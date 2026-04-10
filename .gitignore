@@ -1,0 +1,6 @@
+.cache/
+.tmp/
+.codex
+site/data/*.json
+!site/data/.gitkeep
+site/dist/

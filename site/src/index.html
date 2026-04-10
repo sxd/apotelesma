@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apotelesma Git History Explorer</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <p class="eyebrow">Apotelesma</p>
+        <h1>Static PostgreSQL branch analytics published from the Apotelesma repository.</h1>
+        <p class="lede">
+          This site is built from the
+          <a href="https://github.com/sxd/apotelesma" target="_blank" rel="noreferrer">sxd/apotelesma</a>
+          GitHub repository. CI runs PostgreSQL 18 together with the <code>ekorre</code> FDW at build time,
+          exports JSON snapshots, then publishes a fully static artifact to GitHub Pages.
+        </p>
+        <div class="hero-links">
+          <a class="hero-link" href="https://github.com/sxd/apotelesma" target="_blank" rel="noreferrer">GitHub repo</a>
+          <a class="hero-link" href="./data/grafana.json">Grafana data JSON</a>
+          <a class="hero-link" href="./grafana/apotelesma-starter-dashboard.json">Grafana starter dashboard</a>
+          <a class="hero-link" href="./grafana/apotelesma-postgresql-dashboard.json">Grafana PostgreSQL dashboard</a>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Published Files</p>
+              <h2>Static JSON and Grafana starter assets</h2>
+            </div>
+            <p class="section-copy">
+              These files are the published inputs behind the page and can be consumed directly from other tools.
+            </p>
+          </div>
+          <div class="resource-grid">
+            <a class="resource-card" href="./data/branches.json">
+              <strong>branches.json</strong>
+              <span>Branch metadata and build settings</span>
+            </a>
+            <a class="resource-card" href="./data/branch_summary.json">
+              <strong>branch_summary.json</strong>
+              <span>Branch-level aggregate metrics</span>
+            </a>
+            <a class="resource-card" href="./data/commits.json">
+              <strong>commits.json</strong>
+              <span>Commit-level records used by the interactive explorer</span>
+            </a>
+            <a class="resource-card" href="./data/authors.json">
+              <strong>authors.json</strong>
+              <span>Author activity export</span>
+            </a>
+            <a class="resource-card" href="./data/daily_activity.json">
+              <strong>daily_activity.json</strong>
+              <span>Daily branch activity data</span>
+            </a>
+            <a class="resource-card" href="./data/trailer_fields.json">
+              <strong>trailer_fields.json</strong>
+              <span>Allowed trailer fields and client-facing metadata</span>
+            </a>
+            <a class="resource-card" href="./data/trailer_summary.json">
+              <strong>trailer_summary.json</strong>
+              <span>Trailer value summary across allowed fields</span>
+            </a>
+            <a class="resource-card" href="./data/trailer_people_summary.json">
+              <strong>trailer_people_summary.json</strong>
+              <span>People mentioned in person-oriented trailer fields</span>
+            </a>
+            <a class="resource-card" href="./data/commit_trailers.json">
+              <strong>commit_trailers.json</strong>
+              <span>One row per extracted trailer occurrence</span>
+            </a>
+            <a class="resource-card" href="./data/grafana.json">
+              <strong>grafana.json</strong>
+              <span>Friendly consolidated payload for Grafana and external consumers</span>
+            </a>
+            <a class="resource-card" href="./grafana/apotelesma-starter-dashboard.json">
+              <strong>apotelesma-starter-dashboard.json</strong>
+              <span>Starter Grafana dashboard for static JSON via Infinity</span>
+            </a>
+            <a class="resource-card" href="./grafana/apotelesma-postgresql-dashboard.json">
+              <strong>apotelesma-postgresql-dashboard.json</strong>
+              <span>Starter Grafana dashboard for direct PostgreSQL queries</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="panel controls">
+          <div>
+            <p class="section-label">Interactive Lens</p>
+            <h2>Mix branches, authors, and date ranges in one static dashboard.</h2>
+            <p class="section-copy">
+              Everything below is client-side. The page reads exported JSON only, then filters and redraws the
+              graphs in the browser.
+            </p>
+          </div>
+          <div class="control-stack">
+            <div class="preset-row">
+              <button type="button" class="ghost-button" data-branch-preset="all">All branches</button>
+              <button type="button" class="ghost-button" data-branch-preset="stable">Stable only</button>
+              <button type="button" class="ghost-button" data-branch-preset="root">Root only</button>
+            </div>
+            <label class="field">
+              <span>Timeline metric</span>
+              <select id="metric-select">
+                <option value="commit_count">Commit count</option>
+                <option value="total_insertions">Insertions</option>
+                <option value="total_deletions">Deletions</option>
+                <option value="total_changed_files">Changed files</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel filter-grid">
+          <div class="filter-panel">
+            <div class="section-head compact-head">
+              <div>
+                <p class="section-label">Branches</p>
+                <h2>Compare one branch or several</h2>
+              </div>
+            </div>
+            <div class="toggle-grid" id="branch-filter"></div>
+          </div>
+
+          <div class="filter-panel">
+            <div class="section-head compact-head">
+              <div>
+                <p class="section-label">Authors</p>
+                <h2>Narrow the data to selected people</h2>
+              </div>
+            </div>
+            <div class="preset-row">
+              <button type="button" class="ghost-button" data-author-preset="visible">All visible authors</button>
+              <button type="button" class="ghost-button" data-author-preset="clear">Clear author filter</button>
+            </div>
+            <label class="field">
+              <span>Search authors</span>
+              <input id="author-search" type="search" placeholder="Tom Lane, tgl@..., etc.">
+            </label>
+            <div class="toggle-grid author-grid" id="author-filter"></div>
+          </div>
+
+          <div class="filter-panel">
+            <div class="section-head compact-head">
+              <div>
+                <p class="section-label">Date Range</p>
+                <h2>Limit the window interactively</h2>
+              </div>
+            </div>
+            <div class="date-grid">
+              <label class="field">
+                <span>From</span>
+                <input id="start-date" type="date">
+              </label>
+              <label class="field">
+                <span>To</span>
+                <input id="end-date" type="date">
+              </label>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+            <p class="selection-summary" id="selection-summary"></p>
+          </div>
+        </section>
+
+        <section class="stats-grid" id="stats-grid"></section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Overview</p>
+              <h2>Filtered branch comparison</h2>
+            </div>
+            <p class="section-copy">
+              The summary below is recomputed in the browser from the exported commit dataset as you change filters.
+            </p>
+          </div>
+          <div class="chart-shell">
+            <svg id="branch-chart" viewBox="0 0 960 300" role="img" aria-label="Branch comparison chart"></svg>
+          </div>
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Branch</th>
+                  <th>Commits</th>
+                  <th>Authors</th>
+                  <th>Insertions</th>
+                  <th>Deletions</th>
+                  <th>Changed files</th>
+                  <th>Last commit</th>
+                </tr>
+              </thead>
+              <tbody id="branch-summary-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Timeline</p>
+              <h2>Interactive branch activity graph</h2>
+            </div>
+            <p class="section-copy" id="daily-activity-caption"></p>
+          </div>
+          <div class="chart-shell">
+            <svg id="daily-chart" viewBox="0 0 960 320" role="img" aria-labelledby="daily-chart-title"></svg>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div>
+            <p class="section-label">Authors</p>
+            <h2>Top authors in the filtered slice</h2>
+            <div class="chart-shell compact-chart-shell">
+              <svg id="author-chart" viewBox="0 0 960 320" role="img" aria-label="Author activity chart"></svg>
+            </div>
+            <div class="table-shell">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Author</th>
+                    <th>Commits</th>
+                    <th>Insertions</th>
+                    <th>Deletions</th>
+                    <th>Files</th>
+                    <th>Last commit</th>
+                  </tr>
+                </thead>
+                <tbody id="author-activity-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Recent Commits</p>
+              <h2>Latest matching commits</h2>
+            </div>
+            <p class="section-copy">Only pre-generated JSON is read at runtime. There is no backend or live database.</p>
+          </div>
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>Branch</th>
+                  <th>Author</th>
+                  <th>Summary</th>
+                </tr>
+              </thead>
+              <tbody id="recent-commits-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

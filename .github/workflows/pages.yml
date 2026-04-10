@@ -1,0 +1,69 @@
+name: Build And Publish Site
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    env:
+      PG_CONFIG: /usr/lib/postgresql/18/bin/pg_config
+      EKORRE_SRC_DIR: ${{ github.workspace }}/.cache/ekorre
+      POSTGRES_REPO: ${{ github.workspace }}/.cache/postgresql
+      INCLUDE_DIFF: true
+      MAX_COMMITS: 0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure PostgreSQL apt repository
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ca-certificates curl gnupg lsb-release
+          sudo install -d /etc/apt/keyrings
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+            | sudo gpg --dearmor -o /etc/apt/keyrings/postgresql.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+            | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+
+      - name: Install PostgreSQL 18 and libgit2
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-18 postgresql-server-dev-18 libgit2-dev
+
+      - name: Clone canonical ekorre source
+        run: git clone https://github.com/sxd/ekorre.git "$EKORRE_SRC_DIR"
+
+      - name: Clone PostgreSQL source repository
+        run: git clone https://github.com/postgres/postgres.git "$POSTGRES_REPO"
+
+      - name: Generate static data and site
+        run: ./scripts/generate-site-data.sh
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
