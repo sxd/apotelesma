@@ -6,8 +6,30 @@ DROP VIEW IF EXISTS daily_activity;
 DROP VIEW IF EXISTS commit_trailers;
 DROP VIEW IF EXISTS author_activity;
 DROP VIEW IF EXISTS trailer_field_catalog;
-DROP MATERIALIZED VIEW IF EXISTS commits;
+DROP VIEW IF EXISTS commits_cache_source;
 DROP MATERIALIZED VIEW IF EXISTS authors;
+DROP FUNCTION IF EXISTS commits_cache_health(interval);
+DROP FUNCTION IF EXISTS sync_commits_cache(boolean, interval, interval);
+DROP TABLE IF EXISTS apotelesma_commits_cache_runs;
+DROP TABLE IF EXISTS apotelesma_commits_cache_state;
+DO $$
+DECLARE
+    relation_kind "char";
+BEGIN
+    SELECT c.relkind
+    INTO relation_kind
+    FROM pg_class AS c
+    WHERE c.oid = to_regclass('public.commits');
+
+    IF relation_kind = 'm' THEN
+        EXECUTE 'DROP MATERIALIZED VIEW public.commits';
+    ELSIF relation_kind = 'r' THEN
+        EXECUTE 'DROP TABLE public.commits';
+    ELSIF relation_kind IS NOT NULL THEN
+        RAISE EXCEPTION 'Cannot reset public.commits with relkind %', relation_kind;
+    END IF;
+END;
+$$;
 DROP FUNCTION IF EXISTS ensure_git_log_views(text, text, text);
 DROP FUNCTION IF EXISTS apotelesma_branch_suffix(text);
 DROP FUNCTION IF EXISTS extract_urls(text[]);
@@ -255,17 +277,6 @@ AS $$
     ) deduplicated;
 $$;
 
-CREATE MATERIALIZED VIEW authors AS
-SELECT
-    branch,
-    author_name,
-    author_email,
-    count(*) AS commit_count,
-    min(author_date) AS first_commit_at,
-    max(author_date) AS last_commit_at
-FROM git_log_all
-GROUP BY branch, author_name, author_email;
-
 CREATE VIEW trailer_field_catalog AS
 SELECT
     ordinality,
@@ -286,153 +297,24 @@ FROM (
         (10, 'Backpatch-through'::commit_trailer_field, 'backpatch_through', 'reference')
 ) AS catalog(ordinality, trailer_field, column_name, category);
 
-CREATE MATERIALIZED VIEW commits AS
-SELECT
-    g.branch,
-    g.commit_id,
-    g.author_name,
-    g.author_email,
-    g.author_date,
-    g.committer_name,
-    g.committer_email,
-    g.commit_date,
-    g.summary,
-    g.message,
-    COALESCE(g.deltas, 0) AS deltas,
-    COALESCE(g.insertions, 0) AS insertions,
-    COALESCE(g.deletions, 0) AS deletions,
-    COALESCE(g.changed_files, 0) AS changed_files,
-    trailers.reported_by,
-    trailers.suggested_by,
-    trailers.diagnosed_by,
-    trailers.trailer_author,
-    trailers.co_authored_by,
-    trailers.reviewed_by,
-    trailers.tested_by,
-    trailers.bug,
-    trailers.discussion,
-    trailers.backpatch_through,
-    unique_text_array(
-        trailers.reported_by
-        || trailers.suggested_by
-        || trailers.diagnosed_by
-        || trailers.trailer_author
-        || trailers.co_authored_by
-        || trailers.reviewed_by
-        || trailers.tested_by
-    ) AS mentioned_people,
-    extract_urls(
-        trailers.reported_by
-        || trailers.suggested_by
-        || trailers.diagnosed_by
-        || trailers.trailer_author
-        || trailers.co_authored_by
-        || trailers.reviewed_by
-        || trailers.tested_by
-        || trailers.bug
-        || trailers.discussion
-        || trailers.backpatch_through
-    ) AS mentioned_urls
-FROM git_log_all AS g
-CROSS JOIN LATERAL (
-    SELECT
-        extract_field(g.message, 'Reported-by'::commit_trailer_field) AS reported_by,
-        extract_field(g.message, 'Suggested-by'::commit_trailer_field) AS suggested_by,
-        extract_field(g.message, 'Diagnosed-by'::commit_trailer_field) AS diagnosed_by,
-        extract_field(g.message, 'Author'::commit_trailer_field) AS trailer_author,
-        extract_field(g.message, 'Co-authored-by'::commit_trailer_field) AS co_authored_by,
-        extract_field(g.message, 'Reviewed-by'::commit_trailer_field) AS reviewed_by,
-        extract_field(g.message, 'Tested-by'::commit_trailer_field) AS tested_by,
-        extract_field(g.message, 'Bug'::commit_trailer_field) AS bug,
-        extract_field(g.message, 'Discussion'::commit_trailer_field) AS discussion,
-        extract_field(g.message, 'Backpatch-through'::commit_trailer_field) AS backpatch_through
-) AS trailers;
+\ir sql/commits-cache.sql
 
-CREATE VIEW author_activity AS
+SELECT *
+FROM sync_commits_cache(
+    p_full_reconcile => true,
+    p_overlap => interval '14 days',
+    p_reconcile_interval => interval '7 days'
+);
+
+CREATE MATERIALIZED VIEW authors AS
 SELECT
     branch,
     author_name,
     author_email,
     count(*) AS commit_count,
-    sum(insertions) AS total_insertions,
-    sum(deletions) AS total_deletions,
-    sum(changed_files) AS total_changed_files,
-    max(author_date) AS last_commit_at
-FROM commits
-GROUP BY branch, author_name, author_email
-ORDER BY branch, max(author_date) DESC, count(*) DESC;
-
-CREATE VIEW commit_trailers AS
-SELECT
-    c.branch,
-    c.commit_id,
-    c.summary,
-    trailer_set.trailer_field::text AS trailer_field,
-    CASE
-        WHEN is_person_trailer(trailer_set.trailer_field) THEN 'person'
-        ELSE 'reference'
-    END AS trailer_category,
-    trailer_value.value AS trailer_value,
-    CASE
-        WHEN is_person_trailer(trailer_set.trailer_field) THEN ARRAY[trailer_value.value]
-        ELSE ARRAY[]::text[]
-    END AS people,
-    extract_urls(ARRAY[trailer_value.value]) AS urls,
-    c.author_name,
-    c.author_date
-FROM commits AS c
-CROSS JOIN LATERAL (
-    VALUES
-        ('Reported-by'::commit_trailer_field, c.reported_by),
-        ('Suggested-by'::commit_trailer_field, c.suggested_by),
-        ('Diagnosed-by'::commit_trailer_field, c.diagnosed_by),
-        ('Author'::commit_trailer_field, c.trailer_author),
-        ('Co-authored-by'::commit_trailer_field, c.co_authored_by),
-        ('Reviewed-by'::commit_trailer_field, c.reviewed_by),
-        ('Tested-by'::commit_trailer_field, c.tested_by),
-        ('Bug'::commit_trailer_field, c.bug),
-        ('Discussion'::commit_trailer_field, c.discussion),
-        ('Backpatch-through'::commit_trailer_field, c.backpatch_through)
-) AS trailer_set(trailer_field, trailer_values)
-CROSS JOIN LATERAL unnest(trailer_set.trailer_values) AS trailer_value(value)
-ORDER BY c.branch, c.author_date DESC;
-
-CREATE VIEW daily_activity AS
-SELECT
-    branch,
-    author_date::date AS commit_day,
-    count(*) AS commit_count,
-    sum(insertions) AS total_insertions,
-    sum(deletions) AS total_deletions,
-    sum(changed_files) AS total_changed_files
-FROM commits
-GROUP BY branch, author_date::date
-ORDER BY branch, author_date::date DESC;
-
-CREATE VIEW trailer_summary AS
-SELECT
-    branch,
-    trailer_field,
-    trailer_category,
-    trailer_value,
-    count(*) AS entry_count,
-    count(DISTINCT commit_id) AS commit_count,
     min(author_date) AS first_commit_at,
     max(author_date) AS last_commit_at
-FROM commit_trailers
-GROUP BY branch, trailer_field, trailer_category, trailer_value
-ORDER BY branch, trailer_field, max(author_date) DESC, trailer_value;
+FROM commits
+GROUP BY branch, author_name, author_email;
 
-CREATE VIEW trailer_people_summary AS
-SELECT
-    branch,
-    mentioned.person,
-    count(*) AS mention_count,
-    count(DISTINCT commit_id) AS commit_count,
-    array_agg(DISTINCT trailer_field ORDER BY trailer_field) AS trailer_fields,
-    min(author_date) AS first_commit_at,
-    max(author_date) AS last_commit_at
-FROM commit_trailers
-CROSS JOIN LATERAL unnest(people) AS mentioned(person)
-GROUP BY branch, mentioned.person
-ORDER BY branch, max(author_date) DESC, mentioned.person;
+\ir sql/commits-cache-dependent-views.sql

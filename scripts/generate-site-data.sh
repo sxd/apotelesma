@@ -54,8 +54,6 @@ MAX_COMMITS=$MAX_COMMITS \
 
 "$SCRIPT_DIR/temp-postgres.sh" psql -f "$RUN_DIR/bootstrap.sql"
 "$SCRIPT_DIR/temp-postgres.sh" psql -f "$ROOT_DIR/views.sql"
-"$SCRIPT_DIR/temp-postgres.sh" psql -c "REFRESH MATERIALIZED VIEW authors"
-"$SCRIPT_DIR/temp-postgres.sh" psql -c "REFRESH MATERIALIZED VIEW commits"
 
 DATA_DIR=$DATA_DIR ROOT_BRANCH=$ROOT_BRANCH REPOSITORY_PATH=$POSTGRES_REPO bash "$SCRIPT_DIR/export-json.sh"
 
