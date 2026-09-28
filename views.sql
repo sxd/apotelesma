@@ -226,19 +226,50 @@ CREATE OR REPLACE FUNCTION extract_field(
     field commit_trailer_field
 )
 RETURNS text[]
-LANGUAGE sql
+LANGUAGE plpgsql
 IMMUTABLE
 AS $$
-    SELECT COALESCE(array_agg(value ORDER BY line_number), ARRAY[]::text[])
-    FROM (
-        SELECT
-            ordinality AS line_number,
-            NULLIF(btrim(substring(line FROM position(':' IN line) + 1)), '') AS value
-        FROM regexp_split_to_table(COALESCE(message, ''), E'\r?\n') WITH ORDINALITY AS lines(line, ordinality)
-        WHERE line ~ '^[A-Za-z0-9-]+:'
-          AND split_part(btrim(line), ':', 1) ILIKE field::text
-    ) matched
-    WHERE value IS NOT NULL;
+DECLARE
+    lines text[] := regexp_split_to_array(COALESCE(message, ''), E'\r?\n');
+    last_line integer := cardinality(lines);
+    first_line integer;
+    line_number integer;
+    field_name text;
+    value text;
+    values_found text[] := ARRAY[]::text[];
+    accepted_fields text[] := ARRAY(
+        SELECT lower(label::text) FROM unnest(enum_range(field)) AS label
+    );
+BEGIN
+    -- Ignore trailing blank lines, then inspect the entire final paragraph.
+    -- Never recover a recognized suffix from an invalid paragraph or fall
+    -- back to an earlier block. Trailer-only messages need no leading blank.
+    WHILE last_line > 0 AND btrim(lines[last_line], E' \t') = '' LOOP
+        last_line := last_line - 1;
+    END LOOP;
+    first_line := last_line;
+    WHILE first_line > 1 AND btrim(lines[first_line - 1], E' \t') <> '' LOOP
+        first_line := first_line - 1;
+    END LOOP;
+
+    IF last_line = 0 THEN
+        RETURN values_found;
+    END IF;
+
+    FOR line_number IN first_line..last_line LOOP
+        field_name := lower(split_part(lines[line_number], ':', 1));
+        IF lines[line_number] !~ '^[A-Za-z0-9-]+:'
+           OR NOT (field_name = ANY(accepted_fields)) THEN
+            RETURN ARRAY[]::text[];
+        END IF;
+        -- Keep the existing btrim contract: spaces are trimmed, tabs are not.
+        value := btrim(substring(lines[line_number] FROM position(':' IN lines[line_number]) + 1));
+        IF field_name = lower(field::text) AND value <> '' THEN
+            values_found := array_append(values_found, value);
+        END IF;
+    END LOOP;
+    RETURN values_found;
+END;
 $$;
 
 CREATE OR REPLACE FUNCTION extract_field(

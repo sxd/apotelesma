@@ -243,15 +243,16 @@
               <p class="section-label">Recent Commits</p>
               <h2>Latest matching commits</h2>
             </div>
-            <p class="section-copy">Only pre-generated JSON is read at runtime. There is no backend or live database.</p>
+            <p class="section-copy">Showing the latest 25 matching commits. Patch authors come from terminal Author and Co-authored-by trailers; Git author is shown separately.</p>
           </div>
           <div class="table-shell">
-            <table>
+            <table class="recent-commits-table">
               <thead>
                 <tr>
                   <th>When</th>
                   <th>Branch</th>
-                  <th>Author</th>
+                  <th>Git author</th>
+                  <th>Patch authors</th>
                   <th>Summary</th>
                 </tr>
               </thead>

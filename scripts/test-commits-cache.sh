@@ -26,3 +26,13 @@ trap cleanup EXIT
 "$ROOT_DIR/scripts/temp-postgres.sh" init
 "$ROOT_DIR/scripts/temp-postgres.sh" start
 "$ROOT_DIR/scripts/temp-postgres.sh" psql -f "$ROOT_DIR/tests/commits-cache.sql"
+
+DATA_DIR="$RUN_DIR/export" ROOT_BRANCH=master bash "$ROOT_DIR/scripts/export-json.sh"
+jq -e -n \
+	--argjson fixture "$("$ROOT_DIR/scripts/temp-postgres.sh" psql -At -c "SELECT jsonb_build_object('message', message) FROM git_log_master WHERE commit_id = 'patch-provenance'")" \
+	--slurpfile commits "$RUN_DIR/export/commits.json" \
+	--slurpfile grafana "$RUN_DIR/export/grafana.json" \
+	--slurpfile trailers "$RUN_DIR/export/commit_trailers.json" \
+	--slurpfile summary "$RUN_DIR/export/trailer_summary.json" \
+	--slurpfile people "$RUN_DIR/export/trailer_people_summary.json" \
+	-f "$ROOT_DIR/tests/commits-export.jq"

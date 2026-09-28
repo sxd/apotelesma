@@ -22,6 +22,16 @@ CREATE TABLE public.git_log_master (
 CREATE TABLE public.git_log_rel_19_stable (LIKE public.git_log_master);
 CREATE TABLE public.git_log_rel_18_stable (LIKE public.git_log_master);
 
+-- Keep this raw text intact through cache population, migration and export.
+CREATE TEMP TABLE provenance_fixture AS
+SELECT E'Patch provenance\n\nAuthor: Body Decoy <body@example.test>\nCo-authored-by: Body Decoy <body@example.test>\nReviewed-by: Body Decoy <body@example.test>\nBug: https://example.test/body-decoy\nMore body prose.\n\nAuthor: Patch Author <patch@example.test>\nCo-authored-by: Co One <co1@example.test>\nCo-authored-by: Shared Person <shared@example.test>\nReported-by: Reporter\nSuggested-by: Suggester\nDiagnosed-by: Diagnoser\nReviewed-by: Reviewer Two\nReviewed-by: Reviewer One\nReviewed-by: Reviewer Two\nTested-by: Tester\nBug: https://example.test/bug\nDiscussion: https://example.test/discussion\nBackpatch-through: 18\n' AS message;
+
+INSERT INTO public.git_log_master
+SELECT 'patch-provenance', 'Git Author', 'git@example.test', clock_timestamp(),
+       'Git Committer', 'committer@example.test', clock_timestamp(),
+       'Patch provenance', message, 1, 2, 1, 1
+FROM provenance_fixture;
+
 INSERT INTO public.git_log_master
 VALUES
     ('shared-root', 'Root Author', 'root@example.test', clock_timestamp() - interval '1 day', 'Root Committer', 'root-committer@example.test', clock_timestamp() - interval '1 day', 'root commit', 'Reviewed-by: Root Reviewer <root-review@example.test>', 1, 2, 1, 1),
@@ -41,6 +51,181 @@ VALUES
 SET apotelesma.root_branch = 'master';
 SET apotelesma.branches = 'master, REL_19_STABLE, REL_18_STABLE';
 \ir ../views.sql
+
+-- Each template is exercised for every enum field and both public overloads.
+-- {other} is always a different recognized field; repeats test source order.
+CREATE TEMP TABLE parser_cases (name text, message text, expected text[]);
+INSERT INTO parser_cases VALUES
+    ('terminal', E'Subject\nBody\n\n{field}: Two\n{other}: Other\n{field}: One\n{field}: Two', ARRAY['Two', 'One', 'Two']),
+    ('trailer only', E'{field}: Two\n{other}: Other\n{field}: One\n{field}: Two', ARRAY['Two', 'One', 'Two']),
+    ('earlier block', E'{field}: Decoy\n\nBody\n\n{field}: Value', ARRAY['Value']),
+    ('subject decoy', E'{field}: Decoy\nBody\n\n{field}: Value', ARRAY['Value']),
+    ('no boundary', E'Subject\n{field}: Value', ARRAY[]::text[]),
+    ('body no boundary', E'Subject\n\nBody\n{field}: Value', ARRAY[]::text[]),
+    ('following prose', E'Subject\n\n{field}: Value\nBody', ARRAY[]::text[]),
+    ('nonterminal', E'{field}: Decoy\n\nBody', ARRAY[]::text[]),
+    ('absent field', '{other}: Other', ARRAY[]::text[]),
+    ('null', NULL, ARRAY[]::text[]),
+    ('empty', '', ARRAY[]::text[]),
+    ('blanks only', E' \t\n\t\n', ARRAY[]::text[]),
+    ('spaces trimmed', '{field}:   Value   ', ARRAY['Value']),
+    ('empty values omitted', E'{field}:\n{field}:   \n{field}: Value', ARRAY['Value']),
+    ('tabs retained', E'{field}: \tValue\t \n{field}: \t ', ARRAY[E'\tValue\t', E'\t']);
+
+-- Invalid lines at any position invalidate the WHOLE terminal block, even
+-- when an earlier valid block or a recognized suffix could otherwise match.
+INSERT INTO parser_cases
+SELECT 'invalid ' || bad.name || ' ' || placement.name,
+       E'{field}: Earlier\n\n' || placement.message,
+       ARRAY[]::text[]
+FROM (VALUES
+    ('unknown', 'Unknown: Bad'),
+    ('space continuation', ' continued'),
+    ('tab continuation', E'\tcontinued'),
+    ('space indentation', ' {field}: Bad'),
+    ('tab indentation', E'\t{field}: Bad'),
+    ('space before colon', '{field} : Bad'),
+    ('tab before colon', E'{field}\t: Bad'),
+    ('no colon', '{field}'),
+    ('prose', 'ordinary prose')
+) AS bad(name, line)
+CROSS JOIN LATERAL (VALUES
+    ('before', bad.line || E'\n{field}: Value'),
+    ('between', E'{field}: Value\n' || bad.line || E'\n{field}: Another'),
+    ('after', E'{field}: Value\n' || bad.line)
+) AS placement(name, message);
+
+DO $$
+DECLARE
+    field commit_trailer_field;
+    other_field text;
+    test_case record;
+    line_ending text;
+    blank text;
+    trailing_blanks text;
+    field_spelling text;
+    message text;
+    enum_result text[];
+    text_result text[];
+    bad_argument text;
+BEGIN
+    FOREACH field IN ARRAY enum_range(NULL::commit_trailer_field) LOOP
+        other_field := CASE WHEN field = 'Reviewed-by' THEN 'Bug' ELSE 'Reviewed-by' END;
+        FOREACH field_spelling IN ARRAY ARRAY[
+            field::text, lower(field::text), upper(field::text),
+            overlay(upper(field::text) placing lower(substr(field::text, 2, 1)) from 2 for 1)
+        ] LOOP
+            FOR test_case IN SELECT * FROM parser_cases LOOP
+                FOREACH line_ending IN ARRAY ARRAY[E'\n', E'\r\n'] LOOP
+                    FOREACH blank IN ARRAY ARRAY['', ' ', E'\t', E' \t '] LOOP
+                        FOREACH trailing_blanks IN ARRAY ARRAY['', E'\n', E'\n\n', E'\n \t\n\t'] LOOP
+                            message := replace(replace(test_case.message, '{field}', field_spelling), '{other}', other_field);
+                            message := replace(message, E'\n\n', E'\n' || blank || E'\n');
+                            message := replace(message || trailing_blanks, E'\n', line_ending);
+                            enum_result := extract_field(message, field);
+                            text_result := extract_field(message, field::text);
+                            IF enum_result IS DISTINCT FROM test_case.expected
+                               OR text_result IS DISTINCT FROM test_case.expected THEN
+                                RAISE EXCEPTION 'parser case %, field %, spelling %, message %, enum %, text %, expected %',
+                                    test_case.name, field, field_spelling, message, enum_result, text_result, test_case.expected;
+                            END IF;
+                        END LOOP;
+                    END LOOP;
+                END LOOP;
+            END LOOP;
+        END LOOP;
+    END LOOP;
+
+    FOREACH bad_argument IN ARRAY ARRAY['Unknown', 'author', 'AUTHOR', 'Author ', ''] LOOP
+        BEGIN
+            PERFORM extract_field('Author: Value', bad_argument);
+            RAISE EXCEPTION 'invalid text field argument accepted: %', bad_argument;
+        EXCEPTION WHEN invalid_text_representation THEN
+            NULL; -- The text overload must retain its strict enum-cast contract.
+        END;
+    END LOOP;
+END;
+$$;
+
+CREATE TEMP TABLE expected_trailers (field text, column_name text, values text[]);
+INSERT INTO expected_trailers VALUES
+    ('Reported-by', 'reported_by', ARRAY['Reporter']),
+    ('Suggested-by', 'suggested_by', ARRAY['Suggester']),
+    ('Diagnosed-by', 'diagnosed_by', ARRAY['Diagnoser']),
+    ('Author', 'trailer_author', ARRAY['Patch Author <patch@example.test>']),
+    ('Co-authored-by', 'co_authored_by', ARRAY['Co One <co1@example.test>', 'Shared Person <shared@example.test>']),
+    ('Reviewed-by', 'reviewed_by', ARRAY['Reviewer Two', 'Reviewer One', 'Reviewer Two']),
+    ('Tested-by', 'tested_by', ARRAY['Tester']),
+    ('Bug', 'bug', ARRAY['https://example.test/bug']),
+    ('Discussion', 'discussion', ARRAY['https://example.test/discussion']),
+    ('Backpatch-through', 'backpatch_through', ARRAY['18']);
+
+DO $$
+DECLARE
+    expected record;
+    cached jsonb;
+    actual_values text[];
+    sorted_values text[];
+    expected_value record;
+BEGIN
+    SELECT to_jsonb(c) INTO STRICT cached FROM public.commits c WHERE commit_id = 'patch-provenance';
+    FOR expected IN SELECT * FROM expected_trailers LOOP
+        IF cached -> expected.column_name IS DISTINCT FROM to_jsonb(expected.values) THEN
+            RAISE EXCEPTION 'wrong cached array for %: %', expected.field, cached;
+        END IF;
+        SELECT array_agg(trailer_value ORDER BY trailer_value) INTO actual_values
+        FROM public.commit_trailers
+        WHERE commit_id = 'patch-provenance' AND trailer_field = expected.field;
+        SELECT array_agg(v ORDER BY v) INTO sorted_values FROM unnest(expected.values) AS v;
+        IF actual_values IS DISTINCT FROM sorted_values THEN
+            RAISE EXCEPTION 'wrong trailer multiset/count for %: %', expected.field, actual_values;
+        END IF;
+        FOR expected_value IN SELECT v, count(*) AS occurrences FROM unnest(expected.values) AS v GROUP BY v LOOP
+            IF NOT EXISTS (
+                SELECT 1 FROM public.trailer_summary
+                WHERE branch = 'master' AND trailer_field = expected.field
+                  AND trailer_value = expected_value.v
+                  AND entry_count = expected_value.occurrences AND commit_count = 1
+            ) THEN
+                RAISE EXCEPTION 'missing/wrong trailer summary for %: %', expected.field, expected_value;
+            END IF;
+            IF is_person_trailer(expected.field::commit_trailer_field) AND NOT EXISTS (
+                SELECT 1 FROM public.trailer_people_summary
+                WHERE branch = 'master' AND person = expected_value.v
+                  AND mention_count = expected_value.occurrences AND commit_count = 1
+                  AND trailer_fields = ARRAY[expected.field]
+            ) THEN
+                RAISE EXCEPTION 'missing/wrong people summary for %: %', expected.field, expected_value;
+            END IF;
+        END LOOP;
+        IF (SELECT to_jsonb(c) -> expected.column_name FROM public.commits c WHERE commit_id = 'release-one-only')
+           IS DISTINCT FROM '[]'::jsonb THEN
+            RAISE EXCEPTION 'no-trailer fixture has nonempty/null %', expected.field;
+        END IF;
+    END LOOP;
+    IF (SELECT count(*) FROM public.commit_trailers WHERE commit_id = 'patch-provenance') <> 13
+       OR EXISTS (SELECT 1 FROM public.commit_trailers WHERE commit_id = 'release-one-only') THEN
+        RAISE EXCEPTION 'wrong total trailer count';
+    END IF;
+    IF cached -> 'mentioned_people' IS DISTINCT FROM to_jsonb(ARRAY[
+        'Reporter', 'Suggester', 'Diagnoser', 'Patch Author <patch@example.test>',
+        'Co One <co1@example.test>', 'Shared Person <shared@example.test>',
+        'Reviewer Two', 'Reviewer One', 'Tester'
+    ]) OR cached -> 'mentioned_urls' IS DISTINCT FROM to_jsonb(ARRAY[
+        'https://example.test/bug', 'https://example.test/discussion'
+    ]) THEN
+        RAISE EXCEPTION 'wrong derived people/URLs: %', cached;
+    END IF;
+    IF EXISTS (SELECT 1 FROM public.commit_trailers WHERE trailer_value LIKE '%Body Decoy%' OR trailer_value LIKE '%body-decoy%')
+       OR EXISTS (SELECT 1 FROM public.trailer_summary WHERE trailer_value LIKE '%Body Decoy%' OR trailer_value LIKE '%body-decoy%')
+       OR EXISTS (SELECT 1 FROM public.trailer_people_summary WHERE person LIKE '%Body Decoy%') THEN
+        RAISE EXCEPTION 'body decoy leaked into derived rows/summaries';
+    END IF;
+    IF cached ->> 'message' IS DISTINCT FROM (SELECT message FROM provenance_fixture) THEN
+        RAISE EXCEPTION 'raw message was changed';
+    END IF;
+END;
+$$;
 
 DO $$
 DECLARE
@@ -72,7 +257,7 @@ BEGIN
         RAISE EXCEPTION 'commits output columns changed: %', actual_columns;
     END IF;
 
-    IF (SELECT count(*) FROM public.commits) <> 6 THEN
+    IF (SELECT count(*) FROM public.commits) <> 7 THEN
         RAISE EXCEPTION 'initial backfill row count is wrong';
     END IF;
 

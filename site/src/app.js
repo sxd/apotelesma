@@ -1,3 +1,5 @@
+import { renderPatchAuthors } from "./patch-authors.mjs";
+
 const DATA_FILES = {
   branches: "./data/branches.json",
   commits: "./data/commits.json",
@@ -382,12 +384,13 @@ function renderRecentCommits() {
       row.innerHTML = `
         <td data-label="When">${formatDate(item.author_date)}</td>
         <td data-label="Branch"><span class="pill" style="--pill-color:${getBranchColor(item.branch)}">${escapeHtml(item.branch)}</span></td>
-        <td data-label="Author">${escapeHtml(item.author_name)}</td>
+        <td data-label="Git author">${escapeHtml(item.author_name)}</td>
+        <td data-label="Patch authors">${renderPatchAuthors(item)}</td>
         <td data-label="Summary">${escapeHtml(item.summary)}</td>
       `;
       return row;
     },
-    4,
+    5,
     "No commits match the current filters.",
   );
 }

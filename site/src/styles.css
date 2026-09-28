@@ -410,6 +410,26 @@ tbody tr:last-child td {
   overflow-wrap: anywhere;
 }
 
+.patch-authors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.patch-authors li + li {
+  margin-top: 0.35rem;
+}
+
+.recent-commits-table {
+  table-layout: fixed;
+}
+
+.recent-commits-table th:nth-child(1) { width: 15%; }
+.recent-commits-table th:nth-child(2) { width: 12%; }
+.recent-commits-table th:nth-child(3) { width: 16%; }
+.recent-commits-table th:nth-child(4) { width: 30%; }
+
 .empty-state {
   text-align: center;
   color: var(--muted);
