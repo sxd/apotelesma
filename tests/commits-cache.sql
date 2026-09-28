@@ -19,8 +19,8 @@ CREATE TABLE public.git_log_master (
     changed_files integer
 );
 
-CREATE TABLE public.git_log_release_one (LIKE public.git_log_master);
-CREATE TABLE public.git_log_release_two (LIKE public.git_log_master);
+CREATE TABLE public.git_log_rel_19_stable (LIKE public.git_log_master);
+CREATE TABLE public.git_log_rel_18_stable (LIKE public.git_log_master);
 
 INSERT INTO public.git_log_master
 VALUES
@@ -28,16 +28,18 @@ VALUES
     ('master-only', 'Main Author', 'main@example.test', clock_timestamp() - interval '2 days', 'Main Committer', 'main-committer@example.test', clock_timestamp() - interval '2 days', 'master only', 'Bug: https://example.test/master-only', 1, 3, 1, 2),
     ('old-delete', 'Old Author', 'old@example.test', clock_timestamp() - interval '40 days', 'Old Committer', 'old-committer@example.test', clock_timestamp() - interval '40 days', 'will be deleted outside overlap', '', 0, 0, 0, 0);
 
-INSERT INTO public.git_log_release_one
+INSERT INTO public.git_log_rel_19_stable
 VALUES
     ('shared-root', 'Release Author', 'release@example.test', clock_timestamp() - interval '1 day', 'Release Committer', 'release-committer@example.test', clock_timestamp() - interval '1 day', 'must be hidden by root', '', 0, 0, 0, 0),
     ('cross-branch', 'Release One', 'release-one@example.test', clock_timestamp() - interval '3 days', 'Release Committer', 'release-committer@example.test', clock_timestamp() - interval '3 days', 'same ID as another release branch', 'Tested-by: One Tester <one@example.test>', 1, 1, 0, 1),
     ('release-one-only', 'Release One', 'release-one@example.test', clock_timestamp() - interval '4 days', 'Release Committer', 'release-committer@example.test', clock_timestamp() - interval '4 days', 'release one only', '', 0, 0, 0, 0);
 
-INSERT INTO public.git_log_release_two
+INSERT INTO public.git_log_rel_18_stable
 VALUES
     ('cross-branch', 'Release Two', 'release-two@example.test', clock_timestamp() - interval '5 days', 'Release Committer', 'release-committer@example.test', clock_timestamp() - interval '5 days', 'same ID as release one', 'Reviewed-by: Two Reviewer <two@example.test>', 1, 1, 0, 1);
 
+SET apotelesma.root_branch = 'master';
+SET apotelesma.branches = 'master, REL_19_STABLE, REL_18_STABLE';
 \ir ../views.sql
 
 DO $$
@@ -77,7 +79,7 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM public.commits
-        WHERE branch = 'release_one'
+        WHERE branch = 'REL_19_STABLE'
           AND commit_id = 'shared-root'
     ) THEN
         RAISE EXCEPTION 'root branch de-duplication semantics were not preserved';
@@ -85,6 +87,16 @@ BEGIN
 
     IF (SELECT count(*) FROM public.commits WHERE commit_id = 'cross-branch') <> 2 THEN
         RAISE EXCEPTION 'duplicate commit IDs across branches were not preserved';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM public.commits
+        WHERE branch = 'REL_19_STABLE' AND commit_id = 'release-one-only'
+    ) OR NOT EXISTS (
+        SELECT 1 FROM public.commits
+        WHERE branch = 'REL_18_STABLE' AND commit_id = 'cross-branch'
+    ) THEN
+        RAISE EXCEPTION 'original uppercase release branch labels were not preserved';
     END IF;
 END;
 $$;

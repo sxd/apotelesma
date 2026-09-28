@@ -53,7 +53,10 @@ MAX_COMMITS=$MAX_COMMITS \
 "$SCRIPT_DIR/render-bootstrap-sql.sh" > "$RUN_DIR/bootstrap.sql"
 
 "$SCRIPT_DIR/temp-postgres.sh" psql -f "$RUN_DIR/bootstrap.sql"
-"$SCRIPT_DIR/temp-postgres.sh" psql -f "$ROOT_DIR/views.sql"
+"$SCRIPT_DIR/temp-postgres.sh" psql \
+	-c "SET apotelesma.root_branch = $(sql_literal "$ROOT_BRANCH")" \
+	-c "SET apotelesma.branches = $(sql_literal "$NORMALIZED_BRANCH_CSV")" \
+	-f "$ROOT_DIR/views.sql"
 
 DATA_DIR=$DATA_DIR ROOT_BRANCH=$ROOT_BRANCH REPOSITORY_PATH=$POSTGRES_REPO bash "$SCRIPT_DIR/export-json.sh"
 
