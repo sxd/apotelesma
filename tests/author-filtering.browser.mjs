@@ -88,7 +88,6 @@ try {
   const ax = await cdp.send("Accessibility.getFullAXTree");
   const accessibleOpaque = ax.nodes.find((node) => node.role?.value === "checkbox" && node.name?.value === "Opaque Name (1)");
   assert.match(accessibleOpaque.description.value, /Grouped by exact recorded text/);
-  assert.match(accessibleOpaque.description.value, /Author trailer/);
   assert.doesNotMatch(accessibleOpaque.description.value, /Email identity/);
   assert.doesNotMatch(accessibleOpaque.description.value, /Global recorded/);
   assert.equal(await page.getByText("Unresolved identity", { exact: true }).count(), 0);
@@ -100,7 +99,7 @@ try {
   assert.equal(await page.locator("#author-filter").textContent(), "No authors match this search.");
   await search.fill("owner");
   assert.equal(await page.getByRole("checkbox", { name: "Patch Owner <owner@example.test> (1)", exact: true }).count(), 1);
-  assert.match(await page.locator(".author-description").textContent(), /Roles in this scope: Git author\./);
+  assert.equal(await page.locator(".author-description").count(), 0);
   await page.getByRole("checkbox", { name: "stable", exact: true }).uncheck();
   assert.equal(await page.getByRole("checkbox", { name: "master", exact: true }).isChecked(), true);
 

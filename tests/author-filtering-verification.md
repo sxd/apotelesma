@@ -47,10 +47,10 @@ for Tom Lane in the PostgreSQL export.
 Coverage includes:
 
 - Both `.mjs` modules and `app.js` served and loaded without console errors.
-- Native Tab/Space checkbox operation, alias disclosure keyboard operation,
-  checkbox focus retention and filter scroll restoration.
+- Native Tab/Space checkbox operation, checkbox focus retention and filter
+  scroll restoration.
 - Accessible group/checkbox names and Chromium accessibility-tree descriptions
-  for unresolved entries and trailer provenance.
+  for unresolved entries.
 - Search-hidden and capped selections, inclusive scope changes, pruning,
   unrestricted restoration, root fallback, All visible and Clear.
 - An older patch-only match, latest-25 order, unchanged Git activity attribution,

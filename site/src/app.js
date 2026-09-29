@@ -743,7 +743,7 @@ function renderAuthorFilter() {
         label: `${authorOptionLabel(author.identity)} (${author.count})`,
         value: author.key,
         checked: state.filters.authors.has(author.key),
-        description: authorOptionDescription(author.identity, author.roles),
+        description: authorOptionDescription(author.identity),
         name: "author",
         onChange: (event) => {
           if (event.target.checked) {

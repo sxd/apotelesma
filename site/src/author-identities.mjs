@@ -116,12 +116,11 @@ export function authorOptionLabel(identity) {
   return identity.name || "Unnamed Git author";
 }
 
-export function authorOptionDescription(identity, scopedRoles) {
-  const roles = (values) => roleOrder.filter((role) => values.includes(role)).map((role) => roleNames[role]).join(", ");
+export function authorOptionDescription(identity) {
   const resolution = identity.resolution === "unresolved"
     ? "Grouped by exact recorded text. "
     : "";
-  return `${resolution}Roles in this scope: ${roles(scopedRoles)}.`;
+  return resolution.trim();
 }
 
 export function summarizeParticipants(scopedCommits, index) {
