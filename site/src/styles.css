@@ -219,7 +219,7 @@ th {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1.2fr 1.4fr 0.9fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   overflow: visible;
 }
@@ -272,6 +272,18 @@ th {
 .author-picker {
   position: relative;
   z-index: 3;
+}
+
+.company-picker {
+  position: relative;
+  z-index: 2;
+}
+
+.company-estimates {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
 }
 
 .author-picker-head {
@@ -360,7 +372,8 @@ th {
   color: var(--muted);
 }
 
-#author-search {
+#author-search,
+#company-search {
   width: 100%;
   min-width: 0;
   padding: 0.85rem 0;
@@ -371,7 +384,8 @@ th {
   font: inherit;
 }
 
-#author-search::placeholder {
+#author-search::placeholder,
+#company-search::placeholder {
   color: color-mix(in srgb, var(--muted) 72%, white);
 }
 
@@ -479,6 +493,8 @@ th {
 }
 
 .author-done {
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: 0.35rem 0.8rem;
   border: 0;
   border-radius: 0.45rem;
@@ -752,9 +768,6 @@ tbody tr:last-child td {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .filter-grid > :last-child {
-    grid-column: 1 / -1;
-  }
 }
 
 @media (max-width: 900px) {

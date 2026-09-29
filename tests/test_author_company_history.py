@@ -318,5 +318,118 @@ class SnapshotAndCliTests(unittest.TestCase):
                 ach.load_dataset(data_dir)
 
 
+class WebsiteSnapshotTests(unittest.TestCase):
+    def test_website_projection_never_promotes_candidates_and_deduplicates_roles(self):
+        def row(status, company_status="supported", company_id="company:enterprisedb", branch="master"):
+            return {"branch": branch, "commit_id": "one", "attribution_status": status,
+                    "affiliations": [{"company_id": company_id, "status": company_status}]}
+        records = [row("supported"), row("estimated", "estimated"), row("unknown", company_id="company:databricks"),
+                   row("conflicting", company_id="company:databricks"), row("supported", "candidate", "company:databricks"),
+                   row("estimated", "estimated", branch="stable")]
+        snapshot = ach.website_snapshot([{}, {}], records, load_pilot(), {"timestamp_basis": "committer"})
+        self.assertEqual(snapshot["coverage"]["matched_commits"], 2)
+        self.assertEqual([c["company_id"] for c in snapshot["companies"]], ["company:enterprisedb"])
+        self.assertEqual(snapshot["matches"][0]["companies"], [{"company_id": "company:enterprisedb", "status": "supported"}])
+        self.assertEqual(snapshot["matches"][1]["companies"][0]["status"], "estimated")
+
+    def test_website_build_is_deterministic_sparse_and_bound_to_commit_snapshot(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            output = path / "company_affiliations.json"
+            args = ["build-site", "--data-dir", str(PILOT), "--commits", str(SAMPLE_COMMITS), "--out-dir", str(path)]
+            self.assertEqual(ach.main(args), 0)
+            before = output.read_bytes()
+            self.assertEqual(ach.main(args), 0)
+            self.assertEqual(before, output.read_bytes())
+            snapshot = json.loads(before)
+            self.assertEqual(snapshot["provenance"]["timestamp_basis"], "committer")
+            self.assertEqual(snapshot["provenance"]["input_sha256"]["commit_snapshot_sha256"], hashlib.sha256(SAMPLE_COMMITS.read_bytes()).hexdigest())
+            self.assertEqual(snapshot["coverage"], {"total_commits": 7, "matched_commits": 1, "researched_people": 7})
+            self.assertEqual(snapshot["matches"][0]["companies"][0]["status"], "estimated")
+            self.assertEqual(len(list(path.iterdir())), 1)
+
+    def test_website_output_cannot_alias_input(self):
+        with tempfile.TemporaryDirectory() as temp:
+            data_dir = Path(temp) / "research"
+            shutil.copytree(PILOT, data_dir)
+            out = Path(temp) / "out"
+            out.mkdir()
+            original = (data_dir / "companies.json").read_bytes()
+            (out / "company_affiliations.json").symlink_to(data_dir / "companies.json")
+            self.assertEqual(ach.main(["build-site", "--data-dir", str(data_dir), "--commits", str(SAMPLE_COMMITS), "--out-dir", str(out)]), 2)
+            self.assertEqual((data_dir / "companies.json").read_bytes(), original)
+
+
+class SixCompanyCoverageTests(unittest.TestCase):
+    def test_real_sample_exports_all_six_companies_as_estimates(self):
+        data = load_pilot()
+        commits = ach.read_json(PILOT / "company-coverage-commits.json")
+        self.assertEqual(ach.validate_dataset(data), [])
+        self.assertEqual(ach.validate_commit_snapshot(commits), [])
+        records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
+        snapshot = ach.website_snapshot(commits, records, data, {"timestamp_basis": "committer"})
+        self.assertEqual({c["company_id"] for c in snapshot["companies"]}, {
+            "company:microsoft", "company:amazon", "company:databricks",
+            "company:snowflake", "company:enterprisedb", "company:percona",
+        })
+        self.assertEqual(snapshot["coverage"], {"total_commits": 6, "matched_commits": 6, "researched_people": 7})
+        for row in snapshot["matches"]:
+            self.assertEqual(len(row["companies"]), 1)
+            self.assertEqual(row["companies"][0]["status"], "estimated")
+
+    def test_aliases_share_company_ids_without_renaming_crunchy_data(self):
+        data = load_pilot()
+        aliases = {alias.casefold(): row["company_id"] for row in data["companies"] for alias in row["aliases"]}
+        for alias in ("amazon", "aws", "amazon web services"):
+            self.assertEqual(aliases[alias], "company:amazon")
+        for alias in ("edb", "enterprisedb"):
+            self.assertEqual(aliases[alias], "company:enterprisedb")
+        self.assertEqual(aliases["snowflakes"], "company:snowflake")
+        self.assertNotIn("crunchy data", aliases)
+
+    def test_expansion_preserves_uncertainty_and_review_horizons(self):
+        histories = {h["history_id"]: h for h in load_pilot()["histories"]}
+        tom = histories["hist:tom-snowflake-parent-team"]
+        self.assertEqual(tom["relationship_type"], "other")
+        self.assertEqual(tom["status"], "estimated")
+        self.assertEqual(ach.history_membership(tom, datetime(2025, 5, 31, tzinfo=UTC)), ("none", None))
+        self.assertEqual(ach.history_membership(tom, datetime(2025, 6, 15, tzinfo=UTC)), ("possible", "uncertain_boundary"))
+        self.assertEqual(ach.history_membership(tom, datetime(2026, 7, 15, tzinfo=UTC)), ("none", "outside_reviewed_horizon"))
+        zsolt = histories["hist:zsolt-percona-retrospective"]
+        self.assertEqual(ach.history_membership(zsolt, datetime(2016, 12, 31, tzinfo=UTC)), ("none", None))
+        self.assertEqual(ach.history_membership(zsolt, datetime(2017, 6, 1, tzinfo=UTC)), ("possible", "uncertain_boundary"))
+        self.assertEqual(ach.history_membership(zsolt, datetime(2026, 9, 29, tzinfo=UTC)), ("none", "outside_reviewed_horizon"))
+        nazir = histories["hist:nazir-2026-03-18-observation"]
+        self.assertEqual(ach.history_membership(nazir, datetime(2026, 3, 19, tzinfo=UTC)), ("none", None))
+
+    def test_domains_plus_aliases_and_robert_transition_are_not_guessed(self):
+        data = load_pilot()
+        commits = [
+            {"branch": "master", "commit_id": str(i), "author_email": email,
+             "author_name": name, "commit_date": "2026-03-02T10:00:00Z"}
+            for i, (email, name) in enumerate([
+                ("unresearched@microsoft.com", "Unresearched Person"),
+                ("msawada@postgresql.org", "Masahiko Sawada"),
+                ("boekewurm@gmail.com", "Matthias van de Meent"),
+                ("robertmhaas@gmail.com", "Robert Haas"),
+            ])
+        ]
+        records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
+        self.assertTrue(all(r["attribution_status"] == "unknown" for r in records))
+        self.assertEqual(ach.website_snapshot(commits, records, data, {})["matches"], [])
+
+    def test_research_manifest_hashes_and_exact_empty_queries(self):
+        data = load_pilot()
+        manifest = data["manifest"]
+        self.assertEqual(manifest["evidence_snapshot"], "RESEARCH.md sha256:" + hashlib.sha256((PILOT / "RESEARCH.md").read_bytes()).hexdigest())
+        self.assertEqual(manifest["company_coverage_sample"]["sha256"], hashlib.sha256((PILOT / "company-coverage-commits.json").read_bytes()).hexdigest())
+        self.assertEqual(manifest["company_coverage_sample"]["source_export_sha256"], manifest["commit_source"]["sha256"])
+        empty = [r for r in data["retrieval-ledger"] if r["query"] == ""]
+        self.assertEqual(len(empty), 2)
+        self.assertEqual(ach.validate_dataset(data), [])
+        empty[0].pop("author")
+        self.assertTrue(any("exact query string" in error for error in ach.validate_dataset(data)))
+
+
 if __name__ == "__main__":
     unittest.main()

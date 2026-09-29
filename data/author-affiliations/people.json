@@ -1,5 +1,9 @@
 [
   {"person_id":"person:robert-haas","display_name":"Robert Haas"},
   {"person_id":"person:bruce-momjian","display_name":"Bruce Momjian"},
-  {"person_id":"person:tom-lane","display_name":"Tom Lane"}
+  {"person_id":"person:tom-lane","display_name":"Tom Lane"},
+  {"person_id":"person:nazir-bilal-yavuz","display_name":"Nazir Bilal Yavuz"},
+  {"person_id":"person:masahiko-sawada","display_name":"Masahiko Sawada"},
+  {"person_id":"person:matthias-van-de-meent","display_name":"Matthias van de Meent"},
+  {"person_id":"person:zsolt-parragi","display_name":"Zsolt Parragi"}
 ]

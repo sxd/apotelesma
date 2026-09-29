@@ -120,3 +120,85 @@ Reproducibility and explicit uncertainty are the milestone. Broader collection
 for approximately twenty contributors and any company UI totals follow only
 after reviewing coverage and uncertain results. No precise Robert Haas
 transition date has been established here.
+
+## Six-company expansion (2026-09-29)
+
+The user requested Microsoft, Amazon/AWS, Databricks, Snowflake, EnterpriseDB/EDB
+and Percona. The catalog now contains these six distinct company identities.
+Amazon/AWS and EnterpriseDB/EDB are search aliases, not separate company totals.
+“Snowflakes” is a search spelling only. Crunchy Data is **not** a Snowflake alias.
+The original seven-commit fixture remains unchanged; `company-coverage-commits.json`
+adds six real branch-qualified projections from the same full export, one
+matching each company. No commit rows or company claims were invented to fill
+the selector. All added histories remain estimated, with explicit bounds.
+
+### Microsoft — Nazir Bilal Yavuz
+
+Full mail inspected via Amauta: sender `byavuz81@gmail.com`, Message-ID
+`CAN55FZ1VDwJ-ZD092ChYf++huP+-S3Cg45tJ8jNH5wx2c4BHAg@mail.gmail.com`,
+dated `2026-03-18T15:50:20Z`.
+[Archive](https://www.postgresql.org/message-id/CAN55FZ1VDwJ-ZD092ChYf%2B%2BhuP%2B-S3Cg45tJ8jNH5wx2c4BHAg%40mail.gmail.com).
+His own signature names Microsoft. Only that UTC observation day is used;
+master commit `720c9b504ec6934e93d7304e789c445dc1c09f31` has his exact
+Gmail patch credit earlier that day. No Microsoft-domain guessing is used.
+
+### Amazon/AWS — Masahiko Sawada
+
+Full mail inspected via Amauta: sender `sawada.mshk@gmail.com`, Message-ID
+`CAD21AoAS0rGxyM=o1-=+vznK-aP4vJ91tUqtJSZ2dbvoXevtmg@mail.gmail.com`,
+dated `2025-10-15T00:41:52Z`.
+[Archive](https://www.postgresql.org/message-id/CAD21AoAS0rGxyM%3Do1-%3D%2BvznK-aP4vJ91tUqtJSZ2dbvoXevtmg%40mail.gmail.com).
+His own signature names Amazon Web Services. The same-day estimate matches the
+exact Gmail patch credit in `12609fbacb007698ec91101b6464436506518346`.
+`msawada@postgresql.org` is not merged into this identity.
+
+### Databricks — Matthias van de Meent
+
+Full mail inspected via Amauta: sender `boekewurm+postgres@gmail.com`, Message-ID
+`CAEze2WhJThcajjanXoQGC3BuAGqkcSeLZMZL6z+6OZp+oHDbng@mail.gmail.com`,
+dated `2026-03-02T13:08:59Z`.
+[Archive](https://www.postgresql.org/message-id/CAEze2WhJThcajjanXoQGC3BuAGqkcSeLZMZL6z%2B6OZp%2BoHDbng%40mail.gmail.com).
+His own signature names Databricks after thanking the committer. The same-day
+estimate matches `f68d7e7483d240d8c92b8fc245a3a10199d426dd`. The non-plus
+Gmail address is not merged. Robert Haas's transition remains unresolved;
+the earlier rejected blog observation has not been rehabilitated.
+
+### Percona — Zsolt Parragi
+
+[Percona's contributor profile](https://percona.community/contributors/zsolt_parragi/),
+read on 2026-09-29, explicitly describes a 2017 joining year and continued
+work since then. This retrospective claim permits a bounded historical
+estimate: uncertain start within 2017, exclusive review horizon 2026-09-29.
+It is not an inferred date from a mutable current title.
+
+Identity is independently tied to sender `zsolt.parragi@percona.com` via full
+mail `CAN4CZFNka+2q3=-Dithr4w65RJfwPaV92T62spEzLn+T4MgcMg@mail.gmail.com`,
+dated `2025-02-18T20:02:13Z`.
+[Archive](https://www.postgresql.org/message-id/CAN4CZFNka%2B2q3%3D-Dithr4w65RJfwPaV92T62spEzLn%2BT4MgcMg%40mail.gmail.com).
+That mail discusses his pgindent patch but has no employer statement. It is
+identity evidence only; the company claim comes from Percona's explicit history.
+Commit `8e4d72573cc8b8bdc081661c0a3a76d6573eaa38` carries the exact patch credit.
+
+### Snowflake — Tom Lane
+
+[Snowflake's own team history](https://www.snowflake.com/en/developers/postgres/about-snowflake-postgres-team/),
+updated 2026-07-14 and read 2026-09-29, describes Tom's continuing team role
+from Crunchy Data and the June 2025 acquisition. This supports an **inferred,
+estimated parent/team association**, not a verified legal employer-transfer
+date. The transition window is June 1–July 1, 2025; the exclusive observation
+horizon is July 15, 2026. Earlier Crunchy Data work is not renamed. Tom's exact
+mail identity was already verified. The fixture uses his July 1, 2025 commit
+`1fd772d192909a4f0e1ce88ebc72c8c43b81b025`.
+
+### Discovery provenance and limitations
+
+The ledger adds all 25 actual Amauta searches from this expansion, including
+zero-result queries, exact sender/date filters and all 65 returned hits (some
+repeated). Two sender-filtered queries deliberately used an empty string;
+the ledger retains that exact string rather than inventing search terms.
+Query semantics and completeness are still unverified. Only the four new
+messages explicitly cited above become evidence, plus the two primary company
+pages; other inspected/discovered mail was not sufficient or not needed.
+EDB retains its original Bruce Momjian estimate. Seven people are researched,
+not every contributor to any of these companies. None of these results is a
+complete company contribution or employment-history report.

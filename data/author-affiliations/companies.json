@@ -1,4 +1,8 @@
 [
   {"company_id":"company:enterprisedb","name":"EnterpriseDB","aliases":["EDB","EnterpriseDB"]},
-  {"company_id":"company:databricks","name":"Databricks","aliases":["Databricks"]}
+  {"company_id":"company:databricks","name":"Databricks","aliases":["Databricks"]},
+  {"company_id":"company:microsoft","name":"Microsoft","aliases":["Microsoft"]},
+  {"company_id":"company:amazon","name":"Amazon Web Services (AWS)","aliases":["Amazon","AWS","Amazon Web Services"]},
+  {"company_id":"company:snowflake","name":"Snowflake","aliases":["Snowflake","Snowflake Inc","Snowflakes"]},
+  {"company_id":"company:percona","name":"Percona","aliases":["Percona"]}
 ]

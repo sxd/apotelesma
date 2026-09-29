@@ -99,13 +99,20 @@ Infinity-based dashboard.
 
 ## Author/company affiliation research (pilot)
 
-The offline [affiliation-history pilot](./docs/author-company-affiliations.md)
+The [affiliation-history pilot](./docs/author-company-affiliations.md)
 keeps dated evidence and reviewed identity mappings in durable, versioned files,
 then attributes commit participants using either recorded Git timestamp. It
-includes a three-person research sample, explicit uncertainty, reproducible
-exports, and an independent PostgreSQL schema. Company totals and automatic
-mail collection are not part of this initial pilot; the website pipeline is
-unchanged.
+includes a seven-person research sample, explicit uncertainty, reproducible
+exports, and an independent PostgreSQL schema. The site build derives a compact
+`company_affiliations.json` from the exact published commits and exposes a
+searchable **Companies** multiselect beside the author/date controls. Select any
+number of companies; estimates are included by default and can be excluded.
+Company and author selections are independent commit-level filters. The UI
+shows coverage and uncertainty, not company sponsorship or population-wide
+company totals. Microsoft, Amazon/AWS, Databricks, Snowflake, EDB and Percona
+have evidence-linked estimated matches; aliases share one company identity.
+Research is still limited to seven people; automatic mail
+collection and broader reviewed coverage remain future work.
 
 ## Branch Model
 

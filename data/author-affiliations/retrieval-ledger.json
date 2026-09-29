@@ -203,5 +203,601 @@
     "semantics_verified": false,
     "coverage_status": "sampled",
     "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-00",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Microsoft",
+    "author": "microsoft.com",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "amaanhaque@microsoft.com",
+      "jelte.fennema@microsoft.com"
+    ],
+    "message_ids": [
+      "TYZP153MB0737263A0B32F1BA3BFCC542CB712@TYZP153MB0737.APCP153.PROD.OUTLOOK.COM",
+      "amauta-mbox-missing-id-2f0c3d0e6ecdcd7352309954f3424535@generated.invalid",
+      "amauta-mbox-missing-id-205e5b5c3f13fdb92f4f410069a7dbf3@generated.invalid",
+      "amauta-mbox-missing-id-98a1846adb49ab22689b5c63d46942b0@generated.invalid",
+      "amauta-mbox-missing-id-34551e34ca7b9ef719d36b8350502e67@generated.invalid"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-01",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "amazon.com",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "bdrouvot@amazon.com",
+      "bagrishu@amazon.com",
+      "jfinnert@amazon.com",
+      "rvmallad@amazon.com",
+      "simseih@amazon.com"
+    ],
+    "message_ids": [
+      "ee547cbd-eb0a-28ab-4e71-d3cc8cd77250@amazon.com",
+      "A09EAE0D-0D3F-4A34-ADE9-8AC1DCBE7D57@amazon.com",
+      "1560358329896-0.post@n3.nabble.com",
+      "010101936e4aaa70-b474ab9e-b9ce-474d-a3ba-a3dc223d295c-000000@us-west-2.amazonses.com",
+      "01000190606e3d2a-116ead16-84d2-4449-8d18-5053da66b1f4-000000@email.amazonses.com"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-02",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Databricks",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "sfkeller@gmail.com",
+      "boekewurm@gmail.com",
+      "tristan@partin.io",
+      "boekewurm+postgres@gmail.com"
+    ],
+    "message_ids": [
+      "CAFcOn29cb8j0wjcWHVaumrxOfNesjVirkPPrNxczuDL3f-YXgg@mail.gmail.com",
+      "CAEze2Wi0hg46bcvLQrjid6Kvbb+NSR1N5OKbDNfHy2J=JutJ=Q@mail.gmail.com",
+      "DEUR671F27T4.2TI9SI59IJ3GR@partin.io",
+      "CAEze2WjOOzLVxV+f=7DVcky2FqoxchAVikhTeRmYJhnv0KnOcw@mail.gmail.com",
+      "CAEze2WhJThcajjanXoQGC3BuAGqkcSeLZMZL6z+6OZp+oHDbng@mail.gmail.com"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-03",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Snowflake",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "kuroda.hayato@fujitsu.com",
+      "matheusssilv97@gmail.com",
+      "torikoshia@oss.nttdata.com",
+      "zengman@halodbtech.com",
+      "masao.fujii@oss.nttdata.com"
+    ],
+    "message_ids": [
+      "TY3PR01MB988983D23E4F1DA10567BC5BF5B9A@TY3PR01MB9889.jpnprd01.prod.outlook.com",
+      "DKUUKP9Q53CW.2B8ZJ655OWH0P@gmail.com",
+      "de0551d0f9d9e9072e324e51ed5c426d@oss.nttdata.com",
+      "tencent_1153C6FF0099AB333AEC7C36@qq.com",
+      "6e3dcdc6-8e18-4716-a23b-3bee316aeaa7@oss.nttdata.com"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-04",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Percona",
+    "author": "percona.com",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "zsolt.parragi@percona.com",
+      "jobin.augustine@percona.com"
+    ],
+    "message_ids": [
+      "CAN4CZFPUmkNyYP=MJbCE3OC21-De9AYhJXOD_wd8Q06E6xBzqQ@mail.gmail.com",
+      "CAEpZXfeLrJUS2+5x6AxB2bF+BCusUvQTBgMxrcifURu9FdfwsQ@mail.gmail.com",
+      "CAN4CZFMtxYXiJV+eAA7XmYx4RDU1SFnzFq1UB=aoWa+GX6hFug@mail.gmail.com",
+      "CAN4CZFM4iAESOc08pNiA87nboNP35Nj_7z7eXvfS1-g=08KZ7A@mail.gmail.com",
+      "CAN4CZFMhvTw7J8kNcU+ZxxWq2oUg+-hiaeVH=sdEt1+rtOK3Pg@mail.gmail.com"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-05",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Microsoft",
+    "author": "jelte",
+    "after": "2024-01-01",
+    "before": "2024-02-10",
+    "limit": 4,
+    "offset": 0,
+    "senders": [
+      "postgres@jeltef.nl"
+    ],
+    "message_ids": [
+      "CAGECzQSNe3FVk6zKB9KE8Gi2cmWbQa9w+BkrHn1ay9aNXDuFqQ@mail.gmail.com",
+      "CAGECzQQ4o4pT2dSwuXu=4J_qjVx7uiMK3NM4x68Rp2g9WVmbag@mail.gmail.com",
+      "CAGECzQR4OC9ieo+m5+eY5tSdP5QUsYKsDN5TOM4az+oC1UQvqg@mail.gmail.com",
+      "CAGECzQReBW1o-Sx=mOxi7D7DA12QoGAecKi_8Kea55HjGKoWYQ@mail.gmail.com"
+    ],
+    "result_count": 4,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-06",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Percona",
+    "author": "zsolt.parragi@percona.com",
+    "after": "2025-02-18",
+    "before": "2025-02-22",
+    "limit": 4,
+    "offset": 0,
+    "senders": [
+      "zsolt.parragi@percona.com"
+    ],
+    "message_ids": [
+      "CAN4CZFNka+2q3=-Dithr4w65RJfwPaV92T62spEzLn+T4MgcMg@mail.gmail.com"
+    ],
+    "result_count": 1,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-07",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Databricks",
+    "author": "mikhail.kot@databricks.com",
+    "after": "2025-08-01",
+    "before": "2025-09-15",
+    "limit": 4,
+    "offset": 0,
+    "senders": [
+      "mikhail.kot@databricks.com"
+    ],
+    "message_ids": [
+      "CAAi9E7g9iXSV8P6e6OqibeUau4-4K6b1revWaXUGQczEq30_UA@mail.gmail.com",
+      "CAAi9E7ge4APjZ_atDce+qjYODnxuRwmNej-9RhL3Ydi3zRs8bw@mail.gmail.com",
+      "CAAi9E7jELo5_-sBENftnc2E8XhW2PKZJWfTC3i2y-GMQd2bcqQ@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-08",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Snowflake",
+    "author": "eisentraut",
+    "limit": 4,
+    "offset": 0,
+    "senders": [
+      "peter@eisentraut.org"
+    ],
+    "message_ids": [
+      "4042a046-3dc9-4fc6-bfc6-62beb8492f27@eisentraut.org"
+    ],
+    "result_count": 1,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-09",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Snowflake",
+    "author": "snowflake.com",
+    "limit": 4,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-10",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "bdrouvot@amazon.com",
+    "after": "2022-09-20",
+    "before": "2022-09-26",
+    "limit": 4,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-11",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "bdrouvot@amazon.com",
+    "after": "2022-09-16",
+    "before": "2022-09-19",
+    "limit": 4,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-12",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "andres@anarazel.de",
+    "after": "2025-03-01",
+    "before": "2025-03-04",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "andres@anarazel.de"
+    ],
+    "message_ids": [
+      "ahmn5dx4n4ot5v44i53u3a6gdhjixtrtezwlpn3r7plyurplt3@2x7y4g3lbczd",
+      "m4ipp3aamjswcu2xbu7k5hxafp2sbait67t74igr2ugzjzafx3@lrsnee7ohlyv",
+      "5xahykogf2sg3ofdqk2li7xx3t2vh23m42jnvfwxoi5fhh7iya@girlhoxdxjzc"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-13",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Snowflake",
+    "author": "tgl@sss.pgh.pa.us",
+    "after": "2025-06-01",
+    "before": "2026-04-10",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "tgl@sss.pgh.pa.us"
+    ],
+    "message_ids": [
+      "3101163.1775676098@sss.pgh.pa.us",
+      "3097984.1775674400@sss.pgh.pa.us",
+      "3081271.1775670930@sss.pgh.pa.us"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-14",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Percona",
+    "author": "zsolt.parragi@percona.com",
+    "before": "2026-04-10",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "zsolt.parragi@percona.com"
+    ],
+    "message_ids": [
+      "CAN4CZFOBPOTh=z_OfqqDo1F54vF=2Af7hDKRL=JOHkBprCbmZA@mail.gmail.com",
+      "CAN4CZFOUG9csxguH_+cz=nQ8HQVKLcVvr=qJSbga+tj-3FZhLA@mail.gmail.com",
+      "CAN4CZFPDWoXTQHSd8xhv_Q9UmWX2QunMX-cKD_UTenzbcY4PeQ@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-15",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Microsoft",
+    "author": "byavuz81@gmail.com",
+    "after": "2026-03-01",
+    "before": "2026-03-04",
+    "limit": 3,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-16",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "bdrouvot@amazon.com",
+    "after": "2022-09-13",
+    "before": "2022-10-01",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "bdrouvot@amazon.com"
+    ],
+    "message_ids": [
+      "ee547cbd-eb0a-28ab-4e71-d3cc8cd77250@amazon.com"
+    ],
+    "result_count": 1,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-17",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Microsoft",
+    "author": "byavuz81@gmail.com",
+    "after": "2025-01-01",
+    "before": "2026-04-10",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "byavuz81@gmail.com"
+    ],
+    "message_ids": [
+      "CAN55FZ3CSTpo9x_n5dm3G7wx8xquhZgsPhVvm+L0w8BWFrOAiA@mail.gmail.com",
+      "CAN55FZ2+TX+7viWvyxLRHJ=pN08oO4s-fQRPimpQcvGdvB3avg@mail.gmail.com",
+      "CAN55FZ24VXAJPnN+LgEw-MSgA2AnoURA2Eo6DF1MfZUah0=8XA@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-18",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Microsoft",
+    "author": "byavuz81@gmail.com",
+    "after": "2026-03-25",
+    "before": "2026-04-01",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "byavuz81@gmail.com"
+    ],
+    "message_ids": [
+      "CAN55FZ0PsRHoCXGmOs4d-v_4_bdxE49m_eoQA6wCHLMF8njhUw@mail.gmail.com",
+      "CAN55FZ2-bKNKmMSRDx1xH3SyqwBVMZ8HFG2YNipQ7LCdKm7eKA@mail.gmail.com",
+      "CAN55FZ1xBV0yFBPRKbRPyVWSSG88emYi81fyUgPqkBhX4oyJ+A@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-19",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "sawada.mshk@gmail.com",
+    "after": "2026-03-01",
+    "before": "2026-03-04",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "sawada.mshk@gmail.com"
+    ],
+    "message_ids": [
+      "CAD21AoAFJjLY4GF1+MErybkTcbvFvzUZAV_Nr0wviE-Z7fNcMw@mail.gmail.com",
+      "CAD21AoBx559ox16tCV3spS_7Yt=k1O_f8+qjJ0a6ywt9HAwKRQ@mail.gmail.com",
+      "CAD21AoBSABL10fdNniumcWAGuVGY8=+mNQd1whn6FGH-UP834A@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-20",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "bdrouvot",
+    "after": "2022-09-17",
+    "before": "2022-09-24",
+    "limit": 3,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-21",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Microsoft",
+    "author": "byavuz81@gmail.com",
+    "after": "2026-03-13",
+    "before": "2026-03-19",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "byavuz81@gmail.com"
+    ],
+    "message_ids": [
+      "CAN55FZ1VDwJ-ZD092ChYf++huP+-S3Cg45tJ8jNH5wx2c4BHAg@mail.gmail.com",
+      "CAN55FZ2Pa31vOuiFH+=pAyJUK1C83GQ1-14RERhxL+pBYZ0qjQ@mail.gmail.com",
+      "CAN55FZ0KxMphg+M+4Shm=HmNV+XhC7LUKc6hrC+-QiovhzvdVA@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-22",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "bdrouvot@amazon.com",
+    "after": "2022-09-01",
+    "before": "2022-12-01",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "bdrouvot@amazon.com"
+    ],
+    "message_ids": [
+      "ee547cbd-eb0a-28ab-4e71-d3cc8cd77250@amazon.com",
+      "9a3ac0ad-0f35-d0ee-652d-09bf5af1c3ba@amazon.com",
+      "808019e5-5b28-4771-72fb-99e8013fc05e@amazon.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-23",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "sawada.mshk@gmail.com",
+    "after": "2025-02-01",
+    "before": "2025-03-01",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "sawada.mshk@gmail.com"
+    ],
+    "message_ids": [
+      "CAD21AoB=FBiUB-ER7dmyE-QBBytUxqmv-sgbeP0DKTvYKXsOEA@mail.gmail.com",
+      "CAD21AoCYzmDPqVWDnADdb4T3+he3h+qe59NK3vd+zZN-MXvAxQ@mail.gmail.com",
+      "CAD21AoDr13=dx+k8gmQnR5_bY+NskyN4mbSWN0KhQncL6xuPMA@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
+  },
+  {
+    "ledger_id": "ledger:six-company-discovery-24",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Amazon",
+    "author": "sawada.mshk@gmail.com",
+    "after": "2025-10-15",
+    "before": "2025-10-16",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "sawada.mshk@gmail.com"
+    ],
+    "message_ids": [
+      "CAD21AoBCYRscPxLH0iiV3c3YC5X5BPtosu5G4jcrbuf0_6WtxA@mail.gmail.com",
+      "CAD21AoAsoboLKiq+x7S395Beze3CtOxtGamV2YND52kfqw=jYg@mail.gmail.com",
+      "CAD21AoAS0rGxyM=o1-=+vznK-aP4vJ91tUqtJSZ2dbvoXevtmg@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact discovery request and returned IDs, not exhaustive coverage or proof of a company association. Only explicitly cited full messages were accepted as evidence; domain/name/query matches alone were not accepted."
   }
 ]

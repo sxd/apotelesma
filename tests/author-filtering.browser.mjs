@@ -183,14 +183,17 @@ try {
   assert.equal(await popup.isHidden(), true);
   assert.equal(await search.evaluate((element) => element === document.activeElement), true);
   await search.click();
-  await page.locator("#end-date").click();
+  // The two-column filter layout puts dates below the author popup. Click a
+  // genuinely exposed outside target, not the date input underneath the popup.
+  await page.locator("#company-picker h2").click();
   assert.equal(await popup.isHidden(), true);
+  await page.locator("#end-date").click();
   await page.getByRole("button", { name: "Clear selection" }).click();
   await search.fill("");
   await page.locator("#end-date").fill("2023-01-01");
   await page.locator("#end-date").press("Tab");
   assert.equal(await page.locator("#author-filter").textContent(), "No authors in this branch/date scope.");
-  assert.equal(await page.locator('#recent-commits-body td[colspan="5"]').count(), 1);
+  assert.equal(await page.locator('#recent-commits-body td[colspan="6"]').count(), 1);
 
   // Use the real full export for startup and search timings, without fixture routing.
   await page.unroute("**/data/branches.json");

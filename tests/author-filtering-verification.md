@@ -56,7 +56,7 @@ Coverage includes:
 - Search-hidden selections, inclusive scope changes, pruning, unrestricted
   restoration and root fallback.
 - An older patch-only match, latest-25 order, unchanged Git activity attribution,
-  five-column empty results and hostile strings rendered as text.
+  six-column empty results (including company affiliations) and hostile strings rendered as text.
 - Global patch-priority labels with Git-only scoped roles.
 - Desktop (1440 px), narrow (375/320 px), and effective 200%/400% zoom reflow
   (640/320 CSS px from a 1280 px viewport), with a bounded, layered popup and no

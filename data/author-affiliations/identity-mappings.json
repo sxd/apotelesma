@@ -1,5 +1,9 @@
 [
   {"mapping_id":"map:robert-gmail","email":"robertmhaas@gmail.com","person_id":"person:robert-haas","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:robert-2011"],"mapping_revision":"pilot-agent-reviewed-2026-09-29-v1"},
   {"mapping_id":"map:bruce-momjian-us","email":"bruce@momjian.us","person_id":"person:bruce-momjian","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:bruce-2025-02-18"],"mapping_revision":"pilot-agent-reviewed-2026-09-29-v1"},
-  {"mapping_id":"map:tom-lane-sss","email":"tgl@sss.pgh.pa.us","person_id":"person:tom-lane","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:tom-2025-03-03"],"mapping_revision":"pilot-agent-reviewed-2026-09-29-v1"}
+  {"mapping_id":"map:tom-lane-sss","email":"tgl@sss.pgh.pa.us","person_id":"person:tom-lane","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:tom-2025-03-03"],"mapping_revision":"pilot-agent-reviewed-2026-09-29-v1"},
+  {"mapping_id":"map:nazir-gmail","email":"byavuz81@gmail.com","person_id":"person:nazir-bilal-yavuz","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:nazir-microsoft-2026-03-18"],"mapping_revision":"six-company-agent-reviewed-2026-09-29-v2"},
+  {"mapping_id":"map:sawada-gmail","email":"sawada.mshk@gmail.com","person_id":"person:masahiko-sawada","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:sawada-aws-2025-10-15"],"mapping_revision":"six-company-agent-reviewed-2026-09-29-v2"},
+  {"mapping_id":"map:matthias-gmail-plus","email":"boekewurm+postgres@gmail.com","person_id":"person:matthias-van-de-meent","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:matthias-databricks-2026-03-02"],"mapping_revision":"six-company-agent-reviewed-2026-09-29-v2"},
+  {"mapping_id":"map:zsolt-percona","email":"zsolt.parragi@percona.com","person_id":"person:zsolt-parragi","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:zsolt-identity-2025-02-18"],"mapping_revision":"six-company-agent-reviewed-2026-09-29-v2"}
 ]

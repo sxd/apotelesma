@@ -1,8 +1,8 @@
 # Author/company affiliation pilot
 
-This is an offline, evidence-linked pilot for estimating which companies commit participants were associated with at a recorded commit timestamp. It consumes the existing commits JSON format and never changes the website data pipeline. The checked-in input lives in `data/author-affiliations/`; keep it out of `site/data/`, which `scripts/export-json.sh` clears before export.
+This is an evidence-linked pilot for estimating which companies commit participants were associated with at a recorded commit timestamp. Offline research consumes the existing commits JSON format; the site build now publishes a compact filtering projection. The checked-in input lives in `data/author-affiliations/`; keep it out of `site/data/`, which `scripts/export-json.sh` clears before export.
 
-The pilot is deliberately small: Robert Haas, Bruce Momjian, and Tom Lane, with seven branch-qualified commits. Its research is agent-inspected and provisional; `agent-reviewed` does not mean human-reviewed. It does not establish company sponsorship or support population-wide company totals.
+The research is deliberately small: the initial Robert Haas, Bruce Momjian, and Tom Lane pilot is preserved, with four additional people covering the requested six companies. `commits.json` retains the original seven branch-qualified commits; `company-coverage-commits.json` adds a separate six-company regression sample. Research is agent-inspected and provisional; `agent-reviewed` does not mean human-reviewed. It does not establish company sponsorship or support population-wide company totals.
 
 ## Run it
 
@@ -125,5 +125,118 @@ Databricks transition remains undated in the accepted evidence.
 
 Next milestones are broader reviewed research (approximately twenty people),
 verified mail-retrieval coverage, and a version-aware JSON-to-PostgreSQL importer.
-Automated collection, publication through the site-generation pipeline and
-company totals in the UI are not implemented by this pilot.
+Automated collection and population-wide company totals remain unimplemented.
+
+## Website company selector
+
+`scripts/build-site.sh` now requires Python 3 and generates
+`site/dist/data/company_affiliations.json` after copying the published commits.
+It uses the full published snapshot, **not** the seven-commit research fixture.
+`AFFILIATION_DATA_DIR` can select another validated research directory. No live
+database import is necessary. The existing site-generation and Pages workflows
+both call this build step; research inputs remain outside their disposable data.
+
+The same export can be generated independently:
+
+```sh
+python3 scripts/author_company_history.py build-site \
+  --data-dir data/author-affiliations \
+  --commits site/data/commits.json \
+  --out-dir /tmp/company-site-export \
+  --timestamp-basis committer
+```
+
+The versioned JSON contains company IDs/names/aliases, sparse branch-qualified
+commit/company matches, supported/estimated labels, and coverage denominators.
+It retains input hashes and mapping/history/rule revisions. Its commit SHA-256
+is verified against the actual fetched commits before filtering. This check
+uses Web Crypto (HTTPS, or localhost when previewing). Invalid/stale/missing
+company data disables only the company selector; the author/branch/date
+dashboard remains usable. Invalid research fails the build rather than
+publishing invented affiliations.
+
+The **Companies · Research preview** control supports name/alias search, eight
+suggestions, persistent removable chips, multiple checkbox selections, clear
+search/selection, and keyboard navigation. Its matching contract is:
+
+- Selected companies are ORed, then ANDed with branch, date and author filters.
+- A company can match through any Git author, `Author` or `Co-authored-by`
+  participant. Author and company filters apply independently to the commit;
+  they need not match the same person. This is not a person-at-company query.
+- No companies selected means unrestricted, including unknown affiliations.
+- Estimates are included by default. Turning them off affects company matches,
+  option counts and table labels, but does not exclude otherwise eligible
+  commits when company selection is unrestricted.
+- Unknown/conflicting participants and candidate affiliations never match.
+  Explicit concurrent companies may both match. Each branch/commit is counted
+  once; repeated roles or selected companies cannot multiply its metrics.
+- A supported participant takes precedence over an estimated participant for
+  the same company on the same commit. Detailed participant and evidence links
+  remain in the offline audit export, not this compact UI projection.
+- Option counts and coverage use branch/date scope before author/company
+  selection. Search, scope changes and estimate exclusion never silently clear
+  company selections. Zero-match selections stay selected and show no results.
+- Only companies with at least one eligible match in the complete published
+  snapshot are listed. Rejected Databricks evidence does not create an option.
+- Company histories use Git **committer** timestamps in the site pipeline;
+  existing date filters/charts still use Git author dates. Backpatch branch/ID
+  pairs remain distinct. The UI explains this difference and does not imply
+  company sponsorship. Recent commits show company names with status labels.
+
+The research now covers seven people and all six requested companies:
+Microsoft, Amazon Web Services (AWS), Databricks, Snowflake, EnterpriseDB and
+Percona. Amazon/AWS and EnterpriseDB/EDB aliases do not create duplicate totals;
+“Snowflakes” is accepted as a search spelling. The catalog does not imply that
+every employee or commit has been researched. More companies appear
+automatically as reviewed evidence creates eligible dated matches.
+
+Microsoft (Nazir Bilal Yavuz), AWS (Masahiko Sawada), Databricks (Matthias van de
+Meent) and EDB (Bruce Momjian) use narrow, same-day signature estimates. Percona's
+explicit retrospective statement supplies Zsolt Parragi's uncertain 2017 start
+and continuing employment, capped at the retrieval horizon. Snowflake's
+retrospective team account supplies an estimated Tom Lane parent/team
+association after the June 2025 acquisition, **not** an exact legal-employer
+transfer. Crunchy Data is not a Snowflake alias and earlier commits are not
+renamed. Robert Haas's Databricks transition remains unresolved. All six current
+company matches are estimates; disabling estimates may show zero matches.
+See `data/author-affiliations/RESEARCH.md` for sources, date bounds and caveats.
+
+On the verified 71,200-row local export, the expansion yields 713 distinct
+branch/commit matches. These **estimated, sampled counts are not a ranking of
+company contributions**; different evidence windows explain their disparity.
+
+| Company | Researched matching contributor | Estimated matches |
+| --- | --- | ---: |
+| Microsoft | Nazir Bilal Yavuz | 1 |
+| Amazon/AWS | Masahiko Sawada | 6 |
+| Databricks | Matthias van de Meent | 1 |
+| Snowflake | Tom Lane (parent/team association) | 690 |
+| EnterpriseDB/EDB | Bruce Momjian | 1 |
+| Percona | Zsolt Parragi | 14 |
+
+The expansion ledger preserves 25 additional discovery queries, including two
+empty-string queries constrained by sender. Such requests are valid; a missing
+query value or an empty query without a sender is not. These are sampled
+retrievals, never an exhaustive directory.
+
+Verification:
+
+```sh
+node --test tests/author-identities.test.mjs tests/author-filtering.test.mjs \
+  tests/patch-authors.test.mjs tests/company-filtering.test.mjs
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_author_company_history.py
+
+# Build into a dedicated disposable directory, then run optional Chromium tests.
+company_test_dir=$(mktemp -d /tmp/apotelesma-company-test.XXXXXX)
+SITE_DIST_DIR="$company_test_dir/site" bash scripts/build-site.sh
+SITE_DIST_DIR="$company_test_dir/site" node tests/company-filtering.browser.mjs
+SITE_DIST_DIR="$company_test_dir/site" node tests/author-filtering.browser.mjs
+```
+
+Browser tests accept `PLAYWRIGHT_MODULE` and `CHROMIUM_PATH` overrides for an
+existing local installation, and `BROWSER_ARTIFACT_DIR` for company screenshots.
+The company test covers multi-company fixtures, all six real company names and
+their aliases, author combinations, native
+keyboard behavior, accessibility-tree labels, stale/missing/malformed/empty
+exports, literal hostile text, real full-export filtering and 1440/1000/720/375/320
+pixel layouts. Screen-reader output and native zoom are not asserted.

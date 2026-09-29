@@ -35,12 +35,12 @@ const commit = {
   author_email: "git@example.test", summary: "Summary", trailer_author: ["Patch One", "Patch Two"],
 };
 
-test("actual recent rows, desktop headers and mobile labels have five columns in order", () => {
+test("actual recent rows, desktop headers and mobile labels have six columns in order", () => {
   const ui = dashboard();
   ui.state.data.commits = [{ ...commit, co_authored_by: [hostile] }];
   const [row] = ui.render();
   const cells = [...row.matchAll(/<td data-label="([^"]+)">([\s\S]*?)<\/td>/g)];
-  const labels = ["When", "Branch", "Git author", "Patch authors", "Summary"];
+  const labels = ["When", "Branch", "Git author", "Patch authors", "Company affiliations", "Summary"];
   assert.deepEqual(cells.map((cell) => cell[1]), labels);
   assert.equal(cells[2][2], "Git Author");
   assert.match(cells[3][2], /Patch One<\/li><li>Patch Two/);
@@ -63,7 +63,7 @@ test("empty patch authors and no-results rows render correctly", () => {
     assert.match(ui.render()[0], /<td data-label="Patch authors">—<\/td>/);
   }
   ui.state.filters.authors = new Set(["absent@example.test"]);
-  assert.deepEqual(ui.render(), ['<td colspan="5" class="empty-state">No commits match the current filters.</td>']);
+  assert.deepEqual(ui.render(), ['<td colspan="6" class="empty-state">No commits match the current filters.</td>']);
 });
 
 test("latest 25 are selected after branch, Git-author and date filtering, on every change", () => {

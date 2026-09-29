@@ -318,8 +318,9 @@ def validate_dataset(data: dict[str, Any]) -> list[str]:
         if not ledger_id or ledger_id in seen_ledger_ids:
             errors.append(f"retrieval-ledger[{i}] requires a unique ledger_id")
         seen_ledger_ids.add(ledger_id)
-        if not isinstance(row.get("query"), str) or not row["query"].strip():
-            errors.append(f"retrieval ledger {ledger_id} requires the exact query string")
+        has_sender_filter = isinstance(row.get("author"), str) and bool(row["author"].strip())
+        if not isinstance(row.get("query"), str) or (not row["query"].strip() and not has_sender_filter):
+            errors.append(f"retrieval ledger {ledger_id} requires the exact query string (sender-filtered empty queries are allowed)")
         if not isinstance(row.get("senders"), list) or any(not isinstance(sender, str) or not sender for sender in row["senders"]):
             errors.append(f"retrieval ledger {ledger_id} senders must be an array of addresses")
         message_ids = row.get("message_ids")
@@ -657,7 +658,7 @@ def ensure_output_is_separate(out_dir: Path, data_dir: Path, commits_path: Path)
     inputs = [data_dir / "manifest.json", commits_path]
     inputs.extend(data_dir / f"{name}.json" for name in ("people", "identity-mappings", "companies", "evidence", "histories", "retrieval-ledger"))
     protected = {path.resolve(strict=False) for path in inputs}
-    for name in ("raw_credits.json", "commit_author_companies.json", "coverage.json", "manifest.json"):
+    for name in ("raw_credits.json", "commit_author_companies.json", "coverage.json", "manifest.json", "company_affiliations.json"):
         target = out_dir / name
         resolved_target = target.resolve(strict=False)
         if resolved_target in protected:
@@ -666,6 +667,41 @@ def ensure_output_is_separate(out_dir: Path, data_dir: Path, commits_path: Path)
             for source in inputs:
                 if source.exists() and os.path.samefile(target, source):
                     raise DataError(f"output {target} aliases input {source}")
+
+
+def website_snapshot(commits: list[dict[str, Any]], records: list[dict[str, Any]],
+                     data: dict[str, Any], provenance: dict[str, Any]) -> dict[str, Any]:
+    """Sparse commit/company matches; unresolved candidates never become filters.
+
+    A commit is counted once per company, regardless of people or credit roles.
+    A supported participant takes precedence over estimated participants for the
+    same company. Full participant/evidence detail remains in the audit build.
+    """
+    matches: dict[tuple[str, str], dict[str, str]] = defaultdict(dict)
+    for row in records:
+        if row["attribution_status"] not in {"supported", "estimated"}:
+            continue
+        for affiliation in row["affiliations"]:
+            status = affiliation["status"]
+            if status not in {"supported", "estimated"}:
+                continue
+            companies = matches[(row["branch"], row["commit_id"])]
+            company_id = affiliation["company_id"]
+            if companies.get(company_id) != "supported":
+                companies[company_id] = status
+    used = {company for companies in matches.values() for company in companies}
+    return {
+        "schema_version": 1,
+        "provenance": provenance,
+        "coverage": {"total_commits": len(commits), "matched_commits": len(matches),
+                     "researched_people": len(data["people"])},
+        "companies": sorted((company for company in data["companies"] if company["company_id"] in used),
+                            key=lambda company: company["company_id"]),
+        "matches": [{"branch": branch, "commit_id": commit_id,
+                     "companies": [{"company_id": company_id, "status": status}
+                                   for company_id, status in sorted(companies.items())]}
+                    for (branch, commit_id), companies in sorted(matches.items())],
+    }
 
 
 def build_command(args: argparse.Namespace) -> int:
@@ -691,6 +727,10 @@ def build_command(args: argparse.Namespace) -> int:
         "manifest.json": sha256_bytes((data_dir / "manifest.json").read_bytes()),
     }
     input_manifest = {"data_manifest": data["manifest"], "input_sha256": input_hashes, "commit_snapshot_name": commits_path.name, "timestamp_basis": args.timestamp_basis, "rule_version": RULE_VERSION}
+    if args.command == "build-site":
+        write_json(out_dir / "company_affiliations.json", website_snapshot(commits, attributions, data, input_manifest))
+        print(f"Wrote website company affiliations for {len(commits)} commits to {out_dir}")
+        return 0
     output_hashes = {name: sha256_bytes(canonical_json(value)) for name, value in outputs.items()}
     output_manifest = {**input_manifest, "outputs_sha256": output_hashes}
     for name, value in outputs.items():
@@ -736,6 +776,12 @@ def make_parser() -> argparse.ArgumentParser:
     build.add_argument("--out-dir", required=True)
     build.add_argument("--timestamp-basis", choices=("committer", "author"), default="committer")
     build.set_defaults(func=build_command)
+    website = subparsers.add_parser("build-site", help="build sparse, evidence-qualified website company matches")
+    website.add_argument("--data-dir", required=True)
+    website.add_argument("--commits", required=True)
+    website.add_argument("--out-dir", required=True)
+    website.add_argument("--timestamp-basis", choices=("committer", "author"), default="committer")
+    website.set_defaults(func=build_command)
     return parser
 
 

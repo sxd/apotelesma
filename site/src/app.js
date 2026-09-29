@@ -1,5 +1,7 @@
 import { renderPatchAuthors } from "./patch-authors.mjs";
 import { buildAuthorIndex, summarizeParticipants, matchesSelectedAuthors, authorOptionLabel } from "./author-identities.mjs";
+import { buildCompanyIndex, commitCompanies, matchesSelectedCompanies, summarizeCompanies, verifyCompanySnapshot } from "./company-affiliations.mjs";
+import { createCompanyPicker } from "./company-picker.mjs";
 
 const DATA_FILES = {
   branches: "./data/branches.json",
@@ -22,11 +24,15 @@ const state = {
   authorIndex: null,
   authorScope: null,
   authorNotice: "",
+  companyIndex: null,
+  companyScope: null,
   filteredCommits: [],
   filteredAuthors: [],
   filters: {
     branches: new Set(),
     authors: new Set(),
+    companies: new Set(),
+    includeEstimated: true,
     startDate: "",
     endDate: "",
     metric: "commit_count",
@@ -59,6 +65,10 @@ const branchChart = document.querySelector("#branch-chart");
 const dailyActivityCaption = document.querySelector("#daily-activity-caption");
 const activeFilters = document.querySelector("#active-filters");
 const selectionSummary = document.querySelector("#selection-summary");
+const companyCoverage = document.querySelector("#company-coverage");
+const companyStatus = document.querySelector("#company-status");
+const companyEstimates = document.querySelector("#company-estimates");
+let companyPicker;
 let visibleAuthorOptions = [];
 let suppressAuthorOpen = false;
 
@@ -120,7 +130,8 @@ function commitMatchesFilters(commit) {
   const startMatch = !state.filters.startDate || day >= state.filters.startDate;
   const endMatch = !state.filters.endDate || day <= state.filters.endDate;
 
-  return branchMatch && authorMatch && startMatch && endMatch;
+  return branchMatch && authorMatch && startMatch && endMatch
+    && matchesSelectedCompanies(commit, state.filters.companies, state.companyIndex, state.filters.includeEstimated);
 }
 
 function buildGitAuthorSummaries(commits) {
@@ -264,6 +275,36 @@ function updateDerivedState() {
   state.filteredRecentCommits = getRecentCommits(state.filteredCommits);
 }
 
+function renderCompanyFilter() {
+  const key = JSON.stringify([[...state.filters.branches].sort(), state.filters.startDate, state.filters.endDate, state.filters.includeEstimated]);
+  if (state.companyScope?.key !== key) {
+    const commits = state.data.commits.filter((commit) => {
+      const day = getCommitDay(commit);
+      return state.filters.branches.has(commit.branch)
+        && (!state.filters.startDate || day >= state.filters.startDate)
+        && (!state.filters.endDate || day <= state.filters.endDate);
+    });
+    state.companyScope = { key, ...summarizeCompanies(commits, state.companyIndex, state.filters.includeEstimated) };
+  }
+  companyPicker?.update(state.companyScope.options, Boolean(state.companyIndex));
+  companyEstimates.disabled = !state.companyIndex;
+  if (!state.companyIndex) {
+    companyCoverage.textContent = "Company research data is unavailable or does not match this commit snapshot. Other filters still work.";
+    return;
+  }
+  const { matched, total } = state.companyScope;
+  const basis = state.companyIndex.provenance.timestamp_basis === "committer" ? "Git committer" : "Git author";
+  companyCoverage.textContent = `${formatNumber(matched)} of ${formatNumber(total)} commits in this branch/date scope have ${state.filters.includeEstimated ? "supported or estimated" : "supported"} affiliations. Limited research: ${state.companyIndex.coverage.researched_people} people; other affiliations may be unknown.`;
+  document.querySelector("#company-method").textContent = `Affiliations are matched at the ${basis} timestamp. The date filter and charts use Git author dates. Option counts are before author and company filters.`;
+}
+
+function renderCompanyStatus() {
+  const selectedCount = state.filters.companies.size;
+  companyStatus.textContent = state.companyIndex
+    ? `${selectedCount ? `${selectedCount} ${selectedCount === 1 ? "company" : "companies"} selected.` : "All companies (including unknown affiliations)."} ${formatNumber(state.filteredCommits.length)} matching commits.`
+    : "";
+}
+
 function renderStats() {
   clearElement(statsGrid);
 
@@ -315,6 +356,7 @@ function renderActiveFilters() {
   const chips = [];
   chips.push(`${state.filters.branches.size} branch${state.filters.branches.size === 1 ? "" : "es"}`);
   chips.push(state.filters.authors.size === 0 ? "all author entries" : `${state.filters.authors.size} selected author entries`);
+  if (state.filters.companies.size) chips.push(`${state.filters.companies.size} selected ${state.filters.companies.size === 1 ? "company" : "companies"}${state.filters.includeEstimated ? " (estimates included)" : " (supported only)"}`);
   chips.push(state.filters.startDate ? `from ${state.filters.startDate}` : "from start");
   chips.push(state.filters.endDate ? `to ${state.filters.endDate}` : "to latest");
   chips.push(`metric: ${metricSelect.selectedOptions[0].textContent}`);
@@ -397,16 +439,19 @@ function renderRecentCommits() {
     state.filteredRecentCommits,
     (item) => {
       const row = document.createElement("tr");
+      const companies = commitCompanies(item, state.companyIndex, state.filters.includeEstimated);
+      const companyLabel = companies.map((match) => `${state.companyIndex.companies.get(match.company_id).name} (${match.status})`).join("; ");
       row.innerHTML = `
         <td data-label="When">${formatDate(item.author_date)}</td>
         <td data-label="Branch"><span class="pill" style="--pill-color:${getBranchColor(item.branch)}">${escapeHtml(item.branch)}</span></td>
         <td data-label="Git author">${escapeHtml(item.author_name)}</td>
         <td data-label="Patch authors">${renderPatchAuthors(item)}</td>
+        <td data-label="Company affiliations">${escapeHtml(companyLabel || (state.companyIndex ? "No usable evidence" : "Unavailable"))}</td>
         <td data-label="Summary">${escapeHtml(item.summary)}</td>
       `;
       return row;
     },
-    5,
+    6,
     "No commits match the current filters.",
   );
 }
@@ -882,6 +927,7 @@ function renderDashboardResults() {
   renderDailyChart();
   renderAuthorChart();
   renderBranchChart();
+  renderCompanyStatus();
 }
 
 function updateFromAuthorSelection() {
@@ -898,12 +944,22 @@ function renderDashboard() {
   renderBranchFilter();
   renderAuthorSelection();
   renderAuthorFilter();
+  renderCompanyFilter();
   renderDashboardResults();
   renderAuthorStatus();
   restore();
 }
 
 function initializeControls() {
+  companyPicker = createCompanyPicker({ document, selected: state.filters.companies, onChange: () => {
+    updateDerivedState();
+    renderDashboardResults();
+    renderAuthorStatus();
+  } });
+  companyEstimates.addEventListener("change", () => {
+    state.filters.includeEstimated = companyEstimates.checked;
+    renderDashboard();
+  });
   branchPresetButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const preset = button.dataset.branchPreset;
@@ -1023,9 +1079,22 @@ function initializeControls() {
 }
 
 async function main() {
-  const [branches, commits] = await Promise.all(
-    Object.values(DATA_FILES).map((path) => loadJson(path)),
-  );
+  const [branches, commitResponse] = await Promise.all([
+    loadJson(DATA_FILES.branches), fetch(DATA_FILES.commits),
+  ]);
+  if (!commitResponse.ok) throw new Error("Failed to load commits");
+  const commitText = await commitResponse.text();
+  const commits = JSON.parse(commitText);
+
+  // An absent, malformed or stale optional research export must not break the
+  // existing dashboard or turn unknown affiliations into company matches.
+  try {
+    const snapshot = await loadJson("./data/company_affiliations.json");
+    await verifyCompanySnapshot(snapshot, commitText);
+    state.companyIndex = buildCompanyIndex(snapshot, commits);
+  } catch {
+    state.companyIndex = null;
+  }
 
   state.data = { branches, commits };
   state.authorIndex = buildAuthorIndex(commits);
@@ -1041,7 +1110,7 @@ main().catch((error) => {
       <section class="panel">
         <p class="section-label">Load failure</p>
         <h2>Static data is missing or incomplete.</h2>
-        <p class="section-copy">${error.message}</p>
+        <p class="section-copy">${escapeHtml(error.message)}</p>
       </section>
     </div>
   `;

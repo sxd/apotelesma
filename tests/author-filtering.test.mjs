@@ -101,7 +101,7 @@ test("pruning announces unrestricted restoration, including empty scope and bran
   assert.deepEqual([...ui.state.filters.branches], ["master"]);
   date(ui, "#start-date", "2026-03-01");
   assert.equal(ui.element("#author-filter").textContent, "No authors in this branch/date scope.");
-  assert.match(ui.element("#recent-commits-body").children[0].innerHTML, /colspan="5"/);
+  assert.match(ui.element("#recent-commits-body").children[0].innerHTML, /colspan="6"/);
 });
 
 test("alias search is case-insensitive, cached, and does not change global labels or selections", () => {

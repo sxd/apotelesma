@@ -1,0 +1,96 @@
+[
+  {
+    "branch": "master",
+    "commit_id": "720c9b504ec6934e93d7304e789c445dc1c09f31",
+    "author_name": "Peter Eisentraut",
+    "author_email": "peter@eisentraut.org",
+    "author_date": "2026-03-18T10:09:14+00:00",
+    "committer_name": "Peter Eisentraut",
+    "committer_email": "peter@eisentraut.org",
+    "commit_date": "2026-03-18T10:09:14+00:00",
+    "summary": "meson: Add {perl|python}_includespec to generated Makefile.global",
+    "trailer_author": [
+      "Nazir Bilal Yavuz <byavuz81@gmail.com>"
+    ],
+    "co_authored_by": []
+  },
+  {
+    "branch": "master",
+    "commit_id": "f68d7e7483d240d8c92b8fc245a3a10199d426dd",
+    "author_name": "Michael Paquier",
+    "author_email": "michael@paquier.xyz",
+    "author_date": "2026-03-02T05:13:05+00:00",
+    "committer_name": "Michael Paquier",
+    "committer_email": "michael@paquier.xyz",
+    "commit_date": "2026-03-02T05:13:05+00:00",
+    "summary": "Remove WAL page header flag XLP_BKP_REMOVABLE",
+    "trailer_author": [
+      "Matthias van de Meent <boekewurm+postgres@gmail.com>"
+    ],
+    "co_authored_by": []
+  },
+  {
+    "branch": "master",
+    "commit_id": "12609fbacb007698ec91101b6464436506518346",
+    "author_name": "Etsuro Fujita",
+    "author_email": "efujita@postgresql.org",
+    "author_date": "2025-10-15T08:15:00+00:00",
+    "committer_name": "Etsuro Fujita",
+    "committer_email": "efujita@postgresql.org",
+    "commit_date": "2025-10-15T08:15:00+00:00",
+    "summary": "Fix EvalPlanQual handling of foreign/custom joins in ExecScanFetch.",
+    "trailer_author": [
+      "Masahiko Sawada <sawada.mshk@gmail.com>"
+    ],
+    "co_authored_by": [
+      "Etsuro Fujita <etsuro.fujita@gmail.com>"
+    ]
+  },
+  {
+    "branch": "master",
+    "commit_id": "1fd772d192909a4f0e1ce88ebc72c8c43b81b025",
+    "author_name": "Tom Lane",
+    "author_email": "tgl@sss.pgh.pa.us",
+    "author_date": "2025-07-01T16:40:35+00:00",
+    "committer_name": "Tom Lane",
+    "committer_email": "tgl@sss.pgh.pa.us",
+    "commit_date": "2025-07-01T16:40:35+00:00",
+    "summary": "Make sure IOV_MAX is defined.",
+    "trailer_author": [
+      "Michael Banck <mbanck@gmx.net>"
+    ],
+    "co_authored_by": [
+      "Christoph Berg <myon@debian.org>"
+    ]
+  },
+  {
+    "branch": "master",
+    "commit_id": "8e4d72573cc8b8bdc081661c0a3a76d6573eaa38",
+    "author_name": "Andrew Dunstan",
+    "author_email": "andrew@dunslane.net",
+    "author_date": "2025-02-20T16:36:07+00:00",
+    "committer_name": "Andrew Dunstan",
+    "committer_email": "andrew@dunslane.net",
+    "commit_date": "2025-02-20T16:36:07+00:00",
+    "summary": "Ignore blank lines in pgindent exclude files",
+    "trailer_author": [
+      "Zsolt Parragi <zsolt.parragi@percona.com>"
+    ],
+    "co_authored_by": []
+  },
+  {
+    "branch": "master",
+    "commit_id": "06dc1ffd24096f7c71d1abeaa9e96fec4db9313d",
+    "author_name": "Bruce Momjian",
+    "author_email": "bruce@momjian.us",
+    "author_date": "2025-02-18T20:51:31+00:00",
+    "committer_name": "Bruce Momjian",
+    "committer_email": "bruce@momjian.us",
+    "commit_date": "2025-02-18T20:51:31+00:00",
+    "summary": "doc: add example of sign mismatch with POSIX/ISO-8601 time zones",
+    "trailer_author": [
+      "Laurenz Albe"
+    ],
+    "co_authored_by": []
+  }
+]

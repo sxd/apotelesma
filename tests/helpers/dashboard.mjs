@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 import { renderPatchAuthors } from "../../site/src/patch-authors.mjs";
 import * as identities from "../../site/src/author-identities.mjs";
+import * as companies from "../../site/src/company-affiliations.mjs";
+import { createCompanyPicker } from "../../site/src/company-picker.mjs";
 
 // Deliberately small DOM sink. Browser verification is still required for layout,
 // accessibility and native keyboard behavior; all filter logic comes from app.js.
@@ -84,13 +86,15 @@ export function dashboard(commits = []) {
     createElementNS: (_, tag) => new Element(tag),
     addEventListener(event, callback) { (this.listeners[event] ??= []).push(callback); },
   };
-  const context = vm.createContext({ ...identities, renderPatchAuthors, document,
+  const context = vm.createContext({ ...identities, ...companies, createCompanyPicker, renderPatchAuthors, document,
     fetch: () => new Promise(() => {}), setTimeout,
   });
   let source = readFileSync(new URL("../../site/src/app.js", import.meta.url), "utf8");
   for (const declaration of [
     'import { renderPatchAuthors } from "./patch-authors.mjs";',
     'import { buildAuthorIndex, summarizeParticipants, matchesSelectedAuthors, authorOptionLabel } from "./author-identities.mjs";',
+    'import { buildCompanyIndex, commitCompanies, matchesSelectedCompanies, summarizeCompanies, verifyCompanySnapshot } from "./company-affiliations.mjs";',
+    'import { createCompanyPicker } from "./company-picker.mjs";',
   ]) {
     assert.ok(source.includes(declaration), `Missing known import: ${declaration}`);
     source = source.replace(declaration, "");
