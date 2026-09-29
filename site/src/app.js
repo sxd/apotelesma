@@ -644,7 +644,7 @@ function renderBranchChart() {
 let nextControlId = 0;
 const controlIds = new Map();
 
-function createCheckbox({ label, value, checked, name, onChange, color, description, unresolved }) {
+function createCheckbox({ label, value, checked, name, onChange, color, description }) {
   const wrapper = document.createElement("label");
   wrapper.className = "toggle";
   if (color) {
@@ -676,12 +676,6 @@ function createCheckbox({ label, value, checked, name, onChange, color, descript
   input.setAttribute("aria-describedby", explanation.id);
   input.title = description;
   option.appendChild(wrapper);
-  if (unresolved) {
-    const indicator = document.createElement("span");
-    indicator.className = "identity-indicator";
-    indicator.textContent = "Unresolved identity";
-    option.appendChild(indicator);
-  }
   option.appendChild(explanation);
   return option;
 }
@@ -750,7 +744,6 @@ function renderAuthorFilter() {
         value: author.key,
         checked: state.filters.authors.has(author.key),
         description: authorOptionDescription(author.identity, author.roles),
-        unresolved: author.identity.resolution === "unresolved",
         name: "author",
         onChange: (event) => {
           if (event.target.checked) {

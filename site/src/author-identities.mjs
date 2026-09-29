@@ -121,7 +121,7 @@ export function authorOptionDescription(identity, scopedRoles) {
   const resolution = identity.resolution === "unresolved"
     ? "Grouped by exact recorded text. "
     : "";
-  return `${resolution}Global recorded roles: ${roles(identity.roles)}. Roles in this scope: ${roles(scopedRoles)}.`;
+  return `${resolution}Roles in this scope: ${roles(scopedRoles)}.`;
 }
 
 export function summarizeParticipants(scopedCommits, index) {

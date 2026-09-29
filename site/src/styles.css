@@ -254,8 +254,7 @@ th {
   overflow-wrap: anywhere;
 }
 
-.author-description,
-.identity-indicator {
+.author-description {
   font-size: 0.85rem;
   line-height: 1.4;
 }
@@ -263,12 +262,6 @@ th {
 .author-description {
   margin: 0.35rem 0;
   color: var(--muted);
-}
-
-.identity-indicator {
-  display: block;
-  color: var(--forest);
-  font-weight: bold;
 }
 
 .author-option .toggle {

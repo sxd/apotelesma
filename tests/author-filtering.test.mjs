@@ -156,10 +156,11 @@ test("safe labels, concise descriptions, stable IDs, focus and scroll restoratio
   assert.match(checkbox.parentElement.textContent, /Other Alias <owner@x>/);
   const option = checkbox.parentElement.parentElement;
   const explanation = option.children.find((child) => child.id === checkbox.getAttribute("aria-describedby"));
-  assert.match(explanation.textContent, /Global recorded roles: Git author, Author trailer, Co-authored-by trailer/);
+  assert.match(explanation.textContent, /Roles in this scope: Git author, Author trailer, Co-authored-by trailer/);
+  assert.doesNotMatch(explanation.textContent, /Global recorded/);
   assert.equal(option.querySelector("summary"), null);
-  assert.doesNotMatch(option.textContent, /Recorded aliases and evidence|Email identity/);
-  assert.match(ui.element("#author-filter").textContent, /Unresolved identity/);
+  assert.doesNotMatch(option.textContent, /Recorded aliases and evidence|Email identity|Unresolved identity/);
+  assert.doesNotMatch(ui.element("#author-filter").textContent, /Unresolved identity/);
   const hostileInput = inputs(ui).find((input) => input.value === JSON.stringify(["unresolved", hostile]));
   assert.equal(hostileInput.parentElement.children[1].textContent, `${hostile} (1)`);
   assert.equal(hostileInput.parentElement.innerHTML, "");

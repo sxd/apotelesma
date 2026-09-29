@@ -78,8 +78,8 @@ test("deterministic global labels, scoped roles, lexical ties and all alias sear
     assert.equal(authorOptionLabel(summarizeParticipants(scope, index)[0].identity), "Beta <same@example.test>");
   }
   const description = authorOptionDescription(index.identities.get(key("same@example.test")), ["git"]);
-  assert.match(description, /Global recorded roles: Git author, Author trailer, Co-authored-by trailer/);
   assert.match(description, /Roles in this scope: Git author\./);
+  assert.doesNotMatch(description, /Global recorded/);
   assert.doesNotMatch(description, /Email identity|shared mailboxes/);
   assert.match(index.identities.get(key("same@example.test")).searchText, /aaa git/);
   assert.deepEqual(summarizeParticipants(commits, index)[0].roles, ["git", "author", "coauthor"]);

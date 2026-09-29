@@ -51,8 +51,8 @@ Email identities merge across these three roles using the recorded local part
 dot-atom mailboxes with DNS-style domains, or a display name followed by one
 terminal `<email>` pair. It does not remove plus tags or dots, join different
 addresses, infer names from addresses, or resolve name-only values to emails.
-Unsupported forms remain opaque, exact-text groups labelled “Unresolved
-identity.” Shared email means shared recorded address, not verified personhood.
+Unsupported forms remain opaque exact-text groups. Shared email means shared
+recorded address, not verified personhood.
 
 Labels prefer a patch-recorded name, then a Git name, breaking ties by Unicode
 code-point order. Git-only labels omit email; patch labels include it. Global

@@ -90,9 +90,10 @@ try {
   assert.match(accessibleOpaque.description.value, /Grouped by exact recorded text/);
   assert.match(accessibleOpaque.description.value, /Author trailer/);
   assert.doesNotMatch(accessibleOpaque.description.value, /Email identity/);
+  assert.doesNotMatch(accessibleOpaque.description.value, /Global recorded/);
+  assert.equal(await page.getByText("Unresolved identity", { exact: true }).count(), 0);
   assert.equal(await page.getByText("Recorded aliases and evidence", { exact: true }).count(), 0);
   assert.equal(await page.locator("#author-filter details").count(), 0);
-  assert.equal(await page.getByText("Unresolved identity", { exact: true }).count(), 1);
   await opaque.check();
   await page.getByRole("checkbox", { name: "master", exact: true }).uncheck();
   assert.match(await page.locator("#author-status").textContent(), /Author selection is now unrestricted/);
