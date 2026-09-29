@@ -97,6 +97,16 @@ for direct PostgreSQL queries, with setup notes in [`grafana/README.md`](./grafa
 That directory also documents the offline validator and the live Grafana smoke test for the
 Infinity-based dashboard.
 
+## Author/company affiliation research (pilot)
+
+The offline [affiliation-history pilot](./docs/author-company-affiliations.md)
+keeps dated evidence and reviewed identity mappings in durable, versioned files,
+then attributes commit participants using either recorded Git timestamp. It
+includes a three-person research sample, explicit uncertainty, reproducible
+exports, and an independent PostgreSQL schema. Company totals and automatic
+mail collection are not part of this initial pilot; the website pipeline is
+unchanged.
+
 ## Branch Model
 
 The default imported branch set is:

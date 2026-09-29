@@ -1,0 +1,14 @@
+{
+  "schema_version": "1",
+  "evidence_snapshot": "RESEARCH.md sha256:4d65a8e6485e56bbb8aa493b2e3e0a7783ddc3c3b2f2a0b98acfdd867ab48b2f",
+  "mapping_revision": "pilot-agent-reviewed-2026-09-29-v1",
+  "history_revision": "pilot-agent-reviewed-2026-09-29-v1",
+  "rule_revision": "author-company-attribution/1",
+  "retrieval_ledger_revision": "bounded-mail-sample-2026-09-29-v1",
+  "commit_source": {
+    "path": "site/dist/data/commits.json",
+    "sha256": "09108f7ab144fbe75277921b01abd915a8240eb945b7d880b29462c449279114",
+    "selection": "Seven exact branch-qualified commit rows copied from the full export: Robert Haas with Gmail patch-author credit; Bruce Momjian; Tom Lane master; and four stable backpatches whose Git author is Thomas Munro and patch author is Robert Haas (Gmail). Other unmatched credits remain raw and unresolved."
+  },
+  "review_status": "agent-reviewed; no human review implied"
+}

@@ -1,0 +1,5 @@
+[
+  {"mapping_id":"map:robert-gmail","email":"robertmhaas@gmail.com","person_id":"person:robert-haas","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:robert-2011"],"mapping_revision":"pilot-agent-reviewed-2026-09-29-v1"},
+  {"mapping_id":"map:bruce-momjian-us","email":"bruce@momjian.us","person_id":"person:bruce-momjian","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:bruce-2025-02-18"],"mapping_revision":"pilot-agent-reviewed-2026-09-29-v1"},
+  {"mapping_id":"map:tom-lane-sss","email":"tgl@sss.pgh.pa.us","person_id":"person:tom-lane","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:tom-2025-03-03"],"mapping_revision":"pilot-agent-reviewed-2026-09-29-v1"}
+]

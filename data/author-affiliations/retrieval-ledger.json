@@ -1,0 +1,207 @@
+[
+  {
+    "ledger_id": "ledger:robert-recent",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Robert Haas EnterpriseDB",
+    "author": "robertmhaas@gmail.com",
+    "after": "2026-08-01",
+    "before": "2026-09-29",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "robertmhaas@gmail.com"
+    ],
+    "message_ids": [
+      "CA+TgmoY2feo+4pbB6C84WPWOgv1Cfk8Y5sWfb=pi3jm4dm2COA@mail.gmail.com",
+      "CA+TgmoZhY05pedZUhPz_3vHcXE_a5cm4FTSrKO-KmDqxU1NGwQ@mail.gmail.com",
+      "CA+TgmoaT9LYxg2+4fYh8in0zguHcwyUhN_cFOS-6TCH1-2_Cfw@mail.gmail.com",
+      "CA+TgmoYOXGDDjQV_k9VcPOy45i8tGvTpDvofuhGOLZ0bajZu-A@mail.gmail.com",
+      "CA+TgmoYfZW9y_T8A1nykRUcvJ2FQtMpBjgkq=+TCdq0-odF4=w@mail.gmail.com"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  },
+  {
+    "ledger_id": "ledger:peter-exploratory",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Peter Eisentraut EnterpriseDB",
+    "author": "peter@eisentraut.org",
+    "after": "2025-01-01",
+    "before": "2026-09-29",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "peter@eisentraut.org"
+    ],
+    "message_ids": [
+      "94bef108-4327-40e9-9b02-93124c1b6591@eisentraut.org",
+      "08476942-9d4c-42b7-bde1-4b97cb129896@eisentraut.org",
+      "566b149d-a7a1-46ce-9944-b2cf84cbf066@eisentraut.org",
+      "a2daccef-e3e4-4216-a5bd-806ffc1e77e6@eisentraut.org",
+      "e52e2c29-4834-4c64-a200-eddcba38fb4d@eisentraut.org"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  },
+  {
+    "ledger_id": "ledger:tom-company-search",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "Tom Lane Crunchy",
+    "author": "tgl@sss.pgh.pa.us",
+    "after": "2025-01-01",
+    "before": "2026-09-29",
+    "limit": 5,
+    "offset": 0,
+    "senders": [
+      "tgl@sss.pgh.pa.us"
+    ],
+    "message_ids": [
+      "2737243.1774980800@sss.pgh.pa.us",
+      "4069260.1741032043@sss.pgh.pa.us",
+      "1002413.1772223662@sss.pgh.pa.us",
+      "1361925.1765661150@sss.pgh.pa.us",
+      "1458346.1764101090@sss.pgh.pa.us"
+    ],
+    "result_count": 5,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  },
+  {
+    "ledger_id": "ledger:amit-edb-page-0",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "EDB",
+    "author": "amit.kapila16@gmail.com",
+    "after": "2025-01-01",
+    "before": "2025-03-01",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "amit.kapila16@gmail.com"
+    ],
+    "message_ids": [
+      "CAA4eK1KeOcAqv9akhx-gaM=+mngt0SwYqfRWBn4M_sROqFTmKg@mail.gmail.com",
+      "CAA4eK1LZFthizh6LOy7D2-5Kf7vrMJfUqkV3AcYZN0CagCEVJg@mail.gmail.com",
+      "CAA4eK1+ubqorurkbWOtpbEd2Vc8QZ_vmUHY3mFgL1fp_1+wK=g@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  },
+  {
+    "ledger_id": "ledger:robert-edb-2025",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "EDB",
+    "author": "robertmhaas@gmail.com",
+    "after": "2025-01-01",
+    "before": "2025-03-01",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "robertmhaas@gmail.com"
+    ],
+    "message_ids": [
+      "CA+TgmobD+yMc_jkmk=Vr0UWm9y8AyRFdH+CLZaCukFUoXpCG2A@mail.gmail.com",
+      "CA+TgmoYf6JtCdYJ0Q4WgC-B9t07JTAH9MEMxX4_riuXvjM8ETQ@mail.gmail.com",
+      "CA+TgmoY6VZT=HzuJ_zfrt=2Vi7EHfVfwMd3AOuEfw-f7aeR-AQ@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  },
+  {
+    "ledger_id": "ledger:robert-no-match-control",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "zzamautaaffiliationnomatch73921",
+    "author": "robertmhaas@gmail.com",
+    "after": "2026-08-01",
+    "before": "2026-09-29",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "robertmhaas@gmail.com"
+    ],
+    "message_ids": [
+      "CA+TgmoY2feo+4pbB6C84WPWOgv1Cfk8Y5sWfb=pi3jm4dm2COA@mail.gmail.com",
+      "CA+TgmoZhY05pedZUhPz_3vHcXE_a5cm4FTSrKO-KmDqxU1NGwQ@mail.gmail.com",
+      "CA+TgmoaT9LYxg2+4fYh8in0zguHcwyUhN_cFOS-6TCH1-2_Cfw@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "A fabricated query term still returned sender/date hits with score zero; do not assume a hit contains the query term."
+  },
+  {
+    "ledger_id": "ledger:amit-edb-page-3",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "EDB",
+    "author": "amit.kapila16@gmail.com",
+    "after": "2025-01-01",
+    "before": "2025-03-01",
+    "limit": 3,
+    "offset": 3,
+    "senders": [
+      "amit.kapila16@gmail.com"
+    ],
+    "message_ids": [
+      "CAA4eK1JXk-N3BVR201=rjEv2YA8oGsKWoL4c6chKeFoeUS0REQ@mail.gmail.com",
+      "CAA4eK1L8_QrYavkCy9b0Rrz8gqZRQE8kEmv3g7Tz6tsN8YuvhA@mail.gmail.com",
+      "CAA4eK1LX9N4vcwHtS9ZcMw_+mWQRdmGzMFrZaQL8F1rRoND9YQ@mail.gmail.com"
+    ],
+    "result_count": 3,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  },
+  {
+    "ledger_id": "ledger:bruce-signature-search",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "EDB",
+    "author": "bruce@momjian.us",
+    "after": "2025-02-01",
+    "before": "2025-03-01",
+    "limit": 3,
+    "offset": 0,
+    "senders": [
+      "bruce@momjian.us"
+    ],
+    "message_ids": [
+      "Z7Uk46y32EuP4cX_@momjian.us",
+      "Z7T4X2C6OAxrEf9Y@momjian.us"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-29T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Exact recorded request and returned Message-IDs, not proof of exhaustive coverage. Company claims use only full messages identified in evidence.json; other hits are unreviewed discovery results."
+  }
+]

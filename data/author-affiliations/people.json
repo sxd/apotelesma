@@ -1,0 +1,5 @@
+[
+  {"person_id":"person:robert-haas","display_name":"Robert Haas"},
+  {"person_id":"person:bruce-momjian","display_name":"Bruce Momjian"},
+  {"person_id":"person:tom-lane","display_name":"Tom Lane"}
+]
