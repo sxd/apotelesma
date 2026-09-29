@@ -126,24 +126,42 @@
             <div class="toggle-grid" id="branch-filter"></div>
           </div>
 
-          <div class="filter-panel">
-            <div class="section-head compact-head">
+          <div class="filter-panel author-picker" id="author-picker">
+            <div class="section-head compact-head author-picker-head">
               <div>
                 <p class="section-label" id="authors-heading">Authors</p>
                 <h2>Select Git authors and patch contributors</h2>
               </div>
+              <button type="button" class="text-button" id="author-clear-selection" disabled>Clear selection</button>
             </div>
-            <div class="preset-row">
-              <button type="button" class="ghost-button" data-author-preset="visible">All visible authors</button>
-              <button type="button" class="ghost-button" data-author-preset="clear">Clear author filter</button>
-            </div>
-            <label class="field">
-              <span>Search authors</span>
-              <input id="author-search" type="search" placeholder="Tom Lane, tgl@..., etc.">
-            </label>
             <p class="selection-summary">Author selection matches Git authors and patch contributors. Activity and change totals remain attributed to Git authors.</p>
-            <p class="selection-summary">Different email addresses and name-only entries remain separate selections.</p>
-            <div class="toggle-grid author-grid" id="author-filter" role="group" aria-labelledby="authors-heading"></div>
+            <div class="author-selected" id="author-selected" role="group" aria-label="Selected authors"></div>
+            <div class="author-search-shell" id="author-search-shell">
+              <div class="author-search-field">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                  <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                  <path d="m16 16 5 5"></path>
+                </svg>
+                <label for="author-search" class="sr-only">Search authors by name or email</label>
+                <input id="author-search" type="text" role="searchbox" placeholder="Search by name or email…" autocomplete="off" spellcheck="false" aria-controls="author-popup" aria-expanded="false" aria-describedby="author-help">
+                <button type="button" id="author-clear-search" class="author-search-clear" aria-label="Clear author search" hidden>×</button>
+              </div>
+              <div class="author-popup" id="author-popup" hidden>
+                <div class="author-popup-head">
+                  <span id="author-suggestion-title">Suggested authors</span>
+                  <span id="author-suggestion-count"></span>
+                </div>
+                <div class="author-options" id="author-filter" role="group" aria-label="Matching authors"></div>
+                <div class="author-popup-foot">
+                  <span>Keep searching to add more people</span>
+                  <button type="button" id="author-done" class="author-done">Done</button>
+                </div>
+              </div>
+            </div>
+            <div class="author-hint">
+              <span id="author-help">Search all recorded names, email addresses, and aliases.</span>
+              <span class="author-keyboard">↓ browse · Enter select · Esc close</span>
+            </div>
             <p class="selection-summary" id="author-status" role="status" aria-live="polite" aria-atomic="true"></p>
           </div>
 

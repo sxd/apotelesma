@@ -20,6 +20,9 @@ function search(ui, value) {
 function date(ui, id, value) {
   const input = ui.element(id); input.focus(); input.value = value; input.dispatch("change");
 }
+function clearSelection(ui) {
+  ui.element("#author-clear-selection").dispatch("click");
+}
 
 test("real dashboard filters Git, Author and Co-authored-by with OR and branch/date AND", () => {
   const ui = dashboard([
@@ -39,23 +42,29 @@ test("real dashboard filters Git, Author and Co-authored-by with OR and branch/d
   date(ui, "#start-date", "2026-01-01");
   date(ui, "#end-date", "2026-01-01");
   assert.deepEqual(ids(ui), ["git", "author", "coauthor", "other"]);
-  ui.authorPresets[1].dispatch("click");
+  clearSelection(ui);
   assert.deepEqual(selected(ui), []);
   assert.equal(ids(ui).length, 4);
 });
 
-test("search and cap affect options only; complete scope preserves hidden eligible selections", () => {
+test("eight-choice search affects suggestions only; chips persist and clear independently", () => {
   const commits = Array.from({ length: 85 }, (_, i) => ({ ...base, commit_id: i,
     trailer_author: [`Person ${String(i).padStart(2, "0")} <person${String(i).padStart(2, "0")}@x>`] }));
   const ui = dashboard(commits);
   ui.renderDashboard();
-  assert.equal(inputs(ui).length, 60);
+  assert.equal(inputs(ui).length, 8);
+  assert.equal(ui.element("#author-suggestion-title").textContent, "Suggested authors");
+  assert.equal(ui.element("#author-suggestion-count").textContent, "8 of 86");
+  assert.equal(ui.element("#author-selected").textContent, "All authors");
   search(ui, "person84@x"); choose(ui, key("person84@x"));
   search(ui, "person83@x"); choose(ui, key("person83@x"));
   assert.deepEqual(ids(ui), [83, 84]);
+  assert.match(ui.element("#author-selected").textContent, /Person 84 <person84@x>/);
+  assert.match(ui.element("#author-selected").textContent, /Person 83 <person83@x>/);
+  assert.equal(ui.element("#author-selected").querySelectorAll("button").length, 2);
   search(ui, "");
   assert.ok(!inputs(ui).some((input) => input.value === key("person84@x")));
-  assert.match(ui.element("#author-status").textContent, /2 selected entries hidden/);
+  assert.match(ui.element("#author-status").textContent, /2 authors selected.*2 matching commits/);
   search(ui, "person00@x");
   date(ui, "#start-date", "2026-01-01");
   choose(ui, "stable", false, "branch");
@@ -66,12 +75,17 @@ test("search and cap affect options only; complete scope preserves hidden eligib
   assert.equal(ui.element("#author-filter").textContent, "No authors match this search.");
   assert.deepEqual(ids(ui), [83, 84]);
   search(ui, "person");
-  const visible = inputs(ui).map((input) => input.value).sort();
-  assert.equal(visible.length, 60);
-  ui.authorPresets[0].focus(); ui.authorPresets[0].dispatch("click");
-  assert.deepEqual(selected(ui), visible);
-  assert.equal(ui.document.activeElement, ui.authorPresets[0]);
-  ui.authorPresets[1].dispatch("click");
+  assert.equal(inputs(ui).length, 8);
+  ui.element("#author-clear-search").dispatch("click");
+  assert.equal(ui.element("#author-search").value, "");
+  assert.deepEqual(selected(ui), [key("person83@x"), key("person84@x")].sort());
+  const [removeFirst] = ui.element("#author-selected").querySelectorAll("button");
+  removeFirst.dispatch("click");
+  assert.equal(selected(ui).length, 1);
+  clearSelection(ui);
+  assert.deepEqual(selected(ui), []);
+  assert.equal(ui.element("#author-selected").textContent, "All authors");
+  assert.equal(ui.element("#author-clear-selection").disabled, true);
   assert.equal(ids(ui).length, 85);
 });
 
@@ -145,7 +159,7 @@ test("full dataset is filtered before stable descending recent-25 sort; patch me
   assert.deepEqual(Array.from(ties.state.filteredRecentCommits, (commit) => commit.commit_id), [3, 1, 2]);
 });
 
-test("safe labels, concise descriptions, stable IDs, focus and scroll restoration", () => {
+test("safe plain labels, stable IDs, focused checkbox retention and scope restoration", () => {
   const hostile = '<img src=x onerror="alert(1)">';
   const ui = dashboard([{ ...base, trailer_author: [hostile, "Opaque Name", "Patch Name <owner@x>"] },
     { ...base, branch: "stable", co_authored_by: ["Other Alias <owner@x>"] }]);
@@ -159,18 +173,18 @@ test("safe labels, concise descriptions, stable IDs, focus and scroll restoratio
   assert.doesNotMatch(checkbox.parentElement.textContent, /Recorded aliases and evidence|Email identity|Unresolved identity/);
   assert.doesNotMatch(ui.element("#author-filter").textContent, /Unresolved identity/);
   const hostileInput = inputs(ui).find((input) => input.value === JSON.stringify(["unresolved", hostile]));
-  const unresolvedOption = hostileInput.parentElement.parentElement;
-  const explanation = unresolvedOption.children.find((child) => child.id === hostileInput.getAttribute("aria-describedby"));
-  assert.match(explanation.textContent, /Grouped by exact recorded text/);
+  const unresolvedOption = hostileInput.parentElement;
+  assert.equal(hostileInput.getAttribute("aria-describedby"), undefined);
+  assert.doesNotMatch(unresolvedOption.textContent, /Grouped by exact recorded text/);
   assert.equal(unresolvedOption.querySelector("summary"), null);
-  assert.equal(hostileInput.parentElement.children[1].textContent, `${hostile} (1)`);
+  assert.equal(hostileInput.parentElement.children[1].textContent, hostile);
   assert.equal(hostileInput.parentElement.innerHTML, "");
   assert.equal(ui.element("#author-filter").querySelectorAll("img").length, 0);
   ui.element("#author-filter").scrollTop = 90;
   ui.element("#branch-filter").scrollTop = 12;
   choose(ui, key("owner@x"));
+  assert.equal(ui.document.activeElement, checkbox);
   assert.equal(ui.document.activeElement.id, initialId);
-  assert.equal(ui.document.activeElement.focusOptions.preventScroll, true);
   assert.equal(ui.element("#author-filter").scrollTop, 90);
   assert.equal(ui.element("#branch-filter").scrollTop, 12);
   search(ui, "opaque");
@@ -184,9 +198,12 @@ test("safe labels, concise descriptions, stable IDs, focus and scroll restoratio
     assert.equal(ui.document.activeElement, control);
   }
   const html = readFileSync(new URL("../site/src/index.html", import.meta.url), "utf8");
-  assert.match(html, /id="author-filter" role="group" aria-labelledby="authors-heading"/);
+  assert.match(html, /id="author-filter" role="group" aria-label="Matching authors"/);
+  assert.match(html, /id="author-selected" role="group" aria-label="Selected authors"/);
+  assert.match(html, /id="author-search"[^>]+aria-controls="author-popup"[^>]+aria-expanded="false"/);
   assert.match(html, /id="author-status" role="status" aria-live="polite"/);
   assert.match(html, /Activity and change totals remain attributed to Git authors/);
+  assert.doesNotMatch(html, /All visible authors|Recorded aliases and evidence|Grouped by exact recorded text/);
   assert.match(html, /Git author activity chart/);
   assert.match(html, /Git-author activity export \(not a person directory\)/);
 });

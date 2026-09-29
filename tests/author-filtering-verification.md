@@ -47,20 +47,33 @@ for Tom Lane in the PostgreSQL export.
 Coverage includes:
 
 - Both `.mjs` modules and `app.js` served and loaded without console errors.
-- Native Tab/Space checkbox operation, checkbox focus retention and filter
-  scroll restoration.
-- Accessible group/checkbox names and Chromium accessibility-tree descriptions
-  for unresolved entries.
-- Search-hidden and capped selections, inclusive scope changes, pruning,
-  unrestricted restoration, root fallback, All visible and Clear.
+- The eight-result cap, suggested-author ordering, pinned removable chips,
+  distinct search/selection clearing, and selection persistence across searches.
+- Native Tab/Space operation; Enter selection; ArrowUp/ArrowDown navigation;
+  Escape/Done closure; popup focus retention; and outside-focus closure.
+- Accessible search, selected group and checkbox names, generated control IDs,
+  expanded state, and concise live status without selector metadata descriptions.
+- Search-hidden selections, inclusive scope changes, pruning, unrestricted
+  restoration and root fallback.
 - An older patch-only match, latest-25 order, unchanged Git activity attribution,
   five-column empty results and hostile strings rendered as text.
 - Global patch-priority labels with Git-only scoped roles.
 - Desktop (1440 px), narrow (375/320 px), and effective 200%/400% zoom reflow
-  (640/320 CSS px from a 1280 px viewport), with no page or selector horizontal
-  overflow, including a 400-character name.
+  (640/320 CSS px from a 1280 px viewport), with a bounded, layered popup and no
+  page or selector horizontal overflow, including a 400-character name.
 
-## Implementation run (2026-09-28)
+## Selector implementation run (2026-09-29)
+
+All 23 cases in the three focused Node suites and both JavaScript syntax checks
+passed. The standalone Chromium smoke test passed against the fixture and the
+71,200-row full export using local Chrome through Playwright. The five tested
+viewport/zoom combinations had equal page client and scroll widths; the popup
+remained absolutely positioned at `z-index: 20`. The final run took about 5.97
+seconds to load the full dashboard and 173 ms for the automated full-data search.
+Desktop and 320 px screenshots were visually inspected. These timings are local
+observations, not performance guarantees.
+
+## Previous implementation run (2026-09-28)
 
 All 23 cases in the three focused Node suites, syntax checks and cache/export
 regressions passed.
@@ -68,17 +81,17 @@ Chromium passed the smoke test above; desktop and 320 px screenshots were also
 visually inspected. The connected-browser integration had no browser available,
 so verification used the locally installed Chromium through Playwright.
 
-The existing full dataset contained 71,200 rows, including 11,158 with patch
+The previous selector's full-data run used 71,200 rows, including 11,158 with patch
 values. It produced 1,864 selector identities, of which 1,248 were unresolved
 exact-text groups. One local Node measurement took approximately 327 ms to build
 the index and 110 ms to summarize all rows; 100 cached metadata searches averaged
-0.38 ms each. The final local Chromium run took approximately 4.43 seconds to load and
-render the full dashboard and 187 ms for a search including browser automation
-round trips. These are observations on this machine, not performance guarantees.
-The index is built once; search reuses the cached branch/date summary.
+0.38 ms each. Its final local Chromium run took approximately 4.43 seconds to
+load and render the full dashboard and 187 ms for a search including browser
+automation round trips. These historical observations are not performance
+guarantees. The index is built once; search reuses the cached branch/date summary.
 
 Remaining manual checks: use an actual screen reader to assess spoken checkbox
-descriptions and live-region announcements, and verify native browser-menu zoom.
+labels and live-region announcements, and verify native browser-menu zoom.
 The automated accessibility-tree and effective-viewport checks cover the
 underlying semantics and reflow but do not substitute for those manual checks.
 Quoted email locals, comments, address lists, domain literals, non-ASCII

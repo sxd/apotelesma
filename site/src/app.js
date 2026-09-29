@@ -1,5 +1,5 @@
 import { renderPatchAuthors } from "./patch-authors.mjs";
-import { buildAuthorIndex, summarizeParticipants, matchesSelectedAuthors, authorOptionLabel, authorOptionDescription } from "./author-identities.mjs";
+import { buildAuthorIndex, summarizeParticipants, matchesSelectedAuthors, authorOptionLabel } from "./author-identities.mjs";
 
 const DATA_FILES = {
   branches: "./data/branches.json",
@@ -34,14 +34,21 @@ const state = {
 };
 
 const branchFilter = document.querySelector("#branch-filter");
+const authorPicker = document.querySelector("#author-picker");
 const authorFilter = document.querySelector("#author-filter");
 const authorSearch = document.querySelector("#author-search");
+const authorPopup = document.querySelector("#author-popup");
+const authorSelected = document.querySelector("#author-selected");
+const authorClearSelection = document.querySelector("#author-clear-selection");
+const authorClearSearch = document.querySelector("#author-clear-search");
+const authorSuggestionTitle = document.querySelector("#author-suggestion-title");
+const authorSuggestionCount = document.querySelector("#author-suggestion-count");
+const authorDone = document.querySelector("#author-done");
 const authorStatus = document.querySelector("#author-status");
 const startDateInput = document.querySelector("#start-date");
 const endDateInput = document.querySelector("#end-date");
 const metricSelect = document.querySelector("#metric-select");
 const branchPresetButtons = Array.from(document.querySelectorAll("[data-branch-preset]"));
-const authorPresetButtons = Array.from(document.querySelectorAll("[data-author-preset]"));
 const statsGrid = document.querySelector("#stats-grid");
 const branchSummaryBody = document.querySelector("#branch-summary-body");
 const authorActivityBody = document.querySelector("#author-activity-body");
@@ -52,6 +59,8 @@ const branchChart = document.querySelector("#branch-chart");
 const dailyActivityCaption = document.querySelector("#daily-activity-caption");
 const activeFilters = document.querySelector("#active-filters");
 const selectionSummary = document.querySelector("#selection-summary");
+let visibleAuthorOptions = [];
+let suppressAuthorOpen = false;
 
 async function loadJson(path) {
   const response = await fetch(path);
@@ -241,8 +250,10 @@ function getFilterScopeAuthors() {
 }
 
 function getMatchingAuthorOptions() {
-  const search = authorSearch.value.trim().toLowerCase();
-  return getFilterScopeAuthors().filter(({ identity }) => identity.searchText.includes(search));
+  const terms = authorSearch.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  return getFilterScopeAuthors().filter(({ identity }) => (
+    terms.every((term) => identity.searchText.includes(term))
+  ));
 }
 
 function updateDerivedState() {
@@ -644,7 +655,13 @@ function renderBranchChart() {
 let nextControlId = 0;
 const controlIds = new Map();
 
-function createCheckbox({ label, value, checked, name, onChange, color, description }) {
+function controlId(name, value) {
+  const controlKey = JSON.stringify([name, value]);
+  if (!controlIds.has(controlKey)) controlIds.set(controlKey, `filter-control-${nextControlId++}`);
+  return controlIds.get(controlKey);
+}
+
+function createCheckbox({ label, value, checked, name, onChange, color }) {
   const wrapper = document.createElement("label");
   wrapper.className = "toggle";
   if (color) {
@@ -656,28 +673,14 @@ function createCheckbox({ label, value, checked, name, onChange, color, descript
   input.name = name;
   input.value = value;
   input.checked = checked;
-  const controlKey = JSON.stringify([name, value]);
-  if (!controlIds.has(controlKey)) controlIds.set(controlKey, `filter-control-${nextControlId++}`);
-  input.id = controlIds.get(controlKey);
+  input.id = controlId(name, value);
   input.addEventListener("change", onChange);
 
   const text = document.createElement("span");
   text.textContent = label;
 
   wrapper.append(input, text);
-  if (!description) return wrapper;
-
-  const option = document.createElement("div");
-  option.className = "author-option";
-  const explanation = document.createElement("p");
-  explanation.id = `${input.id}-description`;
-  explanation.className = "author-description";
-  explanation.textContent = description;
-  input.setAttribute("aria-describedby", explanation.id);
-  input.title = description;
-  option.appendChild(wrapper);
-  option.appendChild(explanation);
-  return option;
+  return wrapper;
 }
 
 function renderBranchFilter() {
@@ -718,52 +721,131 @@ function syncAuthorSelection() {
   state.authorNotice = removed ? `${removed} selected author entries removed from this scope. ${state.filters.authors.size === 0 ? "Author selection is now unrestricted." : ""}` : "";
 }
 
+function authorLabel(key) {
+  const identity = state.authorIndex.identities.get(key);
+  return identity ? authorOptionLabel(identity) : key;
+}
+
+function renderAuthorSelection() {
+  clearElement(authorSelected);
+  if (state.filters.authors.size === 0) {
+    const all = document.createElement("span");
+    all.className = "author-all";
+    all.textContent = "All authors";
+    authorSelected.appendChild(all);
+  }
+
+  for (const key of state.filters.authors) {
+    const chip = document.createElement("span");
+    chip.className = "author-chip";
+    const text = document.createElement("span");
+    text.className = "author-chip-label";
+    text.textContent = authorLabel(key);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "×";
+    remove.setAttribute("aria-label", `Remove ${authorLabel(key)}`);
+    remove.addEventListener("click", () => {
+      state.filters.authors.delete(key);
+      updateFromAuthorSelection();
+      authorSearch.focus();
+    });
+    chip.append(text, remove);
+    authorSelected.appendChild(chip);
+  }
+  authorClearSelection.disabled = state.filters.authors.size === 0;
+}
+
+function createAuthorOption(author) {
+  const row = document.createElement("label");
+  row.className = `author-option${state.filters.authors.has(author.key) ? " chosen" : ""}`;
+
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.name = "author";
+  input.value = author.key;
+  input.id = controlId("author", author.key);
+  input.dataset.authorKey = author.key;
+  input.checked = state.filters.authors.has(author.key);
+  input.addEventListener("change", (event) => {
+    if (event.target.checked) state.filters.authors.add(author.key);
+    else state.filters.authors.delete(author.key);
+    updateFromAuthorSelection();
+  });
+
+  const name = document.createElement("span");
+  name.className = "author-option-name";
+  name.textContent = authorOptionLabel(author.identity);
+  const count = document.createElement("span");
+  count.className = "author-count";
+  count.textContent = `${formatNumber(author.count)} commit${author.count === 1 ? "" : "s"}`;
+  count.setAttribute("aria-hidden", "true");
+  row.append(input, name, count);
+  return row;
+}
+
 function renderAuthorFilter() {
-  const restore = captureFilterFocus();
+  const focusedKey = authorFilter.contains(document.activeElement) ? document.activeElement.dataset.authorKey : null;
+  const scrollTop = authorFilter.scrollTop;
   clearElement(authorFilter);
   const matches = getMatchingAuthorOptions();
-  const authors = matches.slice(0, 60);
-  const visibleKeys = new Set(authors.map((item) => item.key));
-  const hidden = [...state.filters.authors].filter((key) => !visibleKeys.has(key)).length;
-  authorStatus.textContent = `${state.authorNotice} Showing ${authors.length} of ${matches.length} matching author entries (${getFilterScopeAuthors().length} in branch/date scope). ${hidden} selected entries hidden by search or the 60-entry limit. Counts are participating commit rows.`.trim();
-  state.authorNotice = "";
+  visibleAuthorOptions = matches.slice(0, 8);
+  authorSuggestionTitle.textContent = authorSearch.value.trim() ? "Search results" : "Suggested authors";
+  authorSuggestionCount.textContent = `${visibleAuthorOptions.length} of ${matches.length}`;
+  authorClearSearch.hidden = authorSearch.value.length === 0;
 
-  if (authors.length === 0) {
+  if (visibleAuthorOptions.length === 0) {
     const empty = document.createElement("p");
-    empty.className = "filter-empty";
+    empty.className = "author-empty";
     empty.textContent = getFilterScopeAuthors().length ? "No authors match this search." : "No authors in this branch/date scope.";
     authorFilter.appendChild(empty);
-    restore();
     return;
   }
 
-  authors.forEach((author) => {
-    authorFilter.appendChild(
-      createCheckbox({
-        label: `${authorOptionLabel(author.identity)} (${author.count})`,
-        value: author.key,
-        checked: state.filters.authors.has(author.key),
-        description: authorOptionDescription(author.identity),
-        name: "author",
-        onChange: (event) => {
-          if (event.target.checked) {
-            state.filters.authors.add(author.key);
-          } else {
-            state.filters.authors.delete(author.key);
-          }
-          renderDashboard();
-        },
-      }),
-    );
-  });
-  restore();
+  visibleAuthorOptions.forEach((author) => authorFilter.appendChild(createAuthorOption(author)));
+  if (focusedKey) {
+    Array.from(authorFilter.querySelectorAll("input"))
+      .find((input) => input.dataset.authorKey === focusedKey)?.focus({ preventScroll: true });
+  }
+  authorFilter.scrollTop = scrollTop;
+}
+
+function syncAuthorOptionStates() {
+  for (const input of authorFilter.querySelectorAll("input")) {
+    input.checked = state.filters.authors.has(input.value);
+    input.parentElement.classList.toggle("chosen", input.checked);
+  }
+}
+
+function openAuthorPopup() {
+  authorPopup.hidden = false;
+  authorSearch.setAttribute("aria-expanded", "true");
+  renderAuthorFilter();
+}
+
+function closeAuthorPopup(returnFocus = false) {
+  authorPopup.hidden = true;
+  authorSearch.setAttribute("aria-expanded", "false");
+  if (returnFocus) {
+    suppressAuthorOpen = true;
+    authorSearch.focus({ preventScroll: true });
+    suppressAuthorOpen = false;
+  }
+}
+
+function renderAuthorStatus() {
+  const selection = state.filters.authors.size
+    ? `${state.filters.authors.size} author${state.filters.authors.size === 1 ? "" : "s"} selected.`
+    : "All authors.";
+  authorStatus.textContent = [state.authorNotice, selection, `${formatNumber(state.filteredCommits.length)} matching commits.`]
+    .filter(Boolean).join(" ").trim();
+  state.authorNotice = "";
 }
 
 function captureFilterFocus() {
   const active = document.activeElement;
   const group = active?.name;
   const value = active?.value;
-  const aliasKey = active?.dataset?.authorKey;
   const scrolls = [branchFilter, authorFilter].map((element) => [element, element.scrollTop, element.scrollLeft]);
   return () => {
     let replacement;
@@ -771,8 +853,6 @@ function captureFilterFocus() {
       const container = group === "author" ? authorFilter : branchFilter;
       replacement = Array.from(container.querySelectorAll("input")).find((input) => input.value === value);
       if (!replacement && group === "author") replacement = authorSearch;
-    } else if (aliasKey !== undefined) {
-      replacement = Array.from(authorFilter.querySelectorAll("summary")).find((summary) => summary.dataset.authorKey === aliasKey) ?? authorSearch;
     }
     // Search, dates, metrics and presets are not replaced and retain native focus.
     replacement?.focus({ preventScroll: true });
@@ -793,11 +873,7 @@ function initializeDateInputs() {
   endDateInput.value = "";
 }
 
-function renderDashboard() {
-  const restore = captureFilterFocus();
-  updateDerivedState();
-  renderBranchFilter();
-  renderAuthorFilter();
+function renderDashboardResults() {
   renderActiveFilters();
   renderStats();
   renderBranchSummary();
@@ -806,6 +882,24 @@ function renderDashboard() {
   renderDailyChart();
   renderAuthorChart();
   renderBranchChart();
+}
+
+function updateFromAuthorSelection() {
+  updateDerivedState();
+  renderAuthorSelection();
+  syncAuthorOptionStates();
+  renderDashboardResults();
+  renderAuthorStatus();
+}
+
+function renderDashboard() {
+  const restore = captureFilterFocus();
+  updateDerivedState();
+  renderBranchFilter();
+  renderAuthorSelection();
+  renderAuthorFilter();
+  renderDashboardResults();
+  renderAuthorStatus();
   restore();
 }
 
@@ -826,21 +920,80 @@ function initializeControls() {
     });
   });
 
-  authorPresetButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      if (button.dataset.authorPreset === "clear") {
-        state.filters.authors = new Set();
-      } else {
-        state.filters.authors = new Set(
-          getMatchingAuthorOptions().slice(0, 60).map((item) => item.key),
-        );
-      }
-      renderDashboard();
-    });
+  authorClearSelection.addEventListener("click", () => {
+    state.filters.authors = new Set();
+    updateFromAuthorSelection();
+    authorSearch.focus();
   });
 
+  authorSearch.addEventListener("focus", () => {
+    if (!suppressAuthorOpen) openAuthorPopup();
+  });
+
+  authorSearch.addEventListener("click", openAuthorPopup);
+
   authorSearch.addEventListener("input", () => {
-    renderAuthorFilter();
+    authorFilter.scrollTop = 0;
+    openAuthorPopup();
+  });
+
+  authorSearch.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      openAuthorPopup();
+      authorFilter.querySelector("input")?.focus();
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      if (authorPopup.hidden) openAuthorPopup();
+      else if (visibleAuthorOptions[0]) {
+        const key = visibleAuthorOptions[0].key;
+        if (state.filters.authors.has(key)) state.filters.authors.delete(key);
+        else state.filters.authors.add(key);
+        updateFromAuthorSelection();
+      }
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      closeAuthorPopup();
+    }
+  });
+
+  authorPopup.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeAuthorPopup(true);
+      return;
+    }
+    const checkboxes = Array.from(authorFilter.querySelectorAll("input"));
+    if (event.target === authorDone && event.key === "ArrowUp") {
+      event.preventDefault();
+      checkboxes.at(-1)?.focus();
+      return;
+    }
+    if ((event.key !== "ArrowDown" && event.key !== "ArrowUp") || event.target.type !== "checkbox") return;
+    event.preventDefault();
+    const index = checkboxes.indexOf(event.target) + (event.key === "ArrowDown" ? 1 : -1);
+    if (index < 0) authorSearch.focus();
+    else (checkboxes[index] ?? authorDone).focus();
+  });
+
+  authorClearSearch.addEventListener("click", () => {
+    authorSearch.value = "";
+    authorFilter.scrollTop = 0;
+    openAuthorPopup();
+    authorSearch.focus();
+  });
+
+  authorDone.addEventListener("click", () => closeAuthorPopup(true));
+
+  document.addEventListener("pointerdown", (event) => {
+    if (!authorPicker.contains(event.target)) closeAuthorPopup();
+  });
+
+  authorPicker.addEventListener("focusout", (event) => {
+    if (event.relatedTarget && authorPicker.contains(event.relatedTarget)) return;
+    setTimeout(() => {
+      if (!authorPicker.contains(document.activeElement)) closeAuthorPopup();
+    }, 0);
   });
 
   startDateInput.addEventListener("change", () => {

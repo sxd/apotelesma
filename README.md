@@ -58,11 +58,13 @@ Labels prefer a patch-recorded name, then a Git name, breaking ties by Unicode
 code-point order. Git-only labels omit email; patch labels include it. Global
 labels stay fixed when branch/date scope changes.
 
-Search covers names, addresses and aliases and limits displayed choices to 60.
-It does not change selected entries or matching commits. Branch/date changes
-remove only selections absent from the complete scope; if none remain, author
-filtering becomes unrestricted. “All visible authors” replaces selection with
-the displayed choices. Hidden-selection counts appear below the selector.
+The compact selector searches names, addresses and aliases and shows at most
+eight choices at a time. With an empty search it suggests the top participants
+in the current branch/date scope. Selected authors remain pinned as removable
+chips above the search field, and changing or clearing the search never changes
+the selection or matching commits. Branch/date changes remove only selections
+absent from the complete scope; if none remain, author filtering becomes
+unrestricted.
 
 Frontend and browser verification instructions and measured results are in
 [`tests/author-filtering-verification.md`](./tests/author-filtering-verification.md).
