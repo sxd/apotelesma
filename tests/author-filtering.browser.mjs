@@ -61,9 +61,8 @@ try {
   assert.equal(await selected.isChecked(), true);
   assert.equal(await selected.evaluate((element) => element === document.activeElement), true);
   await selected.press("Tab");
-  assert.equal(await page.locator("summary:focus").count(), 1);
-  await page.locator("summary:focus").press("Enter");
-  assert.equal(await page.locator("#author-filter details[open]").count(), 1);
+  assert.equal(await page.locator("summary:focus").count(), 0);
+  assert.equal(await page.locator("#author-filter details").count(), 0);
   await search.fill("");
   assert.match(await page.locator("#author-status").textContent(), /1 selected entries hidden/);
   await page.locator("#start-date").fill("2025-01-01");
@@ -88,8 +87,11 @@ try {
   const cdp = await page.context().newCDPSession(page);
   const ax = await cdp.send("Accessibility.getFullAXTree");
   const accessibleOpaque = ax.nodes.find((node) => node.role?.value === "checkbox" && node.name?.value === "Opaque Name (1)");
-  assert.match(accessibleOpaque.description.value, /Grouped by exact recorded text; no verified email identity/);
+  assert.match(accessibleOpaque.description.value, /Grouped by exact recorded text/);
   assert.match(accessibleOpaque.description.value, /Author trailer/);
+  assert.doesNotMatch(accessibleOpaque.description.value, /Email identity/);
+  assert.equal(await page.getByText("Recorded aliases and evidence", { exact: true }).count(), 0);
+  assert.equal(await page.locator("#author-filter details").count(), 0);
   assert.equal(await page.getByText("Unresolved identity", { exact: true }).count(), 1);
   await opaque.check();
   await page.getByRole("checkbox", { name: "master", exact: true }).uncheck();

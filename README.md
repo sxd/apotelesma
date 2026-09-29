@@ -57,7 +57,7 @@ identity.” Shared email means shared recorded address, not verified personhood
 Labels prefer a patch-recorded name, then a Git name, breaking ties by Unicode
 code-point order. Git-only labels omit email; patch labels include it. Global
 labels stay fixed when branch/date scope changes. Descriptions show both global
-and scoped roles, and expandable evidence preserves raw aliases.
+and scoped roles.
 
 Search covers names, addresses and aliases and limits displayed choices to 60.
 It does not change selected entries or matching commits. Branch/date changes

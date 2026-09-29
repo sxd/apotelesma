@@ -644,7 +644,7 @@ function renderBranchChart() {
 let nextControlId = 0;
 const controlIds = new Map();
 
-function createCheckbox({ label, value, checked, name, onChange, color, description, unresolved, aliases }) {
+function createCheckbox({ label, value, checked, name, onChange, color, description, unresolved }) {
   const wrapper = document.createElement("label");
   wrapper.className = "toggle";
   if (color) {
@@ -683,20 +683,6 @@ function createCheckbox({ label, value, checked, name, onChange, color, descript
     option.appendChild(indicator);
   }
   option.appendChild(explanation);
-  if (aliases?.length) {
-    const details = document.createElement("details");
-    const summary = document.createElement("summary");
-    summary.textContent = "Recorded aliases and evidence";
-    summary.dataset.authorKey = value;
-    const list = document.createElement("ul");
-    aliases.forEach((alias) => {
-      const item = document.createElement("li");
-      item.textContent = alias;
-      list.appendChild(item);
-    });
-    details.append(summary, list);
-    option.appendChild(details);
-  }
   return option;
 }
 
@@ -765,7 +751,6 @@ function renderAuthorFilter() {
         checked: state.filters.authors.has(author.key),
         description: authorOptionDescription(author.identity, author.roles),
         unresolved: author.identity.resolution === "unresolved",
-        aliases: author.identity.aliases,
         name: "author",
         onChange: (event) => {
           if (event.target.checked) {

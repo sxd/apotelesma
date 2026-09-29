@@ -119,9 +119,9 @@ export function authorOptionLabel(identity) {
 export function authorOptionDescription(identity, scopedRoles) {
   const roles = (values) => roleOrder.filter((role) => values.includes(role)).map((role) => roleNames[role]).join(", ");
   const resolution = identity.resolution === "unresolved"
-    ? "Grouped by exact recorded text; no verified email identity."
-    : `Email identity: ${identity.email}. Grouped by shared email; shared mailboxes and conflicting names do not prove one person.`;
-  return `${resolution} Global recorded roles: ${roles(identity.roles)}. Roles in this scope: ${roles(scopedRoles)}.`;
+    ? "Grouped by exact recorded text. "
+    : "";
+  return `${resolution}Global recorded roles: ${roles(identity.roles)}. Roles in this scope: ${roles(scopedRoles)}.`;
 }
 
 export function summarizeParticipants(scopedCommits, index) {

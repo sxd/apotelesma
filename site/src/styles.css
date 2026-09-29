@@ -255,7 +255,6 @@ th {
 }
 
 .author-description,
-.author-option details,
 .identity-indicator {
   font-size: 0.85rem;
   line-height: 1.4;
@@ -272,8 +271,6 @@ th {
   font-weight: bold;
 }
 
-.author-option summary { cursor: pointer; }
-.author-option ul { padding-left: 1.2rem; }
 .author-option .toggle {
   align-items: start;
   border-radius: 1rem;

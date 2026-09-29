@@ -145,7 +145,7 @@ test("full dataset is filtered before stable descending recent-25 sort; patch me
   assert.deepEqual(Array.from(ties.state.filteredRecentCommits, (commit) => commit.commit_id), [3, 1, 2]);
 });
 
-test("safe labels, accessible descriptions, aliases, stable IDs, focus and scroll restoration", () => {
+test("safe labels, concise descriptions, stable IDs, focus and scroll restoration", () => {
   const hostile = '<img src=x onerror="alert(1)">';
   const ui = dashboard([{ ...base, trailer_author: [hostile, "Opaque Name", "Patch Name <owner@x>"] },
     { ...base, branch: "stable", co_authored_by: ["Other Alias <owner@x>"] }]);
@@ -157,7 +157,8 @@ test("safe labels, accessible descriptions, aliases, stable IDs, focus and scrol
   const option = checkbox.parentElement.parentElement;
   const explanation = option.children.find((child) => child.id === checkbox.getAttribute("aria-describedby"));
   assert.match(explanation.textContent, /Global recorded roles: Git author, Author trailer, Co-authored-by trailer/);
-  assert.ok(option.querySelector("summary"));
+  assert.equal(option.querySelector("summary"), null);
+  assert.doesNotMatch(option.textContent, /Recorded aliases and evidence|Email identity/);
   assert.match(ui.element("#author-filter").textContent, /Unresolved identity/);
   const hostileInput = inputs(ui).find((input) => input.value === JSON.stringify(["unresolved", hostile]));
   assert.equal(hostileInput.parentElement.children[1].textContent, `${hostile} (1)`);

@@ -80,7 +80,7 @@ test("deterministic global labels, scoped roles, lexical ties and all alias sear
   const description = authorOptionDescription(index.identities.get(key("same@example.test")), ["git"]);
   assert.match(description, /Global recorded roles: Git author, Author trailer, Co-authored-by trailer/);
   assert.match(description, /Roles in this scope: Git author\./);
-  assert.match(description, /shared mailboxes and conflicting names do not prove one person/);
+  assert.doesNotMatch(description, /Email identity|shared mailboxes/);
   assert.match(index.identities.get(key("same@example.test")).searchText, /aaa git/);
   assert.deepEqual(summarizeParticipants(commits, index)[0].roles, ["git", "author", "coauthor"]);
 });
@@ -115,7 +115,7 @@ test("local case, distinct addresses, exact unresolved grouping and no name-base
   assert.equal(authorOptionLabel(identity), "Same");
   assert.deepEqual(identity.roles, ["git", "author", "coauthor"]);
   assert.equal(summarizeParticipants(commits, index)[0].count, 2);
-  assert.match(authorOptionDescription(identity, identity.roles), /Grouped by exact recorded text; no verified email identity\./);
+  assert.match(authorOptionDescription(identity, identity.roles), /Grouped by exact recorded text\./);
   assert.ok(identity.aliases.includes("invalid"));
 });
 
@@ -130,7 +130,7 @@ test("Git fields are normalized directly; malformed fields cannot invent identit
   const index = buildAuthorIndex(commits);
   assert.equal(index.identities.size, 3);
   assert.equal(authorOptionLabel(index.identities.get(key("only@example.test"))), "Unnamed Git author");
-  assert.match(authorOptionDescription(index.identities.get(key("only@example.test")), ["git"]), /only@example.test/);
+  assert.doesNotMatch(authorOptionDescription(index.identities.get(key("only@example.test")), ["git"]), /Email identity|only@example.test/);
   assert.ok(index.identities.has(unresolved("Name <not-a-git-mailbox@example.test>")));
   assert.ok(index.identities.has(unresolved("Fallback")));
 });
