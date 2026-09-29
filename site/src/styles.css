@@ -224,6 +224,9 @@ th {
 .filter-panel {
   display: grid;
   gap: 1rem;
+  align-content: start;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .compact-head {
@@ -234,12 +237,52 @@ th {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
+  align-items: start;
+  align-content: start;
 }
 
 .author-grid {
   max-height: 16rem;
   overflow: auto;
   padding-right: 0.25rem;
+  display: block;
+}
+
+.author-option {
+  min-width: 0;
+  margin-bottom: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.author-description,
+.author-option details,
+.identity-indicator {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.author-description {
+  margin: 0.35rem 0;
+  color: var(--muted);
+}
+
+.identity-indicator {
+  display: block;
+  color: var(--forest);
+  font-weight: bold;
+}
+
+.author-option summary { cursor: pointer; }
+.author-option ul { padding-left: 1.2rem; }
+.author-option .toggle {
+  align-items: start;
+  border-radius: 1rem;
+}
+.author-option input { margin-top: 0.2rem; }
+
+:focus-visible {
+  outline: 3px solid var(--forest);
+  outline-offset: 3px;
 }
 
 .toggle {
@@ -253,7 +296,13 @@ th {
   background: rgba(255, 255, 255, 0.82);
   color: var(--ink);
   cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
+
+.toggle span { min-width: 0; }
+.toggle input { flex-shrink: 0; }
 
 .toggle input {
   accent-color: var(--toggle-accent);

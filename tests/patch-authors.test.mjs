@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import vm from "node:vm";
 import { patchAuthors, renderPatchAuthors } from "../site/src/patch-authors.mjs";
+import { dashboard } from "./helpers/dashboard.mjs";
 
 test("Author then Co-authored-by, stable exact deduplication, full names preserved", () => {
   const commit = {
@@ -29,48 +29,6 @@ test("hostile values are escaped before any markup is produced", () => {
   assert.equal(html, '<ul class="patch-authors"><li>&lt;script&gt;alert(&quot;x&quot; &amp; &#39;y&#39;)&lt;/script&gt;</li></ul>');
   assert.ok(!html.includes("<script>"));
 });
-
-// A minimal DOM sink exercises the actual dashboard filter, sort, row and
-// empty-state functions without a browser dependency or duplicating them.
-function dashboard() {
-  class Element {
-    children = [];
-    innerHTML = "";
-    value = "";
-    get firstChild() { return this.children[0]; }
-    appendChild(child) { this.children.push(child); }
-    removeChild(child) { this.children.splice(this.children.indexOf(child), 1); }
-  }
-  const elements = new Map();
-  const context = vm.createContext({
-    renderPatchAuthors,
-    document: {
-      querySelector(selector) {
-        if (!elements.has(selector)) elements.set(selector, new Element());
-        return elements.get(selector);
-      },
-      querySelectorAll: () => [],
-      createElement: () => new Element(),
-    },
-    // Leave startup pending; tests supply data and exercise rendering below.
-    fetch: () => new Promise(() => {}),
-  });
-  const source = readFileSync(new URL("../site/src/app.js", import.meta.url), "utf8");
-  assert.match(source, /^import \{ renderPatchAuthors \} from "\.\/patch-authors\.mjs";/);
-  vm.runInContext(source.replace(/^import[^\n]+\n/, "") +
-    "\nglobalThis.dashboard = { state, updateDerivedState, renderRecentCommits };", context);
-  const api = context.dashboard;
-  api.state.data = { branches: { branches: ["master", "stable"] }, commits: [] };
-  api.state.filters.branches = new Set(["master", "stable"]);
-  return {
-    state: api.state,
-    render() {
-      api.updateDerivedState();
-      api.renderRecentCommits();
-      return elements.get("#recent-commits-body").children.map((row) => row.innerHTML);
-    },
-  };
-}
 
 const commit = {
   author_date: "2026-01-01T00:00:00Z", branch: "master", author_name: "Git Author",
@@ -126,7 +84,7 @@ test("latest 25 are selected after branch, Git-author and date filtering, on eve
   check(Array.from({ length: 25 }, (_, i) => 119 - i));
   ui.state.filters.branches = new Set(["stable"]);
   check(Array.from({ length: 25 }, (_, i) => 118 - i * 2));
-  ui.state.filters.authors = new Set(["other@example.test"]);
+  ui.state.filters.authors = new Set([JSON.stringify(["email", "other@example.test"])]);
   ui.state.filters.startDate = "2026-01-13";
   ui.state.filters.endDate = "2026-04-13";
   check(Array.from({ length: 16 }, (_, i) => 102 - i * 6));

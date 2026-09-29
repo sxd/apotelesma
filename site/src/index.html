@@ -51,7 +51,7 @@
             </a>
             <a class="resource-card" href="./data/authors.json">
               <strong>authors.json</strong>
-              <span>Author activity export</span>
+              <span>Git-author activity export (not a person directory)</span>
             </a>
             <a class="resource-card" href="./data/daily_activity.json">
               <strong>daily_activity.json</strong>
@@ -129,8 +129,8 @@
           <div class="filter-panel">
             <div class="section-head compact-head">
               <div>
-                <p class="section-label">Authors</p>
-                <h2>Narrow the data to selected people</h2>
+                <p class="section-label" id="authors-heading">Authors</p>
+                <h2>Select Git authors and patch contributors</h2>
               </div>
             </div>
             <div class="preset-row">
@@ -141,7 +141,10 @@
               <span>Search authors</span>
               <input id="author-search" type="search" placeholder="Tom Lane, tgl@..., etc.">
             </label>
-            <div class="toggle-grid author-grid" id="author-filter"></div>
+            <p class="selection-summary">Author selection matches Git authors and patch contributors. Activity and change totals remain attributed to Git authors.</p>
+            <p class="selection-summary">Different email addresses and name-only entries remain separate selections.</p>
+            <div class="toggle-grid author-grid" id="author-filter" role="group" aria-labelledby="authors-heading"></div>
+            <p class="selection-summary" id="author-status" role="status" aria-live="polite" aria-atomic="true"></p>
           </div>
 
           <div class="filter-panel">
@@ -187,7 +190,7 @@
                 <tr>
                   <th>Branch</th>
                   <th>Commits</th>
-                  <th>Authors</th>
+                  <th>Git authors</th>
                   <th>Insertions</th>
                   <th>Deletions</th>
                   <th>Changed files</th>
@@ -214,16 +217,16 @@
 
         <section class="panel">
           <div>
-            <p class="section-label">Authors</p>
-            <h2>Top authors in the filtered slice</h2>
+            <p class="section-label">Git author activity</p>
+            <h2>Top Git authors in matching commits</h2>
             <div class="chart-shell compact-chart-shell">
-              <svg id="author-chart" viewBox="0 0 960 320" role="img" aria-label="Author activity chart"></svg>
+              <svg id="author-chart" viewBox="0 0 960 320" role="img" aria-label="Git author activity chart"></svg>
             </div>
             <div class="table-shell">
               <table>
                 <thead>
                   <tr>
-                    <th>Author</th>
+                    <th>Git author</th>
                     <th>Commits</th>
                     <th>Insertions</th>
                     <th>Deletions</th>

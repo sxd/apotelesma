@@ -1,4 +1,5 @@
 import { renderPatchAuthors } from "./patch-authors.mjs";
+import { buildAuthorIndex, summarizeParticipants, matchesSelectedAuthors, authorOptionLabel, authorOptionDescription } from "./author-identities.mjs";
 
 const DATA_FILES = {
   branches: "./data/branches.json",
@@ -18,6 +19,9 @@ const BRANCH_COLORS = [
 
 const state = {
   data: null,
+  authorIndex: null,
+  authorScope: null,
+  authorNotice: "",
   filteredCommits: [],
   filteredAuthors: [],
   filters: {
@@ -32,6 +36,7 @@ const state = {
 const branchFilter = document.querySelector("#branch-filter");
 const authorFilter = document.querySelector("#author-filter");
 const authorSearch = document.querySelector("#author-search");
+const authorStatus = document.querySelector("#author-status");
 const startDateInput = document.querySelector("#start-date");
 const endDateInput = document.querySelector("#end-date");
 const metricSelect = document.querySelector("#metric-select");
@@ -102,14 +107,14 @@ function getCommitDay(commit) {
 function commitMatchesFilters(commit) {
   const day = getCommitDay(commit);
   const branchMatch = state.filters.branches.has(commit.branch);
-  const authorMatch = state.filters.authors.size === 0 || state.filters.authors.has(commit.author_email);
+  const authorMatch = matchesSelectedAuthors(commit, state.filters.authors, state.authorIndex);
   const startMatch = !state.filters.startDate || day >= state.filters.startDate;
   const endMatch = !state.filters.endDate || day <= state.filters.endDate;
 
   return branchMatch && authorMatch && startMatch && endMatch;
 }
 
-function buildAuthorSummaries(commits) {
+function buildGitAuthorSummaries(commits) {
   const byAuthor = new Map();
 
   commits.forEach((commit) => {
@@ -220,7 +225,8 @@ function getRecentCommits(commits) {
 }
 
 function getFilterScopeAuthors() {
-  const search = authorSearch.value.trim().toLowerCase();
+  const scopeKey = JSON.stringify([[...state.filters.branches].sort(), state.filters.startDate, state.filters.endDate]);
+  if (state.authorScope?.key === scopeKey) return state.authorScope.authors;
   const commits = state.data.commits.filter((commit) => {
     const day = getCommitDay(commit);
     const branchMatch = state.filters.branches.has(commit.branch);
@@ -229,20 +235,19 @@ function getFilterScopeAuthors() {
     return branchMatch && startMatch && endMatch;
   });
 
-  return buildAuthorSummaries(commits).filter((author) => {
-    if (!search) {
-      return true;
-    }
-    return (
-      author.author_name.toLowerCase().includes(search) ||
-      author.author_email.toLowerCase().includes(search)
-    );
-  });
+  const authors = summarizeParticipants(commits, state.authorIndex);
+  state.authorScope = { key: scopeKey, authors };
+  return authors;
+}
+
+function getMatchingAuthorOptions() {
+  const search = authorSearch.value.trim().toLowerCase();
+  return getFilterScopeAuthors().filter(({ identity }) => identity.searchText.includes(search));
 }
 
 function updateDerivedState() {
   state.filteredCommits = state.data.commits.filter(commitMatchesFilters);
-  state.filteredAuthors = buildAuthorSummaries(state.filteredCommits);
+  state.filteredAuthors = buildGitAuthorSummaries(state.filteredCommits);
   state.filteredBranchSummaries = buildBranchSummaries(state.filteredCommits);
   state.filteredDailySeries = buildDailySeries(state.filteredCommits);
   state.filteredRecentCommits = getRecentCommits(state.filteredCommits);
@@ -266,9 +271,9 @@ function renderStats() {
       detail: `branches: ${formatNumber(branchCount)}`,
     },
     {
-      label: "Active authors",
+      label: "Active Git authors",
       value: formatNumber(authorCount),
-      detail: `author filter: ${state.filters.authors.size === 0 ? "all" : formatNumber(state.filters.authors.size)}`,
+      detail: `selected author entries: ${state.filters.authors.size === 0 ? "all" : formatNumber(state.filters.authors.size)}`,
     },
     {
       label: "Lines added / removed",
@@ -298,7 +303,7 @@ function renderActiveFilters() {
 
   const chips = [];
   chips.push(`${state.filters.branches.size} branch${state.filters.branches.size === 1 ? "" : "es"}`);
-  chips.push(state.filters.authors.size === 0 ? "all authors" : `${state.filters.authors.size} authors`);
+  chips.push(state.filters.authors.size === 0 ? "all author entries" : `${state.filters.authors.size} selected author entries`);
   chips.push(state.filters.startDate ? `from ${state.filters.startDate}` : "from start");
   chips.push(state.filters.endDate ? `to ${state.filters.endDate}` : "to latest");
   chips.push(`metric: ${metricSelect.selectedOptions[0].textContent}`);
@@ -328,7 +333,7 @@ function renderBranchSummary() {
     row.innerHTML = `
       <td data-label="Branch"><span class="pill" style="--pill-color:${getBranchColor(item.branch)}">${escapeHtml(item.branch)}</span></td>
       <td data-label="Commits">${formatNumber(item.commit_count)}</td>
-      <td data-label="Authors">${formatNumber(item.author_count)}</td>
+      <td data-label="Git authors">${formatNumber(item.author_count)}</td>
       <td data-label="Insertions">${formatNumber(item.total_insertions)}</td>
       <td data-label="Deletions">${formatNumber(item.total_deletions)}</td>
       <td data-label="Changed files">${formatNumber(item.total_changed_files)}</td>
@@ -358,7 +363,7 @@ function renderAuthorActivity() {
     (item) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td data-label="Author">
+        <td data-label="Git author">
           <strong>${escapeHtml(item.author_name)}</strong><br>
           <span class="metric-trend">${escapeHtml(item.author_email)}</span>
         </td>
@@ -371,7 +376,7 @@ function renderAuthorActivity() {
       return row;
     },
     6,
-    "No authors match the current filters.",
+    "No Git authors in matching commits.",
   );
 }
 
@@ -551,7 +556,7 @@ function renderAuthorChart() {
       fill: "#5b635d",
       "font-size": "16",
     });
-    label.textContent = "No authors match the current filters.";
+    label.textContent = "No Git authors in matching commits.";
     return;
   }
 
@@ -636,7 +641,10 @@ function renderBranchChart() {
   });
 }
 
-function createCheckbox({ label, value, checked, name, onChange, color }) {
+let nextControlId = 0;
+const controlIds = new Map();
+
+function createCheckbox({ label, value, checked, name, onChange, color, description, unresolved, aliases }) {
   const wrapper = document.createElement("label");
   wrapper.className = "toggle";
   if (color) {
@@ -648,13 +656,48 @@ function createCheckbox({ label, value, checked, name, onChange, color }) {
   input.name = name;
   input.value = value;
   input.checked = checked;
+  const controlKey = JSON.stringify([name, value]);
+  if (!controlIds.has(controlKey)) controlIds.set(controlKey, `filter-control-${nextControlId++}`);
+  input.id = controlIds.get(controlKey);
   input.addEventListener("change", onChange);
 
   const text = document.createElement("span");
   text.textContent = label;
 
   wrapper.append(input, text);
-  return wrapper;
+  if (!description) return wrapper;
+
+  const option = document.createElement("div");
+  option.className = "author-option";
+  const explanation = document.createElement("p");
+  explanation.id = `${input.id}-description`;
+  explanation.className = "author-description";
+  explanation.textContent = description;
+  input.setAttribute("aria-describedby", explanation.id);
+  input.title = description;
+  option.appendChild(wrapper);
+  if (unresolved) {
+    const indicator = document.createElement("span");
+    indicator.className = "identity-indicator";
+    indicator.textContent = "Unresolved identity";
+    option.appendChild(indicator);
+  }
+  option.appendChild(explanation);
+  if (aliases?.length) {
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    summary.textContent = "Recorded aliases and evidence";
+    summary.dataset.authorKey = value;
+    const list = document.createElement("ul");
+    aliases.forEach((alias) => {
+      const item = document.createElement("li");
+      item.textContent = alias;
+      list.appendChild(item);
+    });
+    details.append(summary, list);
+    option.appendChild(details);
+  }
+  return option;
 }
 
 function renderBranchFilter() {
@@ -686,42 +729,77 @@ function renderBranchFilter() {
 }
 
 function syncAuthorSelection() {
-  const validAuthors = new Set(getFilterScopeAuthors().map((item) => item.author_email));
+  const validAuthors = new Set(getFilterScopeAuthors().map((item) => item.key));
+  const previousSize = state.filters.authors.size;
   state.filters.authors = new Set(
-    Array.from(state.filters.authors).filter((authorEmail) => validAuthors.has(authorEmail)),
+    Array.from(state.filters.authors).filter((key) => validAuthors.has(key)),
   );
+  const removed = previousSize - state.filters.authors.size;
+  state.authorNotice = removed ? `${removed} selected author entries removed from this scope. ${state.filters.authors.size === 0 ? "Author selection is now unrestricted." : ""}` : "";
 }
 
 function renderAuthorFilter() {
+  const restore = captureFilterFocus();
   clearElement(authorFilter);
-  const authors = getFilterScopeAuthors().slice(0, 60);
+  const matches = getMatchingAuthorOptions();
+  const authors = matches.slice(0, 60);
+  const visibleKeys = new Set(authors.map((item) => item.key));
+  const hidden = [...state.filters.authors].filter((key) => !visibleKeys.has(key)).length;
+  authorStatus.textContent = `${state.authorNotice} Showing ${authors.length} of ${matches.length} matching author entries (${getFilterScopeAuthors().length} in branch/date scope). ${hidden} selected entries hidden by search or the 60-entry limit. Counts are participating commit rows.`.trim();
+  state.authorNotice = "";
 
   if (authors.length === 0) {
     const empty = document.createElement("p");
     empty.className = "filter-empty";
-    empty.textContent = "No authors in the current branch/date scope.";
+    empty.textContent = getFilterScopeAuthors().length ? "No authors match this search." : "No authors in this branch/date scope.";
     authorFilter.appendChild(empty);
+    restore();
     return;
   }
 
   authors.forEach((author) => {
     authorFilter.appendChild(
       createCheckbox({
-        label: `${author.author_name} (${author.commit_count})`,
-        value: author.author_email,
-        checked: state.filters.authors.has(author.author_email),
+        label: `${authorOptionLabel(author.identity)} (${author.count})`,
+        value: author.key,
+        checked: state.filters.authors.has(author.key),
+        description: authorOptionDescription(author.identity, author.roles),
+        unresolved: author.identity.resolution === "unresolved",
+        aliases: author.identity.aliases,
         name: "author",
         onChange: (event) => {
           if (event.target.checked) {
-            state.filters.authors.add(author.author_email);
+            state.filters.authors.add(author.key);
           } else {
-            state.filters.authors.delete(author.author_email);
+            state.filters.authors.delete(author.key);
           }
           renderDashboard();
         },
       }),
     );
   });
+  restore();
+}
+
+function captureFilterFocus() {
+  const active = document.activeElement;
+  const group = active?.name;
+  const value = active?.value;
+  const aliasKey = active?.dataset?.authorKey;
+  const scrolls = [branchFilter, authorFilter].map((element) => [element, element.scrollTop, element.scrollLeft]);
+  return () => {
+    let replacement;
+    if (group === "author" || group === "branch") {
+      const container = group === "author" ? authorFilter : branchFilter;
+      replacement = Array.from(container.querySelectorAll("input")).find((input) => input.value === value);
+      if (!replacement && group === "author") replacement = authorSearch;
+    } else if (aliasKey !== undefined) {
+      replacement = Array.from(authorFilter.querySelectorAll("summary")).find((summary) => summary.dataset.authorKey === aliasKey) ?? authorSearch;
+    }
+    // Search, dates, metrics and presets are not replaced and retain native focus.
+    replacement?.focus({ preventScroll: true });
+    scrolls.forEach(([element, top, left]) => { element.scrollTop = top; element.scrollLeft = left; });
+  };
 }
 
 function initializeDateInputs() {
@@ -738,6 +816,7 @@ function initializeDateInputs() {
 }
 
 function renderDashboard() {
+  const restore = captureFilterFocus();
   updateDerivedState();
   renderBranchFilter();
   renderAuthorFilter();
@@ -749,6 +828,7 @@ function renderDashboard() {
   renderDailyChart();
   renderAuthorChart();
   renderBranchChart();
+  restore();
 }
 
 function initializeControls() {
@@ -762,6 +842,7 @@ function initializeControls() {
       } else {
         state.filters.branches = new Set([state.data.branches.root_branch]);
       }
+      if (state.filters.branches.size === 0) state.filters.branches.add(state.data.branches.root_branch);
       syncAuthorSelection();
       renderDashboard();
     });
@@ -773,7 +854,7 @@ function initializeControls() {
         state.filters.authors = new Set();
       } else {
         state.filters.authors = new Set(
-          getFilterScopeAuthors().slice(0, 60).map((item) => item.author_email),
+          getMatchingAuthorOptions().slice(0, 60).map((item) => item.key),
         );
       }
       renderDashboard();
@@ -816,6 +897,7 @@ async function main() {
   );
 
   state.data = { branches, commits };
+  state.authorIndex = buildAuthorIndex(commits);
   state.filters.branches = new Set(branches.branches);
   initializeDateInputs();
   initializeControls();

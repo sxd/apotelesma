@@ -35,10 +35,38 @@ The published site is fully static but interactive in the browser. It reads the
 exported JSON files and lets users:
 
 - select one branch or multiple branches
-- filter by one author or multiple authors
+- filter by one or more Git authors or patch contributors from terminal `Author`
+  and `Co-authored-by` trailers
 - constrain the visible date range
 - switch graph metrics between commits, insertions, deletions, and changed files
 - compare branch totals, timeline activity, top authors, and recent matching commits
+
+Author selection uses OR across selected entries, combined with branch and
+inclusive date restrictions. The recent table shows the latest 25 rows after
+filtering. Selector counts count participating branch/commit rows; activity,
+change totals and `authors.json` remain attributed to Git authors.
+
+Email identities merge across these three roles using the recorded local part
+(case preserved) and a lowercase domain. The browser supports bare ASCII
+dot-atom mailboxes with DNS-style domains, or a display name followed by one
+terminal `<email>` pair. It does not remove plus tags or dots, join different
+addresses, infer names from addresses, or resolve name-only values to emails.
+Unsupported forms remain opaque, exact-text groups labelled “Unresolved
+identity.” Shared email means shared recorded address, not verified personhood.
+
+Labels prefer a patch-recorded name, then a Git name, breaking ties by Unicode
+code-point order. Git-only labels omit email; patch labels include it. Global
+labels stay fixed when branch/date scope changes. Descriptions show both global
+and scoped roles, and expandable evidence preserves raw aliases.
+
+Search covers names, addresses and aliases and limits displayed choices to 60.
+It does not change selected entries or matching commits. Branch/date changes
+remove only selections absent from the complete scope; if none remain, author
+filtering becomes unrestricted. “All visible authors” replaces selection with
+the displayed choices. Hidden-selection counts appear below the selector.
+
+Frontend and browser verification instructions and measured results are in
+[`tests/author-filtering-verification.md`](./tests/author-filtering-verification.md).
 
 In addition to the site-specific JSON files, the export step also publishes
 `site/data/grafana.json`. That file is intended for Grafana consumption and
