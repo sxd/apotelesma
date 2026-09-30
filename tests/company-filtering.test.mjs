@@ -8,14 +8,14 @@ const base = { branch: "master", author_name: "Git Owner", author_email: "owner@
   author_date: "2025-02-18T10:00:00Z", commit_date: "2025-02-18T11:00:00Z", insertions: 1, deletions: 0, changed_files: 1 };
 const commits = [
   { ...base, commit_id: "one", summary: "First", trailer_author: ["Patch Person <patch@example.test>"] },
-  { ...base, commit_id: "two", summary: "Second", co_authored_by: ["Coauthor <co@example.test>"] },
-  { ...base, commit_id: "both", summary: "Concurrent" },
+  { ...base, commit_id: "two", summary: "Second", trailer_author: ["Second Person <second@example.test>"], co_authored_by: ["Coauthor <co@example.test>"] },
+  { ...base, commit_id: "both", summary: "Concurrent", trailer_author: ["Third Person <third@example.test>", "Fourth Person <fourth@example.test>"] },
   { ...base, commit_id: "one", branch: "stable", summary: "Backpatch" },
   { ...base, commit_id: "unknown", summary: "Unknown" },
 ];
 export function fixture(rows = commits) {
   return {
-    schema_version: 1, provenance: { timestamp_basis: "committer" },
+    schema_version: 2, attribution_source: "trailer_author", provenance: { timestamp_basis: "committer" },
     coverage: { total_commits: rows.length, matched_commits: 3, researched_people: 3 },
     companies: [
       { company_id: "edb", name: "EnterpriseDB", aliases: ["EDB"] },
@@ -43,7 +43,11 @@ test("company OR deduplicates commits, keys include branch, unknowns only match 
 
 test("malformed, conflicting, duplicated and foreign-snapshot matches are rejected", () => {
   for (const mutate of [
-    (s) => { s.schema_version = 2; },
+    (s) => { s.schema_version = 1; },
+    (s) => { s.schema_version = 3; },
+    (s) => { delete s.attribution_source; },
+    (s) => { s.attribution_source = "git_author"; },
+    (s) => { s.attribution_source = "co_authored_by"; },
     (s) => { s.coverage.total_commits++; },
     (s) => { s.provenance.timestamp_basis = "fallback"; },
     (s) => { s.matches[0].companies[0].status = "conflicting"; },
@@ -81,6 +85,8 @@ test("dashboard combines company OR with author/branch/date AND and keeps Git me
   assert.deepEqual(Array.from(ui.state.filteredCommits, (c) => c.summary), ["First"]);
   assert.equal(ui.state.filteredAuthors[0].author_name, "Git Owner");
   assert.match(ui.render()[0], /EnterpriseDB \(estimated\)/);
+  assert.match(ui.element("#company-method").textContent, /only to patch authors in trailer_author/);
+  assert.match(ui.element("#company-coverage").textContent, /patch-author affiliations/);
   ui.state.filters.includeEstimated = false;
   assert.match(ui.render()[0], /No commits match/);
   ui.state.filters.authors.clear();
@@ -93,6 +99,22 @@ test("dashboard combines company OR with author/branch/date AND and keeps Git me
   ui.state.filters.endDate = "2024-01-01";
   ui.updateDerivedState();
   assert.equal(ui.state.filteredCommits.length, 0);
+});
+
+test("catalog companies without patch-author evidence remain selectable with zero matches", () => {
+  const ui = dashboard(commits);
+  const data = fixture();
+  data.companies.push({ company_id: "zero", name: "Zero Company", aliases: ["Zero"] });
+  ui.state.companyIndex = buildCompanyIndex(data, commits);
+  ui.renderDashboard();
+  const search = ui.element("#company-search");
+  search.value = "zero"; search.dispatch("input");
+  const option = ui.element("#company-filter").querySelector("input");
+  assert.equal(option.value, "zero");
+  assert.match(ui.element("#company-filter").textContent, /0 commits/);
+  option.checked = true; option.dispatch("change");
+  assert.equal(ui.state.filteredCommits.length, 0);
+  assert.equal(ui.state.filters.companies.has("zero"), true);
 });
 
 test("company search by alias only changes suggestions; chips and checkbox focus persist", () => {
@@ -130,7 +152,7 @@ test("no research data disables only companies and safely renders text", () => {
 });
 
 test("company filtering happens before recent-25 slicing", () => {
-  const rows = Array.from({ length: 40 }, (_, i) => ({ ...base, commit_id: `c${i}`, summary: `c${i}`, author_date: new Date(Date.UTC(2025, 0, i + 1)).toISOString() }));
+  const rows = Array.from({ length: 40 }, (_, i) => ({ ...base, commit_id: `c${i}`, summary: `c${i}`, trailer_author: ["Patch Person <patch@example.test>"], author_date: new Date(Date.UTC(2025, 0, i + 1)).toISOString() }));
   const data = fixture(rows);
   data.matches = rows.slice(0, 30).map((row) => ({ branch: row.branch, commit_id: row.commit_id, companies: [{ company_id: "edb", status: "estimated" }] }));
   data.coverage.matched_commits = data.matches.length;

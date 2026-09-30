@@ -146,8 +146,11 @@ python3 scripts/author_company_history.py build-site \
   --timestamp-basis committer
 ```
 
-The versioned JSON contains company IDs/names/aliases, sparse branch-qualified
-commit/company matches, supported/estimated labels, and coverage denominators.
+The website JSON uses `schema_version: 2` and
+`attribution_source: "trailer_author"`. It contains company IDs/names/aliases,
+sparse branch-qualified commit/company matches, supported/estimated labels, and
+coverage denominators. The client rejects version 1 all-participant exports and
+exports with a different attribution source, even when their commit hash matches.
 It retains input hashes and mapping/history/rule revisions. Its commit SHA-256
 is verified against the actual fetched commits before filtering. This check
 uses Web Crypto (HTTPS, or localhost when previewing). Invalid/stale/missing
@@ -155,13 +158,17 @@ company data disables only the company selector; the author/branch/date
 dashboard remains usable. Invalid research fails the build rather than
 publishing invented affiliations.
 
-The **Companies · Research preview** control supports name/alias search, eight
+The **Patch author companies · Research preview** control supports name/alias search, eight
 suggestions, persistent removable chips, multiple checkbox selections, clear
 search/selection, and keyboard navigation. Its matching contract is:
 
 - Selected companies are ORed, then ANDed with branch, date and author filters.
-- A company can match through any Git author, `Author` or `Co-authored-by`
-  participant. Author and company filters apply independently to the commit;
+- A company can match only through a resolved `trailer_author` (`Author` trailer)
+  participant. A Git author, committer or `Co-authored-by` credit alone never
+  supplies a match. Missing, name-only or otherwise unresolved patch authors do
+  not fall back to another role. Someone with multiple roles qualifies only if
+  also resolved from `trailer_author`. The full offline audit retains all roles.
+  Author and company filters apply independently to the commit;
   they need not match the same person. This is not a person-at-company query.
 - No companies selected means unrestricted, including unknown affiliations.
 - Estimates are included by default. Turning them off affects company matches,
@@ -170,25 +177,29 @@ search/selection, and keyboard navigation. Its matching contract is:
 - Unknown/conflicting participants and candidate affiliations never match.
   Explicit concurrent companies may both match. Each branch/commit is counted
   once; repeated roles or selected companies cannot multiply its metrics.
-- A supported participant takes precedence over an estimated participant for
+- A supported patch author takes precedence over an estimated patch author for
   the same company on the same commit. Detailed participant and evidence links
   remain in the offline audit export, not this compact UI projection.
 - Option counts and coverage use branch/date scope before author/company
   selection. Search, scope changes and estimate exclusion never silently clear
   company selections. Zero-match selections stay selected and show no results.
-- Only companies with at least one eligible match in the complete published
-  snapshot are listed. Rejected Databricks evidence does not create an option.
-- Company histories use Git **committer** timestamps in the site pipeline;
+- The reviewed company catalog remains searchable even when a company has no
+  eligible patch-author matches. Such options show zero, do not manufacture
+  evidence, and return no commits if selected alone. Rejected evidence never
+  supplies a match.
+- Patch-author company histories use Git **committer** timestamps in the site pipeline;
   existing date filters/charts still use Git author dates. Backpatch branch/ID
-  pairs remain distinct. The UI explains this difference and does not imply
-  company sponsorship. Recent commits show company names with status labels.
+  pairs remain distinct. This selects the attribution date, not the committer's
+  company. The UI explains this difference and does not imply company
+  sponsorship. Recent commits show a **Patch author companies** column with
+  company names and status labels.
 
 The research now covers seven people and all six requested companies:
 Microsoft, Amazon Web Services (AWS), Databricks, Snowflake, EnterpriseDB and
 Percona. Amazon/AWS and EnterpriseDB/EDB aliases do not create duplicate totals;
 “Snowflakes” is accepted as a search spelling. The catalog does not imply that
-every employee or commit has been researched. More companies appear
-automatically as reviewed evidence creates eligible dated matches.
+every employee or commit has been researched. More companies appear when added
+to the reviewed catalog; only accepted dated patch-author evidence creates matches.
 
 Microsoft (Nazir Bilal Yavuz), AWS (Masahiko Sawada), Databricks (Matthias van de
 Meent) and EDB (Bruce Momjian) use narrow, same-day signature estimates. Percona's
@@ -197,22 +208,30 @@ and continuing employment, capped at the retrieval horizon. Snowflake's
 retrospective team account supplies an estimated Tom Lane parent/team
 association after the June 2025 acquisition, **not** an exact legal-employer
 transfer. Crunchy Data is not a Snowflake alias and earlier commits are not
-renamed. Robert Haas's Databricks transition remains unresolved. All six current
-company matches are estimates; disabling estimates may show zero matches.
+renamed. Robert Haas's Databricks transition remains unresolved. All current
+website matches are estimates; disabling estimates may show zero matches.
 See `data/author-affiliations/RESEARCH.md` for sources, date bounds and caveats.
 
-On the verified 71,200-row local export, the expansion yields 713 distinct
-branch/commit matches. These **estimated, sampled counts are not a ranking of
+On the verified 71,200-row local export, trailer-only attribution yields 356
+distinct branch/commit matches (down from 713 when all contributor roles counted).
+These **estimated, sampled counts are not a ranking of
 company contributions**; different evidence windows explain their disparity.
 
-| Company | Researched matching contributor | Estimated matches |
+| Company | Researched person | Estimated patch-author matches |
 | --- | --- | ---: |
 | Microsoft | Nazir Bilal Yavuz | 1 |
 | Amazon/AWS | Masahiko Sawada | 6 |
 | Databricks | Matthias van de Meent | 1 |
-| Snowflake | Tom Lane (parent/team association) | 690 |
-| EnterpriseDB/EDB | Bruce Momjian | 1 |
+| Snowflake | Tom Lane (parent/team association) | 334 |
+| EnterpriseDB/EDB | Bruce Momjian; Robert Haas | 0 |
 | Percona | Zsolt Parragi | 14 |
+
+EDB's previous match came from Bruce as Git author, not the patch author, so it
+is now correctly excluded. The six-company regression fixture keeps its original
+real commits: four match as patch-author affiliations; the Git-only Bruce/EDB
+and Tom/Snowflake cases do not. The catalog still includes all six companies.
+The original seven-commit fixture has no eligible website matches; its broader
+offline audit output is unchanged.
 
 The expansion ledger preserves 25 additional discovery queries, including two
 empty-string queries constrained by sender. Such requests are valid; a missing
@@ -237,6 +256,7 @@ Browser tests accept `PLAYWRIGHT_MODULE` and `CHROMIUM_PATH` overrides for an
 existing local installation, and `BROWSER_ARTIFACT_DIR` for company screenshots.
 The company test covers multi-company fixtures, all six real company names and
 their aliases, author combinations, native
-keyboard behavior, accessibility-tree labels, stale/missing/malformed/empty
+keyboard behavior, accessibility-tree labels, zero-count company selection,
+legacy/wrong-role/stale/missing/malformed/empty
 exports, literal hostile text, real full-export filtering and 1440/1000/720/375/320
 pixel layouts. Screen-reader output and native zoom are not asserted.

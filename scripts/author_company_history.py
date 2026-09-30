@@ -671,14 +671,17 @@ def ensure_output_is_separate(out_dir: Path, data_dir: Path, commits_path: Path)
 
 def website_snapshot(commits: list[dict[str, Any]], records: list[dict[str, Any]],
                      data: dict[str, Any], provenance: dict[str, Any]) -> dict[str, Any]:
-    """Sparse commit/company matches; unresolved candidates never become filters.
+    """Sparse trailer-author/company matches; candidates never become filters.
 
-    A commit is counted once per company, regardless of people or credit roles.
-    A supported participant takes precedence over estimated participants for the
-    same company. Full participant/evidence detail remains in the audit build.
+    Only participants credited in trailer_author qualify, even when a Git author
+    or co-author has usable evidence. A commit is counted once per company; a
+    supported patch author takes precedence over estimated patch authors for
+    that company. Full participant/evidence detail remains in the audit build.
     """
     matches: dict[tuple[str, str], dict[str, str]] = defaultdict(dict)
     for row in records:
+        if "patch_author" not in row.get("roles", []):
+            continue
         if row["attribution_status"] not in {"supported", "estimated"}:
             continue
         for affiliation in row["affiliations"]:
@@ -689,14 +692,15 @@ def website_snapshot(commits: list[dict[str, Any]], records: list[dict[str, Any]
             company_id = affiliation["company_id"]
             if companies.get(company_id) != "supported":
                 companies[company_id] = status
-    used = {company for companies in matches.values() for company in companies}
     return {
-        "schema_version": 1,
+        "schema_version": 2,
+        "attribution_source": "trailer_author",
         "provenance": provenance,
         "coverage": {"total_commits": len(commits), "matched_commits": len(matches),
                      "researched_people": len(data["people"])},
-        "companies": sorted((company for company in data["companies"] if company["company_id"] in used),
-                            key=lambda company: company["company_id"]),
+        # Keep the reviewed catalog searchable even without eligible patch
+        # authors. A zero-count option is not evidence of an affiliation.
+        "companies": sorted(data["companies"], key=lambda company: company["company_id"]),
         "matches": [{"branch": branch, "commit_id": commit_id,
                      "companies": [{"company_id": company_id, "status": status}
                                    for company_id, status in sorted(companies.items())]}

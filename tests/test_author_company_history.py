@@ -320,17 +320,64 @@ class SnapshotAndCliTests(unittest.TestCase):
 
 class WebsiteSnapshotTests(unittest.TestCase):
     def test_website_projection_never_promotes_candidates_and_deduplicates_roles(self):
-        def row(status, company_status="supported", company_id="company:enterprisedb", branch="master"):
+        def row(status, company_status="supported", company_id="company:enterprisedb", branch="master",
+                roles=("patch_author",)):
             return {"branch": branch, "commit_id": "one", "attribution_status": status,
+                    "roles": list(roles),
                     "affiliations": [{"company_id": company_id, "status": company_status}]}
         records = [row("supported"), row("estimated", "estimated"), row("unknown", company_id="company:databricks"),
                    row("conflicting", company_id="company:databricks"), row("supported", "candidate", "company:databricks"),
-                   row("estimated", "estimated", branch="stable")]
+                   row("estimated", "estimated", branch="stable"),
+                   row("supported", company_id="company:databricks", roles=("git_author",)),
+                   row("supported", company_id="company:databricks", roles=("co_author",)),
+                   row("supported", company_id="company:databricks", roles=()),
+                   row("supported", branch="stable", roles=("git_author", "co_author"))]
         snapshot = ach.website_snapshot([{}, {}], records, load_pilot(), {"timestamp_basis": "committer"})
         self.assertEqual(snapshot["coverage"]["matched_commits"], 2)
-        self.assertEqual([c["company_id"] for c in snapshot["companies"]], ["company:enterprisedb"])
+        self.assertEqual(len(snapshot["companies"]), 6)
         self.assertEqual(snapshot["matches"][0]["companies"], [{"company_id": "company:enterprisedb", "status": "supported"}])
         self.assertEqual(snapshot["matches"][1]["companies"][0]["status"], "estimated")
+
+    def test_website_uses_trailer_people_not_git_or_coauthor_people(self):
+        data = load_pilot()
+        data["histories"] = [
+            history(),
+            history(person_id="person:tom-lane", company_id="company:snowflake", history_id="tom"),
+            history(person_id="person:zsolt-parragi", company_id="company:percona", history_id="zsolt"),
+        ]
+        commits = [{
+            "branch": "master", "commit_id": "different-people", "author_name": "Bruce Momjian",
+            "author_email": "bruce@momjian.us", "committer_email": "bruce@momjian.us",
+            "author_date": "2024-01-01T00:00:00Z", "commit_date": "2025-02-18T20:51:31Z",
+            "trailer_author": ["Tom Lane <tgl@sss.pgh.pa.us>", "Zsolt Parragi <zsolt.parragi@percona.com>"],
+            "co_authored_by": ["Bruce Momjian <bruce@momjian.us>"],
+        }]
+        records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
+        # The offline audit still records all roles and their companies.
+        self.assertEqual(len(records), 3)
+        self.assertTrue(all(row["attribution_status"] == "supported" for row in records))
+        snapshot = ach.website_snapshot(commits, records, data, {"timestamp_basis": "committer"})
+        self.assertEqual(snapshot["matches"][0]["companies"], [
+            {"company_id": "company:percona", "status": "supported"},
+            {"company_id": "company:snowflake", "status": "supported"},
+        ])
+
+    def test_website_never_falls_back_for_missing_or_unresolved_trailer_authors(self):
+        data = load_pilot()
+        data["histories"] = [history()]
+        base = {"branch": "master", "author_name": "Bruce Momjian", "author_email": "bruce@momjian.us",
+                "commit_date": "2025-02-18T20:51:31Z", "co_authored_by": ["Bruce Momjian <bruce@momjian.us>"]}
+        commits = [{**base, "commit_id": "missing"}]
+        for i, trailer in enumerate([None, [], ["Bruce Momjian"], ["Bruce <broken>"], ["Unknown <unknown@example.test>"]]):
+            commits.append({**base, "commit_id": str(i), "trailer_author": trailer})
+        # A Git/co-author qualifies only if also resolved from an actual Author trailer.
+        commits.append({**base, "commit_id": "also-patch", "trailer_author": [
+            "Bruce Momjian <bruce@momjian.us>", "Bruce Momjian <bruce@momjian.us>"]})
+        records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
+        snapshot = ach.website_snapshot(commits, records, data, {})
+        self.assertEqual(snapshot["matches"], [{"branch": "master", "commit_id": "also-patch", "companies": [
+            {"company_id": "company:enterprisedb", "status": "supported"}]}])
+        self.assertEqual(snapshot["coverage"]["matched_commits"], 1)
 
     def test_website_build_is_deterministic_sparse_and_bound_to_commit_snapshot(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -342,10 +389,13 @@ class WebsiteSnapshotTests(unittest.TestCase):
             self.assertEqual(ach.main(args), 0)
             self.assertEqual(before, output.read_bytes())
             snapshot = json.loads(before)
+            self.assertEqual(snapshot["schema_version"], 2)
+            self.assertEqual(snapshot["attribution_source"], "trailer_author")
             self.assertEqual(snapshot["provenance"]["timestamp_basis"], "committer")
             self.assertEqual(snapshot["provenance"]["input_sha256"]["commit_snapshot_sha256"], hashlib.sha256(SAMPLE_COMMITS.read_bytes()).hexdigest())
-            self.assertEqual(snapshot["coverage"], {"total_commits": 7, "matched_commits": 1, "researched_people": 7})
-            self.assertEqual(snapshot["matches"][0]["companies"][0]["status"], "estimated")
+            self.assertEqual(snapshot["coverage"], {"total_commits": 7, "matched_commits": 0, "researched_people": 7})
+            self.assertEqual(snapshot["matches"], [])
+            self.assertEqual(len(snapshot["companies"]), 6)
             self.assertEqual(len(list(path.iterdir())), 1)
 
     def test_website_output_cannot_alias_input(self):
@@ -361,7 +411,7 @@ class WebsiteSnapshotTests(unittest.TestCase):
 
 
 class SixCompanyCoverageTests(unittest.TestCase):
-    def test_real_sample_exports_all_six_companies_as_estimates(self):
+    def test_real_sample_keeps_six_company_catalog_but_excludes_git_only_matches(self):
         data = load_pilot()
         commits = ach.read_json(PILOT / "company-coverage-commits.json")
         self.assertEqual(ach.validate_dataset(data), [])
@@ -372,7 +422,14 @@ class SixCompanyCoverageTests(unittest.TestCase):
             "company:microsoft", "company:amazon", "company:databricks",
             "company:snowflake", "company:enterprisedb", "company:percona",
         })
-        self.assertEqual(snapshot["coverage"], {"total_commits": 6, "matched_commits": 6, "researched_people": 7})
+        self.assertEqual(snapshot["coverage"], {"total_commits": 6, "matched_commits": 4, "researched_people": 7})
+        self.assertEqual({c["company_id"] for row in snapshot["matches"] for c in row["companies"]}, {
+            "company:microsoft", "company:amazon", "company:databricks", "company:percona",
+        })
+        self.assertTrue(all(row["commit_id"] not in {
+            "06dc1ffd24096f7c71d1abeaa9e96fec4db9313d",  # Git Bruce, patch Laurenz
+            "1fd772d192909a4f0e1ce88ebc72c8c43b81b025",  # Git Tom, patch Michael
+        } for row in snapshot["matches"]))
         for row in snapshot["matches"]:
             self.assertEqual(len(row["companies"]), 1)
             self.assertEqual(row["companies"][0]["status"], "estimated")

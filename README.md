@@ -105,12 +105,15 @@ then attributes commit participants using either recorded Git timestamp. It
 includes a seven-person research sample, explicit uncertainty, reproducible
 exports, and an independent PostgreSQL schema. The site build derives a compact
 `company_affiliations.json` from the exact published commits and exposes a
-searchable **Companies** multiselect beside the author/date controls. Select any
+searchable **Patch author companies** multiselect beside the author/date controls. Select any
 number of companies; estimates are included by default and can be excluded.
-Company and author selections are independent commit-level filters. The UI
+Company matching uses **only `trailer_author`**, never Git authors or
+`co_authored_by` as a fallback. Company and author selections are independent
+commit-level filters. The UI
 shows coverage and uncertainty, not company sponsorship or population-wide
 company totals. Microsoft, Amazon/AWS, Databricks, Snowflake, EDB and Percona
-have evidence-linked estimated matches; aliases share one company identity.
+remain searchable; companies without usable patch-author evidence show zero
+matches. Aliases share one company identity.
 Research is still limited to seven people; automatic mail
 collection and broader reviewed coverage remain future work.
 

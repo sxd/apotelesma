@@ -29,14 +29,14 @@ try {
   const base = { branch: "master", author_date: "2025-02-18T10:00:00Z", commit_date: "2025-02-18T11:00:00Z", author_name: "Git Owner", author_email: "owner@example.test", insertions: 1, deletions: 0, changed_files: 1 };
   const commits = [
     { ...base, commit_id: "one", summary: "First", trailer_author: ["Patch Person <patch@example.test>"] },
-    { ...base, commit_id: "two", summary: "Second", co_authored_by: ["Coauthor <co@example.test>"] },
-    { ...base, commit_id: "both", summary: "Concurrent" },
+    { ...base, commit_id: "two", summary: "Second", trailer_author: ["Second Person <second@example.test>"], co_authored_by: ["Coauthor <co@example.test>"] },
+    { ...base, commit_id: "both", summary: "Concurrent", trailer_author: ["Third Person <third@example.test>", "Fourth Person <fourth@example.test>"] },
     { ...base, commit_id: "one", branch: "stable", summary: "Backpatch without evidence" },
     { ...base, commit_id: "unknown", summary: "Unknown" },
   ];
   const commitText = JSON.stringify(commits);
   const snapshot = {
-    schema_version: 1,
+    schema_version: 2, attribution_source: "trailer_author",
     provenance: { timestamp_basis: "committer", input_sha256: { commit_snapshot_sha256: createHash("sha256").update(commitText).digest("hex") } },
     coverage: { total_commits: 5, matched_commits: 3, researched_people: 3 },
     companies: [
@@ -59,6 +59,8 @@ try {
     if (mode === "invalid") return route.fulfill({ body: "invalid", contentType: "application/json" });
     const value = structuredClone(snapshot);
     if (mode === "stale") value.provenance.input_sha256.commit_snapshot_sha256 = "wrong";
+    if (mode === "legacy") { value.schema_version = 1; delete value.attribution_source; }
+    if (mode === "wrong-role") value.attribution_source = "git_author";
     if (mode === "empty") { value.matches = []; value.companies = []; value.coverage.matched_commits = 0; }
     return route.fulfill({ json: value });
   });
@@ -71,6 +73,9 @@ try {
   const ready = async () => { await page.waitForFunction(() => document.querySelector("#selection-summary")?.textContent.includes("commits")); };
   await page.goto(url); await ready();
   assert.equal(await search.isEnabled(), true);
+  assert.match(await page.locator("#company-help").textContent(), /trailer_author.*only/);
+  assert.match(await page.locator("#company-method").textContent(), /only to patch authors in trailer_author/);
+  assert.equal(await page.getByRole("columnheader", { name: "Patch author companies", exact: true }).count(), 1);
   await search.click();
   assert.equal(await page.locator("#company-filter input").count(), 8);
   await search.fill("edb");
@@ -136,7 +141,7 @@ try {
       await page.locator(".filter-grid").screenshot({ path: `${process.env.BROWSER_ARTIFACT_DIR}/companies-${width}.png` });
     }
   }
-  for (const failure of ["missing", "stale", "invalid", "empty"]) {
+  for (const failure of ["missing", "stale", "legacy", "wrong-role", "invalid", "empty"]) {
     mode = failure; await page.goto(url); await ready(); await expectCount(5);
     assert.equal(await search.isEnabled(), failure === "empty");
     if (failure === "empty") {
@@ -150,6 +155,8 @@ try {
   await page.goto(url); await ready();
   assert.equal(await search.isEnabled(), true);
   const real = JSON.parse(await readFile(resolve(root, "data/company_affiliations.json"), "utf8"));
+  assert.equal(real.schema_version, 2);
+  assert.equal(real.attribution_source, "trailer_author");
   await expectCount(real.coverage.total_commits.toLocaleString("en-US"));
   await search.fill("edb");
   const edb = page.getByRole("checkbox", { name: "EnterpriseDB", exact: true });
@@ -171,7 +178,8 @@ try {
     assert.equal(await option.inputValue(), idValue);
     await option.check();
     const expected = real.matches.filter((r) => r.companies.some((c) => c.company_id === idValue)).length;
-    assert.ok(expected > 0, `${query} needs a real researched match`);
+    // A catalog option can legitimately have no eligible trailer-author evidence.
+    assert.match(await option.locator("..").textContent(), new RegExp(`${expected.toLocaleString("en-US")} commits?`));
     await expectCount(expected.toLocaleString("en-US"));
   }
   await page.locator("#company-done").click();

@@ -294,8 +294,8 @@ function renderCompanyFilter() {
   }
   const { matched, total } = state.companyScope;
   const basis = state.companyIndex.provenance.timestamp_basis === "committer" ? "Git committer" : "Git author";
-  companyCoverage.textContent = `${formatNumber(matched)} of ${formatNumber(total)} commits in this branch/date scope have ${state.filters.includeEstimated ? "supported or estimated" : "supported"} affiliations. Limited research: ${state.companyIndex.coverage.researched_people} people; other affiliations may be unknown.`;
-  document.querySelector("#company-method").textContent = `Affiliations are matched at the ${basis} timestamp. The date filter and charts use Git author dates. Option counts are before author and company filters.`;
+  companyCoverage.textContent = `${formatNumber(matched)} of ${formatNumber(total)} commits in this branch/date scope have ${state.filters.includeEstimated ? "supported or estimated" : "supported"} patch-author affiliations. Limited research: ${state.companyIndex.coverage.researched_people} people; other affiliations may be unknown.`;
+  document.querySelector("#company-method").textContent = `Companies belong only to patch authors in trailer_author, not to Git authors or co-authors unless also credited there. Their affiliations are matched at the ${basis} timestamp. The date filter and charts use Git author dates. Option counts are before author and company filters.`;
 }
 
 function renderCompanyStatus() {
@@ -446,7 +446,7 @@ function renderRecentCommits() {
         <td data-label="Branch"><span class="pill" style="--pill-color:${getBranchColor(item.branch)}">${escapeHtml(item.branch)}</span></td>
         <td data-label="Git author">${escapeHtml(item.author_name)}</td>
         <td data-label="Patch authors">${renderPatchAuthors(item)}</td>
-        <td data-label="Company affiliations">${escapeHtml(companyLabel || (state.companyIndex ? "No usable evidence" : "Unavailable"))}</td>
+        <td data-label="Patch author companies">${escapeHtml(companyLabel || (state.companyIndex ? "No usable evidence" : "Unavailable"))}</td>
         <td data-label="Summary">${escapeHtml(item.summary)}</td>
       `;
       return row;

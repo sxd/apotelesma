@@ -1,10 +1,12 @@
-// Only accepted, dated matches are exported. A missing row means no usable
+// Only accepted, dated trailer_author matches are exported. A missing row means no usable
 // affiliation evidence, never "unaffiliated" or "independent".
 export const companyCommitKey = (commit) => JSON.stringify([commit.branch, commit.commit_id]);
 
 export function buildCompanyIndex(snapshot, commits) {
   const invalid = () => { throw new Error("Invalid company affiliation snapshot"); };
-  if (snapshot?.schema_version !== 1 || !["committer", "author"].includes(snapshot.provenance?.timestamp_basis)
+  // Reject older all-participant exports, even if their commit hash is current.
+  if (snapshot?.schema_version !== 2 || snapshot.attribution_source !== "trailer_author"
+      || !["committer", "author"].includes(snapshot.provenance?.timestamp_basis)
       || !Array.isArray(snapshot.companies) || !Array.isArray(snapshot.matches)
       || snapshot.coverage?.total_commits !== commits.length
       || snapshot.coverage?.matched_commits !== snapshot.matches.length

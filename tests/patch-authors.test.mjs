@@ -40,7 +40,7 @@ test("actual recent rows, desktop headers and mobile labels have six columns in 
   ui.state.data.commits = [{ ...commit, co_authored_by: [hostile] }];
   const [row] = ui.render();
   const cells = [...row.matchAll(/<td data-label="([^"]+)">([\s\S]*?)<\/td>/g)];
-  const labels = ["When", "Branch", "Git author", "Patch authors", "Company affiliations", "Summary"];
+  const labels = ["When", "Branch", "Git author", "Patch authors", "Patch author companies", "Summary"];
   assert.deepEqual(cells.map((cell) => cell[1]), labels);
   assert.equal(cells[2][2], "Git Author");
   assert.match(cells[3][2], /Patch One<\/li><li>Patch Two/);
