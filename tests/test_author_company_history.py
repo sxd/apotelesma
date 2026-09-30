@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import copy
+import contextlib
 import hashlib
+import io
 import json
 import shutil
 import tempfile
@@ -318,6 +320,60 @@ class SnapshotAndCliTests(unittest.TestCase):
                 ach.load_dataset(data_dir)
 
 
+class ResearchCoverageTests(unittest.TestCase):
+    def test_cli_report_is_read_only_and_identifies_input_revisions(self):
+        before = {path.name: path.read_bytes() for path in PILOT.glob("*.json")}
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            status = ach.main(["research-coverage", "--data-dir", str(PILOT),
+                               "--commits", str(SAMPLE_COMMITS)])
+        self.assertEqual(status, 0)
+        report = json.loads(output.getvalue())
+        self.assertEqual(report["commit_snapshot_sha256"], hashlib.sha256(SAMPLE_COMMITS.read_bytes()).hexdigest())
+        self.assertEqual(report["research_provenance"]["input_sha256"]["histories.json"],
+                         hashlib.sha256(before["histories.json"]).hexdigest())
+        self.assertEqual(report["attribution_source"], "trailer_author")
+        self.assertFalse(report["exhaustive_affiliation_research"])
+        self.assertEqual(before, {path.name: path.read_bytes() for path in PILOT.glob("*.json")})
+
+    def test_inventory_is_trailer_only_and_does_not_merge_names(self):
+        data = load_pilot()
+        data["histories"] = [history()]
+        base = {"author_name": "Git Only", "author_email": "git@example.test",
+                "co_authored_by": ["Coauthor <co@example.test>"],
+                "commit_date": "2025-02-18T20:51:31Z", "commit_id": "same", "branch": "master"}
+        commits = [
+            {**base, "trailer_author": ["Bruce Momjian <bruce@MOMJIAN.US>", "bruce@momjian.us"]},
+            {**base, "branch": "stable", "trailer_author": ["Bruce Momjian <bruce@momjian.us>"]},
+            {**base, "commit_id": "unresolved", "trailer_author": ["Bruce Momjian", "Unreviewed <new@example.test>"]},
+            {**base, "commit_id": "git-only"},
+        ]
+        report = ach.research_coverage(commits, data)
+        self.assertEqual(report["candidate_count"], 3)
+        self.assertEqual(report["email_candidate_count"], 2)
+        self.assertEqual(report["resolved_people"], 1)
+        self.assertFalse(report["exhaustive_affiliation_research"])
+        resolved = next(row for row in report["candidates"] if row["person_id"])
+        self.assertEqual(resolved["commit_count"], 2)
+        self.assertEqual(resolved["matched_commit_count"], 2)
+        self.assertEqual(resolved["companies_with_history"], ["company:enterprisedb"])
+        for row in report["candidates"]:
+            if row["email"] != "bruce@momjian.us":
+                self.assertIsNone(row["person_id"])
+                self.assertEqual(row["matched_commit_count"], 0)
+
+    def test_inventory_missing_dates_opaque_credits_and_determinism(self):
+        data = load_pilot()
+        commits = [{"branch": "master", "commit_id": "one", "trailer_author": [
+            "Alice, Bob <person@example.test>", "Bruce Momjian <bruce@momjian.us>"]}]
+        first = ach.research_coverage(commits, data)
+        self.assertEqual(first, ach.research_coverage(commits, data))
+        self.assertEqual(first["email_candidate_count"], 1)
+        self.assertEqual(first["candidate_count"], 2)
+        self.assertTrue(all(row["first_commit_date"] is None and row["last_commit_date"] is None
+                            and row["matched_commit_count"] == 0 for row in first["candidates"]))
+
+
 class WebsiteSnapshotTests(unittest.TestCase):
     def test_website_projection_never_promotes_candidates_and_deduplicates_roles(self):
         def row(status, company_status="supported", company_id="company:enterprisedb", branch="master",
@@ -393,8 +449,12 @@ class WebsiteSnapshotTests(unittest.TestCase):
             self.assertEqual(snapshot["attribution_source"], "trailer_author")
             self.assertEqual(snapshot["provenance"]["timestamp_basis"], "committer")
             self.assertEqual(snapshot["provenance"]["input_sha256"]["commit_snapshot_sha256"], hashlib.sha256(SAMPLE_COMMITS.read_bytes()).hexdigest())
-            self.assertEqual(snapshot["coverage"], {"total_commits": 7, "matched_commits": 0, "researched_people": 7})
-            self.assertEqual(snapshot["matches"], [])
+            self.assertEqual(snapshot["coverage"], {"total_commits": 7, "matched_commits": 5,
+                                                    "researched_people": len(load_pilot()["people"])})
+            # Newly reviewed Robert histories now cover his five patch credits;
+            # Bruce's Git-only EDB affiliation still cannot supply a match.
+            self.assertTrue(all(row["companies"] == [{"company_id": "company:enterprisedb", "status": "estimated"}]
+                                for row in snapshot["matches"]))
             self.assertEqual(len(snapshot["companies"]), 6)
             self.assertEqual(len(list(path.iterdir())), 1)
 
@@ -422,7 +482,8 @@ class SixCompanyCoverageTests(unittest.TestCase):
             "company:microsoft", "company:amazon", "company:databricks",
             "company:snowflake", "company:enterprisedb", "company:percona",
         })
-        self.assertEqual(snapshot["coverage"], {"total_commits": 6, "matched_commits": 4, "researched_people": 7})
+        self.assertEqual(snapshot["coverage"], {"total_commits": 6, "matched_commits": 4,
+                                               "researched_people": len(data["people"])})
         self.assertEqual({c["company_id"] for row in snapshot["matches"] for c in row["companies"]}, {
             "company:microsoft", "company:amazon", "company:databricks", "company:percona",
         })
@@ -459,7 +520,7 @@ class SixCompanyCoverageTests(unittest.TestCase):
         nazir = histories["hist:nazir-2026-03-18-observation"]
         self.assertEqual(ach.history_membership(nazir, datetime(2026, 3, 19, tzinfo=UTC)), ("none", None))
 
-    def test_domains_plus_aliases_and_robert_transition_are_not_guessed(self):
+    def test_domains_plus_aliases_and_current_employers_are_not_guessed(self):
         data = load_pilot()
         commits = [
             {"branch": "master", "commit_id": str(i), "author_email": email,
@@ -472,8 +533,68 @@ class SixCompanyCoverageTests(unittest.TestCase):
             ])
         ]
         records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
-        self.assertTrue(all(r["attribution_status"] == "unknown" for r in records))
+        self.assertTrue(all(r["attribution_status"] == "unknown" for r in records if r["commit_id"] != "3"))
+        robert = next(r for r in records if r["commit_id"] == "3")
+        self.assertEqual(robert["attribution_status"], "estimated")
+        self.assertEqual({a["company_id"] for a in robert["affiliations"]}, {"company:enterprisedb"})
         self.assertEqual(ach.website_snapshot(commits, records, data, {})["matches"], [])
+
+    def test_new_transition_observations_do_not_fill_company_change_gaps(self):
+        data = load_pilot()
+        cases = [
+            ("Robert Haas <robertmhaas@gmail.com>", "2026-08-31", "company:enterprisedb"),
+            ("Robert Haas <robertmhaas@gmail.com>", "2026-09-10", None),
+            ("Robert Haas <robertmhaas@gmail.com>", "2026-09-29", "company:databricks"),
+            ("Tristan Partin <tristan@partin.io>", "2026-01-10", "company:databricks"),
+            ("Tristan Partin <tristan@partin.io>", "2026-06-01", None),
+            ("Tristan Partin <tristan@partin.io>", "2026-09-28", "company:amazon"),
+        ]
+        commits = [{"branch": "master", "commit_id": str(i), "trailer_author": [credit],
+                    "commit_date": day + "T12:00:00Z"}
+                   for i, (credit, day, _) in enumerate(cases)]
+        records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
+        patch_rows = [row for row in records if "patch_author" in row["roles"]]
+        self.assertEqual(len(patch_rows), len(cases))
+        for row in patch_rows:
+            expected = cases[int(row["commit_id"])][2]
+            self.assertEqual(row["attribution_status"], "estimated" if expected else "unknown")
+            self.assertEqual({a["company_id"] for a in row["affiliations"]}, {expected} if expected else set())
+
+    def test_bounded_estimates_have_two_nearby_same_company_observations(self):
+        data = load_pilot()
+        evidence = {e["evidence_id"]: e for e in data["evidence"]}
+        bounded = [h for h in data["histories"] if h["history_id"].startswith("hist:bounded-")]
+        self.assertGreater(len(bounded), 100)
+        for history_row in bounded:
+            self.assertEqual(history_row["status"], "estimated")
+            self.assertFalse(history_row["end_ongoing"])
+            self.assertEqual(len(history_row["evidence_ids"]), 2)
+            left, right = [evidence[key] for key in history_row["evidence_ids"]]
+            start, end = [datetime.fromisoformat(e["source_date"][:10]).replace(tzinfo=UTC)
+                          for e in (left, right)]
+            self.assertGreater((end - start).days, 0)
+            self.assertLessEqual((end - start).days, 366)
+            self.assertEqual(history_row["start_earliest"], start.strftime("%Y-%m-%dT00:00:00Z"))
+            self.assertEqual(history_row["end_earliest"], end.strftime("%Y-%m-%dT23:59:59Z"))
+            self.assertEqual({left["person_id"], right["person_id"]}, {history_row["person_id"]})
+            self.assertEqual({left["company_id"], right["company_id"]}, {history_row["company_id"]})
+            for observation in evidence.values():
+                if (observation["person_id"] != history_row["person_id"] or not observation.get("company_id")
+                        or not observation.get("source_date") or observation["review_status"] == "rejected"):
+                    continue
+                observed = ach.parse_iso(observation["source_date"], field="source_date")
+                if start <= observed < end:
+                    self.assertEqual(observation["company_id"], history_row["company_id"])
+
+    def test_expanded_people_have_reviewed_identity_and_affiliation_evidence(self):
+        data = load_pilot()
+        self.assertGreaterEqual(len(data["people"]), 58)
+        mapped = {row["person_id"] for row in data["identity-mappings"]}
+        researched = {row["person_id"] for row in data["histories"]}
+        for person in data["people"]:
+            self.assertIn(person["person_id"], mapped)
+            self.assertIn(person["person_id"], researched)
+        self.assertFalse(any("generated.invalid" in (e.get("source_url") or "") for e in data["evidence"]))
 
     def test_research_manifest_hashes_and_exact_empty_queries(self):
         data = load_pilot()
@@ -482,7 +603,7 @@ class SixCompanyCoverageTests(unittest.TestCase):
         self.assertEqual(manifest["company_coverage_sample"]["sha256"], hashlib.sha256((PILOT / "company-coverage-commits.json").read_bytes()).hexdigest())
         self.assertEqual(manifest["company_coverage_sample"]["source_export_sha256"], manifest["commit_source"]["sha256"])
         empty = [r for r in data["retrieval-ledger"] if r["query"] == ""]
-        self.assertEqual(len(empty), 2)
+        self.assertGreaterEqual(len(empty), 2)
         self.assertEqual(ach.validate_dataset(data), [])
         empty[0].pop("author")
         self.assertTrue(any("exact query string" in error for error in ach.validate_dataset(data)))

@@ -1,11 +1,25 @@
 {
   "schema_version": "1",
-  "evidence_snapshot": "RESEARCH.md sha256:360dd0c1cd118b96efdb0f3c771aa939d776dc2115d21eb3b038b42f7c5dc6f9",
-  "previous_evidence_snapshot": "RESEARCH.md sha256:4d65a8e6485e56bbb8aa493b2e3e0a7783ddc3c3b2f2a0b98acfdd867ab48b2f",
-  "mapping_revision": "six-company-agent-reviewed-2026-09-29-v2",
-  "history_revision": "six-company-agent-reviewed-2026-09-29-v2",
+  "evidence_snapshot": "RESEARCH.md sha256:725283d8479a9c5f21f49f0a8da515ed585b7c1971755ef6f87bfedb9e6531ef",
+  "previous_evidence_snapshot": "RESEARCH.md sha256:360dd0c1cd118b96efdb0f3c771aa939d776dc2115d21eb3b038b42f7c5dc6f9",
+  "mapping_revision": "expanded-company-research-2026-09-30-v3",
+  "history_revision": "expanded-company-research-2026-09-30-v3",
   "rule_revision": "author-company-attribution/1",
-  "retrieval_ledger_revision": "six-company-mail-sample-2026-09-29-v2",
+  "retrieval_ledger_revision": "expanded-company-mail-sample-2026-09-30-v3",
+  "history_estimation_policy": {
+    "revision": "bounded-observation-gap/1",
+    "max_gap_days": 366,
+    "automatic_at_build": false,
+    "note": "Curated, estimated continuity between consecutive reviewed same-company observations; no intervening observed company or extrapolation. Other explicitly sourced retrospective histories retain their own methods."
+  },
+  "research_scope": {
+    "attribution_source": "trailer_author",
+    "people": 58,
+    "exact_email_mappings": 62,
+    "exhaustive_affiliation_research": false,
+    "candidate_inventory_command": "research-coverage",
+    "note": "Complete inventory of export credits, sampled affiliation evidence. Unknown identities, gaps and transitions remain unresolved."
+  },
   "commit_source": {
     "path": "site/dist/data/commits.json",
     "sha256": "09108f7ab144fbe75277921b01abd915a8240eb945b7d880b29462c449279114",

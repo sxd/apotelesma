@@ -97,12 +97,12 @@ for direct PostgreSQL queries, with setup notes in [`grafana/README.md`](./grafa
 That directory also documents the offline validator and the live Grafana smoke test for the
 Infinity-based dashboard.
 
-## Author/company affiliation research (pilot)
+## Author/company affiliation research
 
 The [affiliation-history pilot](./docs/author-company-affiliations.md)
 keeps dated evidence and reviewed identity mappings in durable, versioned files,
 then attributes commit participants using either recorded Git timestamp. It
-includes a seven-person research sample, explicit uncertainty, reproducible
+includes 58 researched people, explicit uncertainty, reproducible
 exports, and an independent PostgreSQL schema. The site build derives a compact
 `company_affiliations.json` from the exact published commits and exposes a
 searchable **Patch author companies** multiselect beside the author/date controls. Select any
@@ -114,8 +114,11 @@ shows coverage and uncertainty, not company sponsorship or population-wide
 company totals. Microsoft, Amazon/AWS, Databricks, Snowflake, EDB and Percona
 remain searchable; companies without usable patch-author evidence show zero
 matches. Aliases share one company identity.
-Research is still limited to seven people; automatic mail
-collection and broader reviewed coverage remain future work.
+The expanded snapshot combines dated mailing-list evidence with primary company
+announcements. It is not an exhaustive employment directory. A read-only
+`research-coverage` command inventories every patch-author identity in an export,
+including unresolved credits, so coverage gaps remain visible. Automatic mail
+collection and exhaustive historical coverage remain future work.
 
 ## Branch Model
 

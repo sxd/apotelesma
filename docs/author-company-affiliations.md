@@ -1,8 +1,8 @@
-# Author/company affiliation pilot
+# Author/company affiliation research
 
 This is an evidence-linked pilot for estimating which companies commit participants were associated with at a recorded commit timestamp. Offline research consumes the existing commits JSON format; the site build now publishes a compact filtering projection. The checked-in input lives in `data/author-affiliations/`; keep it out of `site/data/`, which `scripts/export-json.sh` clears before export.
 
-The research is deliberately small: the initial Robert Haas, Bruce Momjian, and Tom Lane pilot is preserved, with four additional people covering the requested six companies. `commits.json` retains the original seven branch-qualified commits; `company-coverage-commits.json` adds a separate six-company regression sample. Research is agent-inspected and provisional; `agent-reviewed` does not mean human-reviewed. It does not establish company sponsorship or support population-wide company totals.
+The 2026-09-30 expansion covers 58 people and 62 reviewed email identities across the six requested companies. The original evidence is preserved. `commits.json` retains the original seven branch-qualified commits; `company-coverage-commits.json` retains the separate six-company regression sample. Research is agent-inspected and provisional; `agent-reviewed` does not mean human-reviewed. It does not establish company sponsorship or support population-wide company totals.
 
 ## Run it
 
@@ -18,11 +18,23 @@ python3 scripts/author_company_history.py build \
   --data-dir data/author-affiliations \
   --commits data/author-affiliations/commits.json \
   --out-dir /tmp/author-affiliation-build
+
+# Read-only JSON inventory of every patch-author candidate in the full export.
+python3 scripts/author_company_history.py research-coverage \
+  --data-dir data/author-affiliations \
+  --commits site/data/commits.json
 ```
 
 The default timestamp basis is `committer`, which uses `commit_date` (the recorded Git committer timestamp). Use `--timestamp-basis author` to select the separate recorded `author_date`. A missing or invalid selected timestamp remains unknown; the other timestamp is never substituted. The output directory can be reused, with each output replaced atomically after validation. It cannot alias an input file through a path or symlink.
 
 The build writes deterministic `raw_credits.json`, `commit_author_companies.json`, `coverage.json`, and `manifest.json`. The output manifest contains SHA-256 hashes of every input JSON file and the commit snapshot, plus hashes of all generated data files. No build timestamp is injected, so identical inputs produce byte-identical outputs.
+
+`research-coverage` prints JSON to stdout without changing any files. It lists
+all `trailer_author` candidates, exact raw values, branch-qualified commit
+counts, date bounds, reviewed identity status, companies with histories and
+actual matched-commit counts. Email keys are not unique people; opaque and
+name-only credits remain separate. The report includes input fingerprints and
+explicitly does not claim exhaustive affiliation research.
 
 ## Input contract
 
@@ -78,7 +90,7 @@ Optional `relationship_group_id` and `relationship_group_mode` express multiple-
 {"ledger_id":"ledger:robert-no-match-control","query":"zzamautaaffiliationnomatch73921","senders":["robertmhaas@gmail.com"],"after":"2026-08-01T00:00:00Z","before":"2026-09-29T00:00:00Z","offset":0,"limit":3,"retrieved_at":"2026-09-29T00:00:00Z","retrieval_precision":"day","message_ids":[],"result_count":3,"semantics_verified":false,"coverage_status":"sampled","coverage_note":"Sender/date matches appeared despite no query-term match."}
 ```
 
-`coverage_status` is `sampled`, `bounded`, or `exhaustive`; exhaustive requires `semantics_verified: true`. The pilot records eight actual search requests with their sender/date filters, pagination and returned Message-IDs. Retrieval times have day-level precision. Only the full messages identified in `evidence.json` were accepted for review; other search hits are discovery results. A sender/date hit is not necessarily a query-term match. Search results do not prove mailbox completeness, and no hit does not prove no affiliation. Re-scan overlapping windows to catch late imports or corrections.
+`coverage_status` is `sampled`, `bounded`, or `exhaustive`; exhaustive requires `semantics_verified: true`. The expanded ledger records 210 completed search requests with exact filters, pagination and returned Message-IDs. Retrieval times have day-level precision. Only messages identified in `evidence.json` support accepted claims; other search hits are discovery results. A sender/date hit is not necessarily a query-term match. Search results do not prove mailbox completeness, and no hit does not prove no affiliation. Re-scan overlapping windows to catch late imports or corrections.
 
 `manifest.json`:
 
@@ -118,13 +130,13 @@ participant records; this demonstrates processing coverage, not researched
 company coverage. The schema test runs only in its own temporary PostgreSQL
 cluster and checks repeat installation and retained mapping/history revisions.
 
-The seven-commit pilot produces 16 raw credits and 15 participant records: one
-estimated affiliation and fourteen unknowns. These intentionally sparse results
-must not be presented as a complete employment directory. Robert Haas's
-Databricks transition remains undated in the accepted evidence.
+The original seven-commit fixture still produces 16 raw credits and 15 participant
+records. New evidence now supports five estimated Robert Haas patch-author
+matches that were previously unknown. Robert's Databricks signature is observed
+on 2026-09-29; his exact transition date remains unknown.
 
-Next milestones are broader reviewed research (approximately twenty people),
-verified mail-retrieval coverage, and a version-aware JSON-to-PostgreSQL importer.
+Next milestones are filling the reported identity/date gaps, verified
+mail-retrieval coverage, and a version-aware JSON-to-PostgreSQL importer.
 Automated collection and population-wide company totals remain unimplemented.
 
 ## Website company selector
@@ -194,47 +206,63 @@ search/selection, and keyboard navigation. Its matching contract is:
   sponsorship. Recent commits show a **Patch author companies** column with
   company names and status labels.
 
-The research now covers seven people and all six requested companies:
+The research now covers 58 people and all six requested companies:
 Microsoft, Amazon Web Services (AWS), Databricks, Snowflake, EnterpriseDB and
 Percona. Amazon/AWS and EnterpriseDB/EDB aliases do not create duplicate totals;
 “Snowflakes” is accepted as a search spelling. The catalog does not imply that
 every employee or commit has been researched. More companies appear when added
 to the reviewed catalog; only accepted dated patch-author evidence creates matches.
 
-Microsoft (Nazir Bilal Yavuz), AWS (Masahiko Sawada), Databricks (Matthias van de
-Meent) and EDB (Bruce Momjian) use narrow, same-day signature estimates. Percona's
+Individual signatures still provide narrow observation-day estimates. The
+expansion adds 239 explicitly estimated intervals between consecutive reviewed
+same-company observations no more than 366 days apart. These intervals never
+extend before the first or beyond the last observed day; another observed
+company prevents bridging, and larger gaps remain unknown. This is a curated
+continuity hypothesis, not a proven employment interval or an automatic build
+inference. Microsoft also supplies an explicit retrospective 2024 team list;
+year-only joins retain uncertain boundaries and competing evidence stays
+unresolved. Percona's
 explicit retrospective statement supplies Zsolt Parragi's uncertain 2017 start
 and continuing employment, capped at the retrieval horizon. Snowflake's
 retrospective team account supplies an estimated Tom Lane parent/team
 association after the June 2025 acquisition, **not** an exact legal-employer
 transfer. Crunchy Data is not a Snowflake alias and earlier commits are not
-renamed. Robert Haas's Databricks transition remains unresolved. All current
+renamed. Robert Haas and Tristan Partin have separately dated company changes;
+their unobserved transition gaps remain unknown. All current
 website matches are estimates; disabling estimates may show zero matches.
 See `data/author-affiliations/RESEARCH.md` for sources, date bounds and caveats.
 
-On the verified 71,200-row local export, trailer-only attribution yields 356
-distinct branch/commit matches (down from 713 when all contributor roles counted).
+On the same verified 71,200-row local export, trailer-only attribution now yields
+936 distinct branch/commit matches, up from 356 with the seven-person dataset.
 These **estimated, sampled counts are not a ranking of
 company contributions**; different evidence windows explain their disparity.
 
-| Company | Researched person | Estimated patch-author matches |
+| Company | People with dated history | Estimated patch-author matches |
 | --- | --- | ---: |
-| Microsoft | Nazir Bilal Yavuz | 1 |
-| Amazon/AWS | Masahiko Sawada | 6 |
-| Databricks | Matthias van de Meent | 1 |
-| Snowflake | Tom Lane (parent/team association) | 334 |
-| EnterpriseDB/EDB | Bruce Momjian; Robert Haas | 0 |
-| Percona | Zsolt Parragi | 14 |
+| Microsoft | 15 | 249 |
+| Amazon/AWS | 9 | 78 |
+| Databricks | 3 | 9 |
+| Snowflake | 3 | 334 |
+| EnterpriseDB/EDB | 34 | 248 |
+| Percona | 2 | 26 |
 
-EDB's previous match came from Bruce as Git author, not the patch author, so it
-is now correctly excluded. The six-company regression fixture keeps its original
+People and commits may appear under more than one company, so these columns
+are not additive. Only 41 researched people currently yield dated patch matches.
+The inventory contains 1,787 candidate keys: 548 email keys (61 reviewed,
+representing 57 people) and 1,239 unresolved name-only/opaque keys. These are
+not counts of employees at the six companies. Bruce is researched but has no
+resolved patch credit in this export. Some known authors have no date overlap.
+The two additional Snowflake roster observations are from July 2026, later than
+this export; they do not retroactively change its totals.
+
+Bruce's Git-only EDB match remains correctly excluded. The six-company regression fixture keeps its original
 real commits: four match as patch-author affiliations; the Git-only Bruce/EDB
 and Tom/Snowflake cases do not. The catalog still includes all six companies.
-The original seven-commit fixture has no eligible website matches; its broader
-offline audit output is unchanged.
+The original seven-commit fixture gains five EDB matches through Robert's actual
+patch-author identity; this does not restore the removed Git-author fallback.
 
-The expansion ledger preserves 25 additional discovery queries, including two
-empty-string queries constrained by sender. Such requests are valid; a missing
+The expansion ledger preserves all 33 previous queries and 177 new completed
+discovery queries, including empty-string queries constrained by sender. Such requests are valid; a missing
 query value or an empty query without a sender is not. These are sampled
 retrievals, never an exhaustive directory.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build an auditable, offline commit-participant/company attribution snapshot.
 
-The input directory is an explicitly reviewed pilot dataset. This tool does not
+The input directory is an explicitly reviewed research dataset. This tool does not
 infer employment from signatures, company names, or missing evidence; it applies
 only the person mappings and affiliation histories supplied by reviewers.
 """
@@ -764,6 +764,79 @@ def extract_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def research_coverage(commits: list[dict[str, Any]], data: dict[str, Any]) -> dict[str, Any]:
+    """Inventory every trailer credit without guessing identities or employers.
+
+    Email keys are candidate identities, not a count of unique people. Opaque
+    and name-only credits remain separate research leads, never name matches.
+    """
+    credits = extract_credits(commits)
+    mappings = {normalize_email(row["email"]): row["person_id"] for row in data["identity-mappings"]}
+    commit_index = {(row["branch"], row["commit_id"]): row for row in commits}
+    candidates: dict[tuple[str, str], dict[str, Any]] = {}
+    for credit in credits:
+        if credit["role"] != "patch_author":
+            continue
+        email = normalize_email(credit.get("email"))
+        key = ("email", email) if email else ("raw", credit["raw_value"])
+        row = candidates.setdefault(key, {"email": email or None, "raw_values": set(),
+                                         "commits": set(), "dates": set()})
+        row["raw_values"].add(credit["raw_value"])
+        commit_key = (credit["branch"], credit["commit_id"])
+        row["commits"].add(commit_key)
+        date, _ = parse_commit_time(commit_index[commit_key].get("commit_date"), "commit_date")
+        if date:
+            row["dates"].add(date.isoformat())
+    records, _ = build_attributions(commits, credits, data, "committer")
+    matched_by_person: dict[str, set[tuple[str, str]]] = defaultdict(set)
+    for record in records:
+        if "patch_author" in record["roles"] and record["attribution_status"] in {"supported", "estimated"}:
+            matched_by_person[record["person_id"]].add((record["branch"], record["commit_id"]))
+    output = []
+    for key, row in sorted(candidates.items()):
+        person_id = mappings.get(row["email"])
+        companies = sorted({h["company_id"] for h in data["histories"]
+                            if h["person_id"] == person_id and h["status"] in {"supported", "estimated"}})
+        dates = sorted(row["dates"])
+        output.append({"candidate_key": list(key), "email": row["email"],
+                       "raw_values": sorted(row["raw_values"]), "person_id": person_id,
+                       "identity_status": "resolved" if person_id else "needs_review",
+                       "companies_with_history": companies,
+                       "commit_count": len(row["commits"]),
+                       "matched_commit_count": len(row["commits"] & matched_by_person.get(person_id, set())),
+                       "first_commit_date": dates[0] if dates else None,
+                       "last_commit_date": dates[-1] if dates else None})
+    return {"schema_version": 1, "attribution_source": "trailer_author",
+            "exhaustive_affiliation_research": False,
+            "coverage_note": "Complete credit inventory for this snapshot, not a complete employment directory. Name-only credits and unknown affiliations remain unresolved.",
+            "total_commits": len(commits), "candidate_count": len(output),
+            "email_candidate_count": sum(row["email"] is not None for row in output),
+            "resolved_email_candidates": sum(row["person_id"] is not None for row in output),
+            "resolved_people": len({row["person_id"] for row in output if row["person_id"]}),
+            "people_with_matched_commits": len(matched_by_person),
+            "matched_commits": len(set().union(*matched_by_person.values())) if matched_by_person else 0,
+            "candidates": output}
+
+
+def research_coverage_command(args: argparse.Namespace) -> int:
+    data_dir, commits_path = Path(args.data_dir), Path(args.commits)
+    data, commits = load_dataset(data_dir), read_json(commits_path)
+    errors = validate_dataset(data) + validate_commit_snapshot(commits)
+    if errors:
+        raise DataError("\n".join(errors))
+    report = research_coverage(commits, data)
+    report["commit_snapshot_sha256"] = sha256_bytes(commits_path.read_bytes())
+    report["research_provenance"] = {
+        "manifest": data["manifest"],
+        "input_sha256": {f"{name}.json": sha256_bytes((data_dir / f"{name}.json").read_bytes())
+                         for name in ("people", "identity-mappings", "companies", "evidence",
+                                      "histories", "retrieval-ledger", "manifest")},
+    }
+    # This inspection command is read-only; callers can choose where to retain it.
+    print(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2))
+    return 0
+
+
 def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -774,6 +847,10 @@ def make_parser() -> argparse.ArgumentParser:
     extract.add_argument("--commits", required=True)
     extract.add_argument("--out", required=True)
     extract.set_defaults(func=extract_command)
+    research = subparsers.add_parser("research-coverage", help="report every trailer-author research candidate as JSON")
+    research.add_argument("--data-dir", required=True)
+    research.add_argument("--commits", required=True)
+    research.set_defaults(func=research_coverage_command)
     build = subparsers.add_parser("build", help="build a deterministic attribution snapshot")
     build.add_argument("--data-dir", required=True)
     build.add_argument("--commits", required=True)

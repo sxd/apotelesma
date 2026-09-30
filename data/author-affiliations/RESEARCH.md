@@ -1,4 +1,113 @@
-# Initial affiliation pilot research
+# Author/company research
+
+## Expanded coverage (2026-09-30)
+
+This revision expands the seven-person sample to **58 people**, **62 exact email
+mappings**, **337 evidence records** and **560 reviewed history hypotheses**.
+The six company identities and the trailer-author-only website contract are
+unchanged. Old evidence, rejected observations and both commit fixtures are
+preserved. This is agent-reviewed research, not human-approved employment data.
+
+The full commit export has SHA-256
+`09108f7ab144fbe75277921b01abd915a8240eb945b7d880b29462c449279114`.
+The read-only `research-coverage` command inventories every trailer credit:
+1,787 candidate keys, including 548 exact parsed email keys and 1,239 name-only
+or opaque keys. Of the email keys, 61 resolve to 57 researched people. Bruce's
+identity is researched but has no resolved patch-author occurrence in this
+export. These denominators cover all companies, not only the six requested ones.
+They are not unique-person counts and do not imply exhaustive employer research.
+
+### Collection and evidence review
+
+Amauta `pgsql-hackers` searches covered company names/aliases and exact sender
+addresses discovered in the complete patch-credit inventory. The ledger adds
+177 completed requests to the previous 33, preserving exact query/filter/offset
+arguments and 4,589 distinct returned Message-IDs in this pass. There were 597
+distinct message records fetched for inspection; 275 new sender-owned company
+signatures were accepted. First-person job statements, identity-only messages
+and dated primary company announcements are recorded separately.
+
+Searches and selected messages span multiple years, but this is **sampled
+retrieval**, not a full mailbox sweep. Broad company queries used selected
+offsets, not every page. Sender searches sometimes returned no hits despite
+known public messages, and a nonsense keyword with a sender filter still
+returned mail. Query semantics, boundary inclusivity and completeness remain
+unverified. Seven requests with an invalid limit of 1,000 failed before search;
+a slow yearly date-window sweep was stopped without usable results. Neither
+is included among the 177 completed requests or treated as negative evidence.
+
+Company names in product discussions, build logs, someone else's quoted
+signature, or an address domain alone were not accepted as affiliation evidence.
+Malformed archive records with synthetic `generated.invalid` Message-IDs were
+excluded. Exact public sender addresses support identity mappings; no fuzzy
+name, plus-address or local-part case folding was introduced. The Amauta miss
+for Tomas Vondra's personal address was supplemented by a public PostgreSQL
+archive sender header, explicitly identified as such in its evidence record.
+
+### Dates and estimates
+
+Each company signature remains an observation of association on its message
+date, not proof of employment or patch sponsorship. An isolated observation
+still supports only its own UTC day. In addition, 239 curated intervals apply
+`bounded-observation-gap/1`: estimate continuity only between consecutive
+reviewed observations of the same person's same company no more than 366 days
+apart. Each interval cites both endpoints, retains day-level uncertainty, and
+is marked `estimated`. A different company at either endpoint or in between
+prevents bridging. There is no extrapolation before/after the observed dates,
+and larger gaps remain unknown. The offline builder consumes these explicit
+histories; it does not infer new intervals automatically.
+
+[Microsoft's retrospective team article](https://techcommunity.microsoft.com/blog/adforpostgresql/microsoft-postgresql-oss-engine-team-reflecting-on-2024/4388700)
+names eleven contributors, including four who joined during 2024. The latter
+retain year-level start uncertainty; existing members' 2024 association is also
+an estimate, not a hire date. The source was published March 7, 2025 and updated
+May 3; the update is the observation horizon, not an employment-change date.
+The [2025 team update](https://techcommunity.microsoft.com/blog/adforpostgresql/whats-new-with-postgres-at-microsoft-2025-edition/4410710/)
+provides additional observations for explicitly identified teammates, not
+podcast guests or every acknowledged reviewer. Its publication and update
+dates are recorded separately. Overlapping prior EDB observations remain
+competing evidence, not two automatically supported employers.
+
+[EDB's April 2025 announcement](https://www.enterprisedb.com/blog/jacob-champion-becomes-postgresql-committer?lang=en),
+[September release article](https://www.enterprisedb.com/blog/celebrating-postgresql-18-release)
+and [June 2026 team report](https://www.enterprisedb.com/blog/pgconfdev-2026-our-teams-sessions-working-groups-and-key-takeaways)
+support named team members without inferring affiliation from all conference
+participants. [Snowflake's July 2026 roster](https://www.snowflake.com/en/developers/postgres/about-snowflake-postgres-team/)
+adds David Christensen and Greg Sabino Mullane on the roster's update date
+only. Their histories are not backdated to the acquisition. Existing Tom Lane
+parent/team and Zsolt Parragi retrospective histories are unchanged.
+
+Robert Haas has an EDB signature on August 31, 2026 and a sender-owned
+[Databricks signature on September 29](https://www.postgresql.org/message-id/CA%2BTgmobUaa0OAkUBOy0E-BxkG1k%2B0FZacFzp93_sPJPDQgx3Tw%40mail.gmail.com).
+This supersedes the initial pilot's lack of accepted Databricks evidence, not
+its rejected mutable-blog observation. The exact transition remains undated.
+Tristan Partin likewise has Databricks observations through January 2026 and
+an AWS signature on September 28, with the intervening gap left unknown.
+Andres Freund's September 2017 first-person EDB announcement explicitly mentions
+a simultaneous Citus advisory role; it is not evidence of Microsoft employment
+in 2017. Peter Geoghegan's first-person Amazon statement is a dated observation,
+not a guessed start date.
+
+### Result and remaining gaps
+
+On the same 71,200-commit export, the website now matches 936 distinct
+branch/commit rows through dated patch authors (previously 356). There are 41
+people with usable date overlaps. Company match counts are Microsoft 249,
+Amazon/AWS 78, Databricks 9, Snowflake 334, EDB 248 and Percona 26. They overlap,
+are all estimates, and are not a ranking of company contributions.
+
+Some known people still have no dated match in this export, including Richard
+Guo, Vignesh C, David Christensen and Greg Sabino Mullane. Additional research
+is needed between their known observations and their patch dates. Corporate
+address leads remain unresolved for Sait Nisanci, Craig Ringer, Davinder Singh,
+Florin Irion, Jakub Wartak, Jeevan Ladhe, Jelte Fennema-Nio, Markus Wanner,
+Maxime Schoemans and Mikhail Kot; further corporate aliases of already reviewed
+people also remain unmapped. Their domains are leads, not evidence. Name-only
+credits, unsupported aliases and older history gaps remain in the inventory.
+No absence of employment is inferred. Re-run `research-coverage` against each
+new export to prioritize these gaps without reintroducing a hand-picked list.
+
+## Initial affiliation pilot research (historical snapshot)
 
 Collected on 2026-09-29 through Amauta's `pgsql-hackers` inbox. This is a
 bounded, agent-inspected sample, not a human-approved employment directory or
