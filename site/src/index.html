@@ -292,7 +292,10 @@
               <p class="section-label">Recent Commits</p>
               <h2>Latest matching commits</h2>
             </div>
-            <p class="section-copy">Showing the latest 25 matching commits. Patch authors come from terminal Author and Co-authored-by trailers; Git author is shown separately.</p>
+            <div class="recent-commits-actions">
+              <p class="section-copy" id="matching-commits-download-help">Showing the latest 25 matching commits. Download includes all matching commits, with the same six columns and displayed UTC dates. Commit-author fallback is labeled when used.</p>
+              <button type="button" class="ghost-button" id="download-matching-commits" aria-describedby="matching-commits-download-help" disabled>Download JSON</button>
+            </div>
           </div>
           <div class="table-shell">
             <table class="recent-commits-table">

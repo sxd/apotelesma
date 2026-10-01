@@ -1,4 +1,4 @@
-import { renderPatchAuthors } from "./patch-authors.mjs";
+import { renderPatchAuthors, patchAuthorsText } from "./patch-authors.mjs";
 import { buildAuthorIndex, summarizeParticipants, matchesSelectedAuthors, authorOptionLabel } from "./author-identities.mjs";
 import { buildCompanyIndex, commitCompanies, matchesSelectedCompanies, summarizeCompanies, verifyCompanySnapshot } from "./company-affiliations.mjs";
 import { createCompanyPicker } from "./company-picker.mjs";
@@ -7,6 +7,12 @@ const DATA_FILES = {
   branches: "./data/branches.json",
   commits: "./data/commits.json",
 };
+
+const displayDateFormatter = new Intl.DateTimeFormat("en-US", {
+  dateStyle: "medium",
+  timeStyle: "short",
+  timeZone: "UTC",
+});
 
 const BRANCH_COLORS = [
   "#d16a3b",
@@ -59,6 +65,7 @@ const statsGrid = document.querySelector("#stats-grid");
 const branchSummaryBody = document.querySelector("#branch-summary-body");
 const authorActivityBody = document.querySelector("#author-activity-body");
 const recentCommitsBody = document.querySelector("#recent-commits-body");
+const downloadMatchingButton = document.querySelector("#download-matching-commits");
 const dailyChart = document.querySelector("#daily-chart");
 const authorChart = document.querySelector("#author-chart");
 const branchChart = document.querySelector("#branch-chart");
@@ -88,11 +95,7 @@ function formatDate(value) {
   if (!value) {
     return "n/a";
   }
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "UTC",
-  }).format(new Date(value));
+  return displayDateFormatter.format(new Date(value));
 }
 
 function escapeHtml(value) {
@@ -240,8 +243,12 @@ function buildDailySeries(commits) {
   });
 }
 
+function sortMatchingCommits(commits) {
+  return [...commits].sort((left, right) => right.author_date.localeCompare(left.author_date));
+}
+
 function getRecentCommits(commits) {
-  return [...commits].sort((left, right) => right.author_date.localeCompare(left.author_date)).slice(0, 25);
+  return sortMatchingCommits(commits).slice(0, 25);
 }
 
 function getFilterScopeAuthors() {
@@ -433,21 +440,59 @@ function renderAuthorActivity() {
   );
 }
 
+// These exact display columns are shared by the table and the JSON download.
+function matchingCommitRow(item) {
+  const companies = commitCompanies(item, state.companyIndex, state.filters.includeEstimated);
+  const companyLabel = companies.map((match) => `${state.companyIndex.companies.get(match.company_id).name} (${match.status})`).join("; ");
+  return {
+    "When": formatDate(item.author_date),
+    "Branch": item.branch ?? "",
+    "Git author": item.author_name ?? "",
+    "Patch authors": patchAuthorsText(item),
+    "Patch author companies": companyLabel || (state.companyIndex ? "No usable evidence" : "Unavailable"),
+    "Summary": item.summary ?? "",
+  };
+}
+
+function matchingCommitRows() {
+  // Use the complete filtered result, not the 25-row table preview.
+  return sortMatchingCommits(state.filteredCommits).map(matchingCommitRow);
+}
+
+function downloadMatchingCommits() {
+  if (!state.data || state.filteredCommits.length === 0) return;
+  const blob = new Blob([JSON.stringify(matchingCommitRows(), null, 2) + "\n"], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "matching-commits.json";
+  document.body.appendChild(link);
+  try {
+    link.click();
+  } finally {
+    link.remove();
+    // Give the browser time to start reading the blob before releasing it.
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+}
+
 function renderRecentCommits() {
+  const count = state.filteredCommits.length;
+  downloadMatchingButton.disabled = !state.data || count === 0;
+  downloadMatchingButton.textContent = `Download JSON (${formatNumber(count)})`;
   fillTable(
     recentCommitsBody,
     state.filteredRecentCommits,
     (item) => {
       const row = document.createElement("tr");
-      const companies = commitCompanies(item, state.companyIndex, state.filters.includeEstimated);
-      const companyLabel = companies.map((match) => `${state.companyIndex.companies.get(match.company_id).name} (${match.status})`).join("; ");
+      const values = matchingCommitRow(item);
       row.innerHTML = `
-        <td data-label="When">${formatDate(item.author_date)}</td>
-        <td data-label="Branch"><span class="pill" style="--pill-color:${getBranchColor(item.branch)}">${escapeHtml(item.branch)}</span></td>
-        <td data-label="Git author">${escapeHtml(item.author_name)}</td>
+        <td data-label="When">${escapeHtml(values["When"])}</td>
+        <td data-label="Branch"><span class="pill" style="--pill-color:${getBranchColor(item.branch)}">${escapeHtml(values["Branch"])}</span></td>
+        <td data-label="Git author">${escapeHtml(values["Git author"])}</td>
         <td data-label="Patch authors">${renderPatchAuthors(item)}</td>
-        <td data-label="Patch author companies">${escapeHtml(companyLabel || (state.companyIndex ? "No usable evidence" : "Unavailable"))}</td>
-        <td data-label="Summary">${escapeHtml(item.summary)}</td>
+        <td data-label="Patch author companies">${escapeHtml(values["Patch author companies"])}</td>
+        <td data-label="Summary">${escapeHtml(values["Summary"])}</td>
       `;
       return row;
     },
@@ -951,6 +996,7 @@ function renderDashboard() {
 }
 
 function initializeControls() {
+  downloadMatchingButton.addEventListener("click", downloadMatchingCommits);
   companyPicker = createCompanyPicker({ document, selected: state.filters.companies, onChange: () => {
     updateDerivedState();
     renderDashboardResults();

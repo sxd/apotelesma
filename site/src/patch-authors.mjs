@@ -26,15 +26,23 @@ export function patchAuthors(commit) {
   return [...new Set(authors)];
 }
 
-export function renderPatchAuthors(commit) {
-  const authors = patchAuthors(commit);
-  if (authors.length === 0) return "—";
-
+function patchAuthorEntries(commit) {
   const fallback = primaryAuthorSource(commit) === "git_author_fallback" ? gitAuthorCredit(commit) : null;
-  const escaped = authors.map((value) => value.replaceAll("&", "&amp;")
+  return patchAuthors(commit).map((value) => ({ value,
+    note: value === fallback ? "(commit-author fallback)" : "" }));
+}
+
+export function patchAuthorsText(commit) {
+  return patchAuthorEntries(commit).map(({ value, note }) => `${value}${note ? ` ${note}` : ""}`).join("\n") || "—";
+}
+
+export function renderPatchAuthors(commit) {
+  const authors = patchAuthorEntries(commit);
+  if (authors.length === 0) return "—";
+  const escaped = authors.map(({ value, note }) => value.replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;") + (value === fallback ? " <small>(commit-author fallback)</small>" : ""));
+    .replaceAll("'", "&#39;") + (note ? ` <small>${note}</small>` : ""));
   return `<ul class="patch-authors">${escaped.map((value) => `<li>${value}</li>`).join("")}</ul>`;
 }

@@ -71,7 +71,29 @@ try {
   const choice = (id) => page.locator(`#company-filter input[value="${id}"]`);
   const expectCount = async (n) => assert.match(await page.locator("#selection-summary").textContent(), new RegExp(`^${n} commits`));
   const ready = async () => { await page.waitForFunction(() => document.querySelector("#selection-summary")?.textContent.includes("commits")); };
+  const downloadRows = async (expectedCount) => {
+    const pending = page.waitForEvent("download");
+    await page.getByRole("button", { name: /^Download JSON/ }).click();
+    const download = await pending;
+    assert.equal(download.suggestedFilename(), "matching-commits.json");
+    const stream = await download.createReadStream();
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    const rows = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    assert.equal(rows.length, expectedCount);
+    const columns = await page.locator(".recent-commits-table th").allTextContents();
+    for (const row of rows) assert.deepEqual(Object.keys(row), columns);
+    const visible = await page.locator("#recent-commits-body tr").evaluateAll((rows) => rows.map((row) =>
+      Array.from(row.querySelectorAll("td"), (cell) => cell.innerText.trim())));
+    assert.deepEqual(rows.slice(0, 25).map((row) => columns.map((key) => row[key].trim())), visible);
+    return rows;
+  };
   await page.goto(url); await ready();
+  await downloadRows(5);
+  if (process.env.BROWSER_ARTIFACT_DIR) {
+    await page.locator("section").filter({ has: page.getByRole("heading", { name: "Latest matching commits", exact: true }) })
+      .screenshot({ path: `${process.env.BROWSER_ARTIFACT_DIR}/download-1440.png` });
+  }
   assert.equal(await search.isEnabled(), true);
   assert.match(await page.locator("#company-help").textContent(), /Git author when that tag is absent/);
   assert.match(await page.locator("#company-method").textContent(), /Git author is the fallback/);
@@ -102,6 +124,7 @@ try {
   assert.equal(await popup.isHidden(), true);
   await page.locator("#company-estimates").uncheck(); await expectCount(2);
   assert.doesNotMatch(await page.locator("#recent-commits-body").textContent(), /estimated/);
+  assert.ok((await downloadRows(2)).every((row) => !row["Patch author companies"].includes("estimated")));
   await page.locator("#company-estimates").check();
   const authorSearch = page.locator("#author-search");
   await authorSearch.fill("patch person");
@@ -109,6 +132,7 @@ try {
   await expectCount(1);
   assert.match(await page.locator("#recent-commits-body").textContent(), /EnterpriseDB \(estimated\)/);
   await page.locator("#author-done").click();
+  assert.equal((await downloadRows(1))[0].Summary, "First");
   await page.locator("#author-clear-selection").click();
   await page.getByRole("button", { name: "Stable only", exact: true }).click(); await expectCount(0);
   assert.equal(await page.locator("#company-selected .author-chip").count(), 2);
@@ -139,6 +163,8 @@ try {
     layouts.push(geometry);
     if (process.env.BROWSER_ARTIFACT_DIR && [1440, 320].includes(width)) {
       await page.locator(".filter-grid").screenshot({ path: `${process.env.BROWSER_ARTIFACT_DIR}/companies-${width}.png` });
+      if (width === 320) await page.locator("section").filter({ has: page.getByRole("heading", { name: "Latest matching commits", exact: true }) })
+        .screenshot({ path: `${process.env.BROWSER_ARTIFACT_DIR}/download-320.png` });
     }
   }
   for (const failure of ["missing", "stale", "legacy", "wrong-role", "invalid", "empty"]) {
@@ -147,6 +173,7 @@ try {
     if (failure === "empty") {
       await search.click(); assert.match(await page.locator("#company-filter").textContent(), /No usable company affiliations/);
     } else assert.match(await page.locator("#company-coverage").textContent(), /unavailable/);
+    if (failure === "missing") assert.ok((await downloadRows(5)).every((row) => row["Patch author companies"] === "Unavailable"));
   }
   await page.unroute("**/data/branches.json");
   await page.unroute("**/data/commits.json");
@@ -158,11 +185,15 @@ try {
   assert.equal(real.schema_version, 3);
   assert.equal(real.attribution_source, "trailer_author_or_git_author");
   await expectCount(real.coverage.total_commits.toLocaleString("en-US"));
+  const allDownloaded = await downloadRows(real.coverage.total_commits);
+  assert.ok(allDownloaded.length > 25);
   await search.fill("edb");
   const edb = page.getByRole("checkbox", { name: "EnterpriseDB", exact: true });
   await edb.check();
   const matches = real.matches.filter((r) => r.companies.some((c) => c.company_id === "company:enterprisedb"));
   await expectCount(matches.length.toLocaleString("en-US"));
+  const filteredDownloaded = await downloadRows(matches.length);
+  assert.ok(filteredDownloaded.every((row) => row["Patch author companies"].includes("EnterpriseDB")));
   // Exercise the requested real companies and their aliases, not just fixtures.
   assert.equal(real.companies.length, 6);
   for (const [query, id] of [
@@ -185,12 +216,14 @@ try {
   await page.locator("#company-done").click();
   await page.locator("#company-estimates").uncheck();
   await expectCount(0);
+  assert.equal(await page.getByRole("button", { name: /^Download JSON/ }).isDisabled(), true);
   assert.equal(await page.locator("#company-selected .author-chip").count(), 1);
   await page.locator("#company-clear-selection").click();
   await expectCount(real.coverage.total_commits.toLocaleString("en-US"));
   assert.match(await page.locator("#company-method").textContent(), /Git committer timestamp/);
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ result: "passed", layouts, fullExportCoverage: real.coverage, companyCount: real.companies.length }, null, 2));
+  console.log(JSON.stringify({ result: "passed", layouts, fullExportCoverage: real.coverage, companyCount: real.companies.length,
+    downloadedRows: allDownloaded.length, filteredDownloadedRows: filteredDownloaded.length }, null, 2));
 } finally {
   await browser?.close();
   await new Promise((done) => server.close(done));

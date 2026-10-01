@@ -40,6 +40,16 @@ exported JSON files and lets users:
 - constrain the visible date range
 - switch graph metrics between commits, insertions, deletions, and changed files
 - compare branch totals, timeline activity, top authors, and recent matching commits
+- download every matching commit as JSON from **Latest matching commits** (not just the latest 25)
+
+The download is a JSON array with exactly the table's six column headings as
+keys: `When`, `Branch`, `Git author`, `Patch authors`, `Patch author companies`,
+and `Summary`. Values are the displayed text, including UTC-formatted dates,
+company status/empty labels and commit-author fallback labels. Multiple patch
+authors are newline-separated within their field. All current branch, author,
+date, company and estimate filters apply; rows have the same newest-first order
+as the table. No commit IDs or other hidden fields are added. The file is
+generated locally in the browser without an upload or server request.
 
 Author selection uses OR across selected entries, combined with branch and
 inclusive date restrictions. The recent table shows the latest 25 rows after

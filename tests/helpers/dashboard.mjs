@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
-import { renderPatchAuthors } from "../../site/src/patch-authors.mjs";
+import { renderPatchAuthors, patchAuthorsText } from "../../site/src/patch-authors.mjs";
 import * as identities from "../../site/src/author-identities.mjs";
 import * as companies from "../../site/src/company-affiliations.mjs";
 import { createCompanyPicker } from "../../site/src/company-picker.mjs";
@@ -10,6 +10,10 @@ import { createCompanyPicker } from "../../site/src/company-picker.mjs";
 // accessibility and native keyboard behavior; all filter logic comes from app.js.
 export function dashboard(commits = []) {
   let document;
+  const downloads = [];
+  const objectUrls = new Map();
+  const revokedUrls = [];
+  let nextUrl = 0;
   class Element {
     constructor(tag = "div") { this.tagName = tag; }
     children = [];
@@ -53,6 +57,10 @@ export function dashboard(commits = []) {
       return value;
     }
     focus(options) { document.activeElement = this; this.focusOptions = options; }
+    click() {
+      if (this.tagName === "a") downloads.push({ filename: this.download, blob: objectUrls.get(this.href), url: this.href });
+      this.dispatch("click");
+    }
     contains(element) { return element === this || this.children.some((child) => child.contains(element)); }
     querySelectorAll(selector) {
       return this.children.flatMap((child) => [
@@ -70,6 +78,7 @@ export function dashboard(commits = []) {
   });
   const branchPresets = presets("branch", ["all", "stable", "root"]);
   document = {
+    body: new Element("body"),
     activeElement: null,
     listeners: {},
     querySelector(selector) {
@@ -86,12 +95,16 @@ export function dashboard(commits = []) {
     createElementNS: (_, tag) => new Element(tag),
     addEventListener(event, callback) { (this.listeners[event] ??= []).push(callback); },
   };
-  const context = vm.createContext({ ...identities, ...companies, createCompanyPicker, renderPatchAuthors, document,
-    fetch: () => new Promise(() => {}), setTimeout,
+  const context = vm.createContext({ ...identities, ...companies, createCompanyPicker, renderPatchAuthors, patchAuthorsText, document,
+    fetch: () => new Promise(() => {}), setTimeout, Blob,
+    URL: {
+      createObjectURL(blob) { const url = `blob:test-${nextUrl++}`; objectUrls.set(url, blob); return url; },
+      revokeObjectURL(url) { objectUrls.delete(url); revokedUrls.push(url); },
+    },
   });
   let source = readFileSync(new URL("../../site/src/app.js", import.meta.url), "utf8");
   for (const declaration of [
-    'import { renderPatchAuthors } from "./patch-authors.mjs";',
+    'import { renderPatchAuthors, patchAuthorsText } from "./patch-authors.mjs";',
     'import { buildAuthorIndex, summarizeParticipants, matchesSelectedAuthors, authorOptionLabel } from "./author-identities.mjs";',
     'import { buildCompanyIndex, commitCompanies, matchesSelectedCompanies, summarizeCompanies, verifyCompanySnapshot } from "./company-affiliations.mjs";',
     'import { createCompanyPicker } from "./company-picker.mjs";',
@@ -103,7 +116,8 @@ export function dashboard(commits = []) {
   vm.runInContext(source + `\nglobalThis.dashboard = { state, updateDerivedState, renderRecentCommits,
     renderDashboard, renderAuthorFilter, syncAuthorSelection, getFilterScopeAuthors,
     getMatchingAuthorOptions, renderAuthorSelection, updateFromAuthorSelection,
-    openAuthorPopup, closeAuthorPopup, initializeControls, initializeDateInputs };`, context);
+    openAuthorPopup, closeAuthorPopup, initializeControls, initializeDateInputs,
+    matchingCommitRows, downloadMatchingCommits };`, context);
   const api = context.dashboard;
   api.state.data = { branches: { branches: ["master", "stable"], root_branch: "master" }, commits };
   api.state.filters.branches = new Set(["master", "stable"]);
@@ -113,7 +127,7 @@ export function dashboard(commits = []) {
   }
   reindex();
   api.initializeControls();
-  return { ...api, document, elements, branchPresets, reindex,
+  return { ...api, document, elements, branchPresets, reindex, downloads, objectUrls, revokedUrls,
     element: (selector) => document.querySelector(selector),
     render() {
       reindex();

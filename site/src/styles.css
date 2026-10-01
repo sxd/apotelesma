@@ -628,6 +628,19 @@ th {
   margin-bottom: 1rem;
 }
 
+.recent-commits-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+#download-matching-commits:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
 .chart-shell {
   padding-top: 0.5rem;
   overflow: hidden;
@@ -754,6 +767,10 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 1100px) {
+  .recent-commits-actions {
+    align-items: flex-start;
+  }
+
   .controls,
   .section-head {
     flex-direction: column;
