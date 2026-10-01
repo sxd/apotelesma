@@ -294,8 +294,8 @@ function renderCompanyFilter() {
   }
   const { matched, total } = state.companyScope;
   const basis = state.companyIndex.provenance.timestamp_basis === "committer" ? "Git committer" : "Git author";
-  companyCoverage.textContent = `${formatNumber(matched)} of ${formatNumber(total)} commits in this branch/date scope have ${state.filters.includeEstimated ? "supported or estimated" : "supported"} patch-author affiliations. Limited research: ${state.companyIndex.coverage.researched_people} people; other affiliations may be unknown.`;
-  document.querySelector("#company-method").textContent = `Companies belong only to patch authors in trailer_author, not to Git authors or co-authors unless also credited there. Their affiliations are matched at the ${basis} timestamp. The date filter and charts use Git author dates. Option counts are before author and company filters.`;
+  companyCoverage.textContent = `${formatNumber(matched)} of ${formatNumber(total)} commits in this branch/date scope have ${state.filters.includeEstimated ? "supported or estimated" : "supported"} author affiliations (including commit-author fallback). Limited research: ${state.companyIndex.coverage.researched_people} people; other affiliations may be unknown.`;
+  document.querySelector("#company-method").textContent = `Companies use Author trailers first. When the full message has no Author: tag, the Git author is the fallback, including messages with only Co-authored-by: tags. Co-authors remain visible but do not independently supply company matches. Unresolved or unextracted Author tags never trigger fallback. Affiliations are matched at the ${basis} timestamp. The date filter and charts use Git author dates. Option counts are before author and company filters.`;
 }
 
 function renderCompanyStatus() {

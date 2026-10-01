@@ -60,5 +60,93 @@
   {"mapping_id":"map:expanded:david@pgguru.net","person_id":"person:david-christensen","email":"david@pgguru.net","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:identity-20260930-david-christensen"],"mapping_revision":"expanded-company-research-2026-09-30-v3"},
   {"mapping_id":"map:expanded:htamfids@gmail.com","person_id":"person:greg-sabino-mullane","email":"htamfids@gmail.com","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:identity-20260930-greg-sabino-mullane"],"mapping_revision":"expanded-company-research-2026-09-30-v3"},
   {"mapping_id":"map:expanded:pg@bowt.ie","person_id":"person:peter-geoghegan","email":"pg@bowt.ie","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:identity-20260930-peter-geoghegan"],"mapping_revision":"expanded-company-research-2026-09-30-v3"},
-  {"mapping_id":"map:expanded:tomas@vondra.me","person_id":"person:tomas-vondra","email":"tomas@vondra.me","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:identity-20260930-tomas-vondra-personal"],"mapping_revision":"expanded-company-research-2026-09-30-v3"}
+  {"mapping_id":"map:expanded:tomas@vondra.me","person_id":"person:tomas-vondra","email":"tomas@vondra.me","decision":"reviewed","review_status":"agent-reviewed","evidence_ids":["ev:identity-20260930-tomas-vondra-personal"],"mapping_revision":"expanded-company-research-2026-09-30-v3"},
+  {
+    "mapping_id": "map:rel19:michael@paquier.xyz",
+    "person_id": "person:michael-paquier",
+    "email": "michael@paquier.xyz",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:profile-observed:michael-paquier"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  },
+  {
+    "mapping_id": "map:rel19:noah@leadboat.com",
+    "person_id": "person:noah-misch",
+    "email": "noah@leadboat.com",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:profile-observed:noah-misch"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  },
+  {
+    "mapping_id": "map:rel19:bertranddrouvot.pg@gmail.com",
+    "person_id": "person:bertrand-drouvot",
+    "email": "bertranddrouvot.pg@gmail.com",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:profile-observed:bertrand-drouvot"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  },
+  {
+    "mapping_id": "map:rel19:etsuro.fujita@gmail.com",
+    "person_id": "person:etsuro-fujita",
+    "email": "etsuro.fujita@gmail.com",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:profile-observed:etsuro-fujita"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  },
+  {
+    "mapping_id": "map:rel19:marco.nenciarini@enterprisedb.com",
+    "person_id": "person:marco-nenciarini",
+    "email": "marco.nenciarini@enterprisedb.com",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:mail-e08548ae7c97:marco-nenciarini"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  },
+  {
+    "mapping_id": "map:rel19:mths.dev@pm.me",
+    "person_id": "person:matheus-alcantara",
+    "email": "mths.dev@pm.me",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:mail-97639f34c656:matheus-alcantara"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  },
+  {
+    "mapping_id": "map:rel19:samimseih.pg@gmail.com",
+    "person_id": "person:sami-imseih",
+    "email": "samimseih.pg@gmail.com",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:mail-0997c93c99ac:sami-imseih"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  },
+  {
+    "mapping_id": "map:rel19:ayushtiwari.slg01@gmail.com",
+    "person_id": "person:ayush-tiwari",
+    "email": "ayushtiwari.slg01@gmail.com",
+    "decision": "reviewed",
+    "review_status": "agent-reviewed",
+    "evidence_ids": [
+      "ev:rel19:mail-identity:ayush-tiwari"
+    ],
+    "mapping_revision": "rel19-since-fork-research-2026-09-30-v4"
+  }
 ]

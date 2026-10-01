@@ -10178,5 +10178,2511 @@
     "coverage_status": "sampled",
     "coverage_note": "Exact request and returned Message-IDs; unverified query semantics, incomplete paging and date ranges. Empty results are not negative affiliation evidence. Only independently inspected messages in evidence.json support attribution.",
     "research_batch": "finalIdentityLedger"
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-000",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "3danissimo@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "3danissimo@gmail.com"
+    ],
+    "message_ids": [
+      "CAJDiXggCNfp1sJ-WeFRmdbR14CGJ0Ep5OxiociWkFM+FZ_Y5NQ@mail.gmail.com",
+      "CAJDiXgh=AjP1WQk+soYRT2DyfxSXX044nhXwmPtjxFS_EpOoPw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-001",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "a.voloshin@postgrespro.ru",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "a.voloshin@postgrespro.ru"
+    ],
+    "message_ids": [
+      "4a3d36ba-276a-4211-b31b-6d1f5227f967@postgrespro.ru",
+      "ad5d772e-09d9-4248-97a4-0011afab9e71@postgrespro.ru"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-002",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "adam8157@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "adam8157@gmail.com"
+    ],
+    "message_ids": [
+      "aj4gJQMba0kClQmj@Mac",
+      "aifizBXakKoiaAiA@MAC-CVW1VHW5R6"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-003",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ah@cybertec.at",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-004",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "alberto.piai@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "alberto.piai@gmail.com"
+    ],
+    "message_ids": [
+      "DLN1MKEVTIQW.31UMH54A38IA7@gmail.com",
+      "DLLBPPI9MKV4.1EYFI9ZD90Z1E@gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-005",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "aleksander@tigerdata.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "aleksander@tigerdata.com"
+    ],
+    "message_ids": [
+      "CAJ7c6TMMOTDV7Q2EyZkt77k4Q43HaxnPD2xmkWdscL5K++f-hg@mail.gmail.com",
+      "CAJ7c6TMCQmm-7akUPPE0GoAwYdeN5E==KU87=E8g9yjArVHXMQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-006",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "alvherre@kurilemu.de",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-007",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "amit.kapila16@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-008",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "andreas@proxel.se",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "andreas@proxel.se"
+    ],
+    "message_ids": [
+      "6ba07f06-28f6-461b-a7b6-05ed4b99bd91@proxel.se",
+      "65c29091-1ca0-41e6-ba58-c5fc1cbfa01a@proxel.se"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-009",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "andreaslindpetersen@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "andreaslindpetersen@gmail.com"
+    ],
+    "message_ids": [
+      "CAMxA3rvwEgfbBqRx6UB2TOAmnLp5-SDLmCuhtvKo24i6iY+a2g@mail.gmail.com",
+      "CAMxA3rv1CS6R7JR5ojz-3CmCEnZEFrqu+XXTnGbLRWrjJRH7sA@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-010",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "andres@anarazel.de",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-011",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ante@tigerdata.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "ante@tigerdata.com"
+    ],
+    "message_ids": [
+      "CABXQ4dLmy-=2yW6x2kGGCZ4W0CsFLSPSG-9XTftxBaiwCc4Exw@mail.gmail.com",
+      "CABXQ4dJUibZzN91qvWmsfA7MUDn9YRCNyu3CcukdyokbH1=41Q@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-012",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "anthonin.bonnefoy@datadoghq.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "anthonin.bonnefoy@datadoghq.com"
+    ],
+    "message_ids": [
+      "CAO6_XqrhOnpon4pg+aceN_-Z+qOAW_Xp1DsmgDUQz6+wiPMwBA@mail.gmail.com",
+      "CAO6_XqrJOSkmWakAP0dHS071NULFFteFcytOnbh=tLqNeGAy-g@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-013",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "arne.roland@malkut.net",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "arne.roland@malkut.net"
+    ],
+    "message_ids": [
+      "cb01993a-c540-4c6c-9607-3788fa74e40a@malkut.net",
+      "7b2e54d2-df82-4a3c-b72f-255863c94e6d@malkut.net"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-014",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ashutosh.bapat.oss@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-015",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "assam258@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-016",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ayushtiwari.slg01@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "ayushtiwari.slg01@gmail.com"
+    ],
+    "message_ids": [
+      "CAJTYsWVvGOGmyXVjjOwC4-R31Lp1iay27jR5tukr+CTh2JefMA@mail.gmail.com",
+      "CAJTYsWXCLi00cJ6-_OkMJB4UjyV6EZjc86QwmgE9=iH_C0R-Aw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-017",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "baji.pgdev@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "baji.pgdev@gmail.com"
+    ],
+    "message_ids": [
+      "CA+fm-RMG8QU5sWuw62rhuz=32LRxPDYgLxbtBWCWRD1=ztRq1g@mail.gmail.com",
+      "CA+fm-RPAMxA_+h5q=_TShnQ9dooD8OLsebeBsSnsH2GOi+HtTw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-018",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "barwick@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-019",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "bertranddrouvot.pg@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-020",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "bharath.rupireddyforpostgres@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-021",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "billkimjh@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "billkimjh@gmail.com"
+    ],
+    "message_ids": [
+      "CAMQXxcjN+Z8AqSpmjOwd6Rc-U4D91kOyzs-bDDmOKAKJsj=hJw@mail.gmail.com",
+      "CAMQXxchB0ZfMHyk+Ji-=s3hkqh0_XyuKiaNLRgvatvndSt3KNw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-022",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "boekewurm+postgres@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-023",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "byavuz81@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "byavuz81@gmail.com"
+    ],
+    "message_ids": [
+      "CAN55FZ2i-=87NWg8v66hbbm18o+kBmCjyLyX4fE7s49c9JbEBw@mail.gmail.com",
+      "CAN55FZ2NT6529QhB_dcrZ5LaSL20aayhP33ZisZVFSg2hOqLXg@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-024",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "cca5507@qq.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "cca5507@qq.com"
+    ],
+    "message_ids": [
+      "tencent_E7E6040FE6E0C2EE26D4B330BD7622654F05@qq.com",
+      "tencent_98AFE320C16E3BF4AA90AF16254558461D05@qq.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-025",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "chaitanyyachoudhary@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-026",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "chauhandhruv351@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "chauhandhruv351@gmail.com"
+    ],
+    "message_ids": [
+      "CANWwWcpXigbBjDFY_8XGkrST+PO=o2xWu+UBq=HJpLr=FZ2TsQ@mail.gmail.com",
+      "CANWwWcpsuwAxeAbA-PeEFU8PnReEKiXv4Wt0b==FF=+UssYdKA@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-027",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "chee.wooson@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "chee.wooson@gmail.com"
+    ],
+    "message_ids": [
+      "CAMfungPrC3MpAv-3Ptfx6p55dMk5aP6FigxEBh7PjCnioUSVrA@mail.gmail.com",
+      "20260911025213.1156239-1-chee.wooson@gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-028",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "chengpeng_yan@outlook.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "chengpeng_yan@outlook.com"
+    ],
+    "message_ids": [
+      "BB860562-8922-490D-91D9-BAB43CAAE668@outlook.com",
+      "BE2AB1CA-8187-4A68-8E00-0DFD55D39B7E@outlook.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-029",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "corey.huinker@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "corey.huinker@gmail.com"
+    ],
+    "message_ids": [
+      "CADkLM=eMJVoAfey8oF5JuRAOV=YH_Ufn95X+owOCZbqzPPOm4g@mail.gmail.com",
+      "CADkLM=ciZMk+YAnSzdSHB=nC7q-qxFdBRyOij0B8aCxdBM3vhA@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-030",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "daniel@yesql.se",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-031",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "danielbaniel@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "danielbaniel@gmail.com"
+    ],
+    "message_ids": [
+      "178664680647.1093.5976435662683646180.pgcf@coridan.postgresql.org",
+      "CAMtj0_YfU1PT0HgxyjbYfNUQwk8P5064tuNMq3jyOOTxvbsEdw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-032",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "dbryan.green@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "dbryan.green@gmail.com"
+    ],
+    "message_ids": [
+      "340f649d-5b37-4161-956c-e16d42abcfa3@gmail.com",
+      "6929b807-32e9-4e80-b3d3-1f7823880d60@gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-033",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "dean.a.rasheed@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-034",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "devisettirithvika@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "devisettirithvika@gmail.com"
+    ],
+    "message_ids": [
+      "CA+HR5vgoAvdduijRW13KODS_ad-Sc1w-NDQvH93Sao+qr9As=Q@mail.gmail.com",
+      "CA+HR5vhR0e4C=hAXupZK373Zjh+_j2SRGxnNharhqSxdSiFU_Q@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-035",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "dgrowleyml@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-036",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "dgustafsson@postgresql.org",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "dgustafsson@postgresql.org"
+    ],
+    "message_ids": [
+      "28435010-0003-4786-9A64-F8F378D0AED6@postgresql.org",
+      "277F140E-9DB1-4679-B821-0D9AF9CFFFD8@postgresql.org"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-037",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "dilipbalaut@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-038",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "etsuro.fujita@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "etsuro.fujita@gmail.com"
+    ],
+    "message_ids": [
+      "CAPmGK14-b_9Z1et89geAm9A9wj1uGaOghTeBvrO+4+rRFquNRw@mail.gmail.com",
+      "CAPmGK16E0o1AUpe=kt5Odo6u-2jVpKTgYkefBaEL0TrWagGfyw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-039",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ewie@ewie.name",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "ewie@ewie.name"
+    ],
+    "message_ids": [
+      "10fbfdfe-80f6-4ef9-b8b3-f7be0eb53a50@ewie.name",
+      "a977a633-cff1-425c-861a-5b29e0c17aab@ewie.name"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-040",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "guofenglinux@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "guofenglinux@gmail.com"
+    ],
+    "message_ids": [
+      "CAMbWs4_DBQyZRaphH3F0ks7C5SkEOuAQ4GX1nCAU9C728PyHYw@mail.gmail.com",
+      "CAMbWs4_KT4LGcxS4oyoHsTTfTdw_evJ0DdWcaejDi9hbSp0dXg@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-041",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "heikki.linnakangas@iki.fi",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "heikki.linnakangas@iki.fi"
+    ],
+    "message_ids": [
+      "E1w2R6W-00099h-0X@gemulon.postgresql.org",
+      "amauta-mbox-missing-id-5f8559428c43a6ad7cda4f90e759ac4f@generated.invalid"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-042",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "horikyota.ntt@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-043",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "houzj.fnst@fujitsu.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-044",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ilya.evdokimov@tantorlabs.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "ilya.evdokimov@tantorlabs.com"
+    ],
+    "message_ids": [
+      "cba47b16-76cf-4d84-9dea-2421ccf83eee@tantorlabs.com",
+      "8e10784c-4e6f-405e-bcc2-19bee5e19a9b@tantorlabs.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-045",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "imran.zhir@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "imran.zhir@gmail.com"
+    ],
+    "message_ids": [
+      "CA+UBfanrT0h+efw+UD2ShRcX35C54do-iq8DyPuJWJr6d5vbTA@mail.gmail.com",
+      "CA+UBfakXLFhAGL7bKqTfYS2qtKLdYNGSsm9zYhH_LwespjJTkQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-046",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "jacob.champion@enterprisedb.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "jacob.champion@enterprisedb.com"
+    ],
+    "message_ids": [
+      "CAOYmi+=Cy2j=-_-VdT1cE_91NRXs9_1hyGTUA8CVpOUSFvOKUA@mail.gmail.com",
+      "CAOYmi+kKMBDOK7yOiFtLZOL09tPC9btUEV0YteK+tMUvp-yTew@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-047",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "jan@planetscale.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "jan@planetscale.com"
+    ],
+    "message_ids": [
+      "3f6db46e-3175-40de-9001-ccde3a8b05f2@planetscale.com",
+      "07f64e65-0ef2-4034-a7b8-bf1be3e647e4@planetscale.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-048",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "japinli@hotmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-049",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "jb@jbitc.de",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "jb@jbitc.de"
+    ],
+    "message_ids": [
+      "e153aac1-f376-4be1-82aa-2a0198ab0066@jbitc.de",
+      "579c31d4-97e1-4edc-a4e1-1cb7523f3097@jbitc.de"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-050",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "jian.universality@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-051",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "jkatz@postgresql.org",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-052",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ju.grigorev@ftdata.ru",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "ju.grigorev@ftdata.ru"
+    ],
+    "message_ids": [
+      "c41fb2cad0414894b765f487ac373813@localhost.localdomain",
+      "cd00a0536c674fac9e5dd9f4e27ae868@localhost.localdomain"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-053",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "kawatatatsuya0913@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "kawatatatsuya0913@gmail.com"
+    ],
+    "message_ids": [
+      "CAHza6qf4chUzqvNS+T71Wd=7tuZ_YZrsje6P1-rFk0wPY4H6uw@mail.gmail.com",
+      "CAHza6qf2F-9rsN6Gq4b2LaNmFSZSq1u6ToqfbqoO3wKqsPCLsg@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-054",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "kdbase.hack@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-055",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "kennychen851228@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "kennychen851228@gmail.com"
+    ],
+    "message_ids": [
+      "CAPXstDuWD8jg0=C8PXTXGSTTsZcjqJ+u+xKCrMpN99CXsxQzCg@mail.gmail.com"
+    ],
+    "result_count": 1,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-056",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "knizhnik@garret.ru",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "knizhnik@garret.ru"
+    ],
+    "message_ids": [
+      "4be52164-66f7-43c0-8ceb-7ce55ba67ac0@garret.ru",
+      "4e611ee8-14e3-423f-bbc8-a7b547358520@garret.ru"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-057",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "koshino@sraoss.co.jp",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "koshino@sraoss.co.jp"
+    ],
+    "message_ids": [
+      "OS9P286MB6486BEACED1E79E3EB8B5F4594AC2@OS9P286MB6486.JPNP286.PROD.OUTLOOK.COM",
+      "OS9P286MB64867F881B1AA850A8F174F794AE2@OS9P286MB6486.JPNP286.PROD.OUTLOOK.COM"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-058",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "kuroda.hayato@fujitsu.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-059",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "laurenz.albe@cybertec.at",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-060",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "li.evan.chao@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-061",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "lic@highgo.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "lic@highgo.com"
+    ],
+    "message_ids": [
+      "7fc7ddd7.18d.1987f47444d.Coremail.lic@highgo.com",
+      "4e5a18b0.181.1987dbe5683.Coremail.lic@highgo.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-062",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "litskevichkarina@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "litskevichkarina@gmail.com"
+    ],
+    "message_ids": [
+      "CACiT8ibVVrDK2rS8kKOcGc8ZeV9gKOc080AD=1YWgnYLoY+XKg@mail.gmail.com",
+      "CACiT8iamoL-=792e6JK2uCVvwDhfCg7DXHhvqN0P33jhGg2-8A@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-063",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "lizi.openmind@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-064",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "m.taha.naveed27@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "m.taha.naveed27@gmail.com"
+    ],
+    "message_ids": [
+      "CAPTqav+VUjYgm1jZy0Scy=1-PfdgznVj2=PwH8disiXF76HEow@mail.gmail.com",
+      "CAPTqavL3R9AbnT8qJ_8wdwDiA0p7i_bDz+-xCwGVve1Fn6anZw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-065",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "mahi6run@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "mahi6run@gmail.com"
+    ],
+    "message_ids": [
+      "CAKYtNArk5r-iDswWb86ggkoYW-4gRNRQ1Vwb_c1RtYSLmtNjpA@mail.gmail.com",
+      "CAKYtNArryDL=KZ=FCcdsk3GsS4JaoUjgSG209qm+1hWMke+21Q@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-066",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "manuelreyesbravo@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "manuelreyesbravo@gmail.com"
+    ],
+    "message_ids": [
+      "179070492900.527107.8843747083878165117@gmail.com",
+      "179069810491.316007.4145107668471017354@gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-067",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "marco.nenciarini@enterprisedb.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "marco.nenciarini@enterprisedb.com"
+    ],
+    "message_ids": [
+      "CA+nrD2fwcm9cgJB6icGbnhrfz7AQTFPYLH9Z0GjGt9a05z6VYw@mail.gmail.com",
+      "CA+nrD2doAz+RdgJcqo1O7i=fe3UVZvT4LVucJ9GLGEfBNNNpSQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-068",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "marcos@f10.com.br",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "marcos@f10.com.br"
+    ],
+    "message_ids": [
+      "CAB-JLwa+J-sAjirhbf5j2sJLO+6FuR_Ok2b2UMQVEUuBmCYjfQ@mail.gmail.com",
+      "CAB-JLwZO_4HyjANHiFdnLFjXy0gkWhaXxk9hE=pQOoZJ8q6MGQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-069",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "masao.fujii@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-070",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "matheusssilv97@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "matheusssilv97@gmail.com"
+    ],
+    "message_ids": [
+      "908cfebc-7d2d-43b1-88b9-2385de24eed6@gmail.com",
+      "DLRUNGYX33TS.2M17VTR2OBXPC@gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-071",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "maxime.schoemans@enterprisedb.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "maxime.schoemans@enterprisedb.com"
+    ],
+    "message_ids": [
+      "B6BCDE05-5DD5-4D37-A1BE-2AF419926017@enterprisedb.com",
+      "89FF6895-5F19-48C5-9795-3717A627ACE4@enterprisedb.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-072",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "me@jeltef.nl",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "me@jeltef.nl"
+    ],
+    "message_ids": [
+      "CAGECzQQrOEo7dy8uQ_UKb29XxPVPB--MivU1uCUCnB8cxMhYqg@mail.gmail.com",
+      "CAGECzQRO5KxKdiXJ6m9BH9aQgXR_V0vyPXVPi=-WdbX=7r4V3Q@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-073",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "melanieplageman@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-074",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "michael@paquier.xyz",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-075",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "mihailnikalayeu@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "mihailnikalayeu@gmail.com"
+    ],
+    "message_ids": [
+      "CADzfLwVKOzUxWX8yqZ2ck1BXzyw9u=b_yv5-+tVk9=6ZKPLsUA@mail.gmail.com",
+      "CADzfLwU97r3QC5oZDeVcWvcvXhNy9VnoFNDVHw+ERg_DEG4=FQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-076",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "mok03127@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "mok03127@gmail.com"
+    ],
+    "message_ids": [
+      "179074273441.6180.2515281464552050662@mail.gmail.com",
+      "178956158235.97809.18200289969141907831@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-077",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "mrdrivingduck@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "mrdrivingduck@gmail.com"
+    ],
+    "message_ids": [
+      "CAPsk3_Bc20UPyZUHabaX_XbFHj5riFqj6GRUBiQtJdc-=3edmw@mail.gmail.com",
+      "CAPsk3_C8MVu9y0JFgoJeEsiTefvrMc1mva-C8VHXD+JbExOU+A@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-078",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "mths.dev@pm.me",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "mths.dev@pm.me"
+    ],
+    "message_ids": [
+      "xB8mjPxwcpQNKrrrQLcFPN61ZwWyRd18C02ELlwcWVdvl9zRrkEXOj5vSAlsaXOIyUZ_qZHpmRnUCy88_4fm9GQzUTq4mFLbiowLYJh9SDY=@pm.me",
+      "La1Tfi7wirg9uGbCx_y7Qb9kl2T15mYouDXjCKAFuDqzQWnTRwH7KNLGigLLcxRs91V6dp2ySs1j_7mB4btzEZJ9NIMEAyOjUyAS7Jx-ydQ=@pm.me"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-079",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "myon@debian.org",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "myon@debian.org"
+    ],
+    "message_ids": [
+      "aqzmJ7-5202qXuzx@msg.df7cb.de",
+      "ani4BpccmFfbO9dq@msg.df7cb.de"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-080",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "nagata@sraoss.co.jp",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-081",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "nik@postgres.ai",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "nik@postgres.ai"
+    ],
+    "message_ids": [
+      "CAM527d_fz=OmHSznp3nx_sc2KG9hKb5mHoVRt5jsgsuM9G9hdg@mail.gmail.com",
+      "CAM527d-pu-rWTjuZ7TEDDO7nGqzBkHi2rM-GdJy46_HrNsP8rw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-082",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "nikhil@planetscale.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "nikhil@planetscale.com"
+    ],
+    "message_ids": [
+      "CA+UBoq3D5SPuDGFQN5MVp09AYEV2SZz2twgyuGnuwigMrN7BHA@mail.gmail.com",
+      "CA+UBoq0F2ua2fQEAU3-6w0oxOgFc9BgEN4gRcchiUUZ+WouVrQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-083",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "nisha.moond412@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-084",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "nitinmotiani@google.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "nitinmotiani@google.com"
+    ],
+    "message_ids": [
+      "CAH5HC95hJXkCkja0fXUoF1Kb+KKO7_BeASq51iWB+oU6Scb7KQ@mail.gmail.com",
+      "CAH5HC962RpWBAr=Sjd2NGMhN+NcQk3ye99=W5cXL1MNNs_7cJA@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-085",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "nn@turacolabs.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-086",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "noah@leadboat.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-087",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "osamaabdulqader.cs@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "osamaabdulqader.cs@gmail.com"
+    ],
+    "message_ids": [
+      "CAC+8b5jyo=5ELqCnpwXr4cQY2=jxkZ+c1rjVWS+MCmXBfCnoew@mail.gmail.com",
+      "CAC+8b5i4MXWfA-XU=zk5jpG2R4wt6TGJX9dNghX5VCvMOtHtBw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-088",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "peter.b.smith@fujitsu.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "peter.b.smith@fujitsu.com"
+    ],
+    "message_ids": [
+      "amauta-mbox-missing-id-26d54aa27b6b8dd50a3020e44529b635@generated.invalid",
+      "amauta-mbox-missing-id-70146f36b244ab266490a02f66f45316@generated.invalid"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-089",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "pg@bowt.ie",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-090",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "pierre.forstmann@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "pierre.forstmann@gmail.com"
+    ],
+    "message_ids": [
+      "179042222819.1129.9520282623409278427.pgcf@coridan.postgresql.org",
+      "178983608752.1097.2806869639571559525.pgcf@coridan.postgresql.org"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-091",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "piki@planetscale.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-092",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "pj@illuminatedcomputing.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "pj@illuminatedcomputing.com"
+    ],
+    "message_ids": [
+      "CA+renyVOGeDLcp165r=7inFBSVStgC8HYDwDhYNStZf2M35Rag@mail.gmail.com",
+      "CA+renyV2NRb-XZj0+wpSsHcDYQwHhQXNRp0cOGuDvO4kKJDcTg@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-093",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "pkopylov@cloudlinux.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-094",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "pl0h0yp1@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "pl0h0yp1@gmail.com"
+    ],
+    "message_ids": [
+      "CAB8bMisS6rTQGqy9f3Y7Wyo-LdONZM0SRPgF3hNHHezZ7WzLOQ@mail.gmail.com",
+      "CAB8bMit1h4PqwXsCRa4qeAzsxidgMV0wzGuL97Q78jQ=bQ6HDA@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-095",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "postgres@jeltef.nl",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "postgres@jeltef.nl"
+    ],
+    "message_ids": [
+      "DLRIUVXIEUOQ.2E2I0B7VZLHLI@jeltef.nl",
+      "CAGECzQS_vv5ixC4AmaOoffqgk1D+3QW9Ugw=Tzd=8ND_CFw7uw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-096",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "qiuwenhuifx@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "qiuwenhuifx@gmail.com"
+    ],
+    "message_ids": [
+      "CAGjGUAL3PXwJng2ThnVAv+n3CXhPe4_Ztimk43EOXiV0sPQQsw@mail.gmail.com",
+      "CAGjGUALAE2DPdC3atrLK13=A+c3oHDVkFJ7Gm2TB_bhSYgPUVg@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-097",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "r.khamidullin@postgrespro.ru",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "r.khamidullin@postgrespro.ru"
+    ],
+    "message_ids": [
+      "5c5a7984-b149-b505-7ad9-2a7766c65b55@postgrespro.ru"
+    ],
+    "result_count": 1,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-098",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "ranier.vf@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-099",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "reshkekirill@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "reshkekirill@gmail.com"
+    ],
+    "message_ids": [
+      "CALdSSPgHU=um9oMK39NQg3MPQ-fFfBNL3gYPfiDNxPaGg9jBsg@mail.gmail.com",
+      "CALdSSPgG8V8ETKLyYzugqvpELYsBsZxK02Ur-rYDDMvNRPK+XQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-100",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "samimseih.pg@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "samimseih.pg@gmail.com"
+    ],
+    "message_ids": [
+      "CAN12+Y+R0omTVoPLvosfV7ZEB6o1ycWLEi6CsnQRciWfCvjW2w@mail.gmail.com",
+      "CAN12+YKdOimN3dXwU7AffJ1R-4No62vQfNBZvvcofbkO_2BAGQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-101",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "samimseih@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-102",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "satyanarlapuram@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "satyanarlapuram@gmail.com"
+    ],
+    "message_ids": [
+      "CAHg+QDcZruKkzjaebtMoMQMd4LuG8sxtJPS=Hpx2Rxtddn+HOg@mail.gmail.com",
+      "CAHg+QDfTaDHm1NVtysOa1HPCRAhNstconXQxkrVbOS3vfr5mKQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-103",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "sehrope@jackdb.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "sehrope@jackdb.com"
+    ],
+    "message_ids": [
+      "CAH7T-aoyWXh1GDZRJg5AzG_sAmUnvPdWoV9ybW+EA5VP=hMwmw@mail.gmail.com",
+      "CAH7T-ap2La6nD0g2BL79UY=_syuVt3gR+hXBHsEaVQHvhFq5Og@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-104",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "semih702do@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "semih702do@gmail.com"
+    ],
+    "message_ids": [
+      "CALOtZ7tuWisV=v0cUY_q6PLHJ-fOiQ7ZN476JwmM0PyV0t5i7Q@mail.gmail.com"
+    ],
+    "result_count": 1,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-105",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "shinya11.kato@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "shinya11.kato@gmail.com"
+    ],
+    "message_ids": [
+      "CAOzEurRddqm-etFkG9T4auovYUDdB1bBasNJGg1jW09tXcOmTg@mail.gmail.com",
+      "CAOzEurQTJDHQmG0xekQapZDM-DaoK1-5sK03PABrMZ2Er=zZKA@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-106",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "shveta.malik@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-107",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "sirichamarthi22@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "sirichamarthi22@gmail.com"
+    ],
+    "message_ids": [
+      "CAKrAKeW81MwaEecB5r=we6fChZyjkTboynO+Tq-ajKXLntFv9g@mail.gmail.com",
+      "CAKrAKeX8EjbF17aBoFJOjFh2k2V-G5ZzqK15Och+7PtoqS=8Xg@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-108",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "smithpb2250@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-109",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "srinath2133@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "srinath2133@gmail.com"
+    ],
+    "message_ids": [
+      "CAFC+b6qE80WFVcU9CK12QSAxp8BEaeKsdzd2WhzMcK3rTa8HQQ@mail.gmail.com",
+      "CAFC+b6oOhwGRg6ad=S6irP7pEO0r0ZNsQnjkW4nj5=fc-AkECw@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-110",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "tgl@sss.pgh.pa.us",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-111",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "thom@linux.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-112",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "tndrwang@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "tndrwang@gmail.com"
+    ],
+    "message_ids": [
+      "CAHewXNm2sph6Z6QANfu67TTm2TYkbBn6dfoPCe=EeX1fb_LiTQ@mail.gmail.com",
+      "CAHewXNmvw-tA733uT=iBNHQf2M=FAyxYz_Ko36CdXL5iPrR17g@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-113",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "vignesh21@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-114",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "vismay.t@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-115",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "vladlesin@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "vladlesin@gmail.com"
+    ],
+    "message_ids": [
+      "f98f541d-8adf-4144-9ba1-37b935e59dd6@gmail.com",
+      "794e8b4e-f7e7-4900-944f-af1d62e6665f@gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-116",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "x4mmm@yandex-team.ru",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-117",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "xunengzhou@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-118",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "zengman@halodbtech.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "zengman@halodbtech.com"
+    ],
+    "message_ids": [
+      "tencent_0C511CAE082BF9D242F8C140@qq.com",
+      "tencent_39C3CBD3571707FB3A8D5E05@qq.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-119",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "zhaorui126@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "zhaorui126@gmail.com"
+    ],
+    "message_ids": [
+      "CAHWVJhGx1of_p51CbVquNCugc_JRJyzawU9brtW9diA-dwtLdQ@mail.gmail.com",
+      "CAHWVJhHATWoEduLY9j2wGft8h5L_DAg=Pywek2bonXaQj3sf0A@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-120",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "zhong950419@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-121",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "zsolt.parragi@percona.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "zsolt.parragi@percona.com"
+    ],
+    "message_ids": [
+      "CAN4CZFPmoGbx22eqZhXLm1NivLRo8YzgWkx27R=7EqgvZzfHNw@mail.gmail.com",
+      "CAN4CZFOjS+POs_p3PFM7HW43DgVHwJyviR601W-Fdaz-N7VUuQ@mail.gmail.com"
+    ],
+    "result_count": 2,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-122",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "nathandbossart@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-123",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "i.staroverov@ftdata.ru",
+    "limit": 2,
+    "offset": 0,
+    "senders": [
+      "i.staroverov@ftdata.ru"
+    ],
+    "message_ids": [
+      "41b98cf827294e60b726aedcca06f9d5@localhost.localdomain"
+    ],
+    "result_count": 1,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "One captured request per exact parsed patch-author email in the REL19 cohort, including parser-recovered emails. Latest two results requested, not an exhaustive mailbox search; empty results are not evidence of no affiliation. Earlier exploratory/retried calls are not claimed as part of this reproducible sweep."
+  },
+  {
+    "ledger_id": "ledger:rel19:mail-124",
+    "operation": "search_mail",
+    "inbox": "pgsql-hackers",
+    "query": "",
+    "author": "sawada.mshk@gmail.com",
+    "limit": 2,
+    "offset": 0,
+    "senders": [],
+    "message_ids": [],
+    "result_count": 0,
+    "retrieved_at": "2026-09-30T00:00:00Z",
+    "retrieval_precision": "day",
+    "semantics_verified": false,
+    "coverage_status": "sampled",
+    "coverage_note": "Final exact-email inventory reconciliation: parser-recovered Masahiko Sawada credit. Empty sender search despite existing reviewed public identity/evidence. No negative employment inference; this is a sampled request, not an exhaustive mailbox sweep."
   }
 ]

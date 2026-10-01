@@ -1,0 +1,18 @@
+[
+  {"name":"no tags", "commit":{"message":"Subject\n\nA correction.","author_name":"Git Author","author_email":"git@example.test"}, "source":"git_author_fallback"},
+  {"name":"coauthors only", "commit":{"message":"Subject\n\nCo-authored-by: Co Person <co@example.test>\n","author_name":"Git Author","author_email":"git@example.test","co_authored_by":["Co Person <co@example.test>"]}, "source":"git_author_fallback"},
+  {"name":"empty message", "commit":{"message":"","author_email":"git@example.test"}, "source":"git_author_fallback"},
+  {"name":"name only Git author", "commit":{"message":"Subject","author_name":"Git Author"}, "source":"git_author_fallback"},
+  {"name":"blank extracted values", "commit":{"message":"Subject","author_email":"git@example.test","trailer_author":["", "  "]}, "source":"git_author_fallback"},
+  {"name":"explicit trailer", "commit":{"trailer_author":["Patch Person <patch@example.test>"],"author_email":"git@example.test"}, "source":"trailer_author"},
+  {"name":"name only trailer", "commit":{"trailer_author":["Patch Person"],"message":"Author: Patch Person","author_email":"git@example.test"}, "source":"trailer_author"},
+  {"name":"malformed trailer address", "commit":{"trailer_author":["Patch <broken>"],"message":"Author: Patch <broken>","author_email":"git@example.test"}, "source":"trailer_author"},
+  {"name":"earlier author paragraph", "commit":{"message":"Subject\n\nAuthor: Patch Person\n\nBackpatch-through: 19","author_email":"git@example.test","trailer_author":[]}, "source":"unextracted_author"},
+  {"name":"malformed neighboring label", "commit":{"message":"Subject\n\nAuthor: Patch Person\nBackpatch through: 19","author_email":"git@example.test","trailer_author":[]}, "source":"unextracted_author"},
+  {"name":"empty author tag", "commit":{"message":"Subject\n\nAuthor: \n","author_email":"git@example.test"}, "source":"unextracted_author"},
+  {"name":"case whitespace CRLF", "commit":{"message":"Subject\r\n\r\n\tAuThOr : Patch Person\r\n","author_email":"git@example.test"}, "source":"unextracted_author"},
+  {"name":"missing full message", "commit":{"summary":"Subject","author_email":"git@example.test"}, "source":"missing_message"},
+  {"name":"null full message", "commit":{"message":null,"author_email":"git@example.test"}, "source":"missing_message"},
+  {"name":"committer is not author", "commit":{"message":"Subject","committer_name":"Committer","committer_email":"committer@example.test"}, "source":"missing_git_author"},
+  {"name":"coauthor is not fallback", "commit":{"message":"Co-authored-by: Co Person <co@example.test>","co_authored_by":["Co Person <co@example.test>"]}, "source":"missing_git_author"}
+]

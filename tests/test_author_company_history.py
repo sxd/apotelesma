@@ -12,6 +12,7 @@ import tempfile
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
+from collections import Counter
 
 from scripts import author_company_history as ach
 
@@ -321,6 +322,144 @@ class SnapshotAndCliTests(unittest.TestCase):
 
 
 class ResearchCoverageTests(unittest.TestCase):
+    def test_shared_primary_author_fallback_policy(self):
+        cases = ach.read_json(ROOT / "tests" / "fixtures" / "author-fallback.json")
+        for row in cases:
+            with self.subTest(row["name"]):
+                self.assertEqual(ach.primary_author_source(row["commit"]), row["source"])
+
+    def test_frozen_rel19_cohort_and_complete_sender_query_inventory(self):
+        data = load_pilot()
+        scope = data["manifest"]["rel19_coverage_sample"]
+        cohort_path = PILOT / scope["path"]
+        commits = ach.read_json(cohort_path)
+        self.assertEqual(hashlib.sha256(cohort_path.read_bytes()).hexdigest(), scope["sha256"])
+        self.assertEqual(len(commits), 619)
+        self.assertEqual(ach.validate_commit_snapshot(commits), [])
+        fork = ach.parse_iso(scope["fork_commit_date"], field="fork_commit_date")
+        for commit in commits:
+            self.assertEqual(commit["branch"], "REL_19_STABLE")
+            self.assertNotEqual(commit["commit_id"], scope["fork_commit"])
+            self.assertGreater(ach.parse_iso(commit["commit_date"], field="commit_date"), fork)
+            self.assertIsInstance(commit["author_email"], str)
+        recovered = [c for c in commits if c["trailer_author"] != c["exported_trailer_author"]]
+        self.assertEqual(len(recovered), 30)
+        self.assertTrue(all(not c["exported_trailer_author"] and c["trailer_author"] for c in recovered))
+        self.assertEqual(sum(not c["exported_trailer_author"] for c in commits), 242)
+        report = ach.research_coverage(commits, data)
+        self.assertEqual(report["coverage_funnel"], {
+            "matched_company": 178, "no_author_credit": 8,
+            "unresolved_author_identity": 357, "no_usable_company_at_date": 76})
+        self.assertEqual(report["author_sources"], {"trailer_author": 407,
+            "git_author_fallback": 204, "unextracted_author": 8})
+        self.assertEqual(Counter(c["author_source"] for c in report["commits"] if c["company_ids"]),
+                         {"trailer_author": 143, "git_author_fallback": 35})
+        self.assertEqual(report["candidate_count"], 144)
+        self.assertEqual(report["email_candidate_count"], 141)
+        ledger = [r for r in data["retrieval-ledger"] if r["ledger_id"].startswith("ledger:rel19:")]
+        self.assertEqual(len(ledger), 125)
+        trailer_emails = {ach.normalize_email(c["email"]) for c in ach.extract_credits(commits)
+                          if c["role"] == "patch_author" and c["email"]}
+        self.assertEqual({r["author"] for r in ledger}, trailer_emails)
+        self.assertEqual(sum(bool(r["message_ids"]) for r in ledger), 77)
+        self.assertEqual(len({mid for r in ledger for mid in r["message_ids"]}), 150)
+        self.assertTrue(all(r["query"] == "" and r["limit"] == 2 and not r["semantics_verified"]
+                            and r["coverage_status"] == "sampled" for r in ledger))
+
+    def test_saved_rel19_audit_is_reproducible_and_agrees_with_website(self):
+        data = load_pilot()
+        scope = data["manifest"]["rel19_coverage_sample"]
+        commits = ach.read_json(PILOT / scope["path"])
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(ach.main(["research-coverage", "--data-dir", str(PILOT),
+                "--commits", str(PILOT / scope["path"]), "--branch", scope["branch"], "--include-commits"]), 0)
+        self.assertEqual(output.getvalue(), (PILOT / scope["audit_path"]).read_text())
+        report = json.loads(output.getvalue())
+        self.assertEqual(len(report["commits"]), len(commits))
+        self.assertEqual(Counter(c["coverage_status"] for c in report["commits"]), report["coverage_funnel"])
+        records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
+        website = ach.website_snapshot(commits, records, data, {})
+        self.assertEqual(website["coverage"]["matched_commits"], 178)
+        self.assertEqual({c["commit_id"] for c in report["commits"] if c["company_ids"]},
+                         {c["commit_id"] for c in website["matches"]})
+        self.assertEqual(Counter(a["company_id"] for c in website["matches"] for a in c["companies"]), {
+            "company:amazon": 47, "company:microsoft": 52, "company:snowflake": 40,
+            "company:enterprisedb": 21, "company:percona": 17, "company:databricks": 2})
+        self.assertTrue(all(a["status"] == "estimated" for c in website["matches"] for a in c["companies"]))
+
+    def test_rel19_profile_dates_and_bounded_estimates_remain_explicit(self):
+        data = load_pilot()
+        evidence = {e["evidence_id"]: e for e in data["evidence"]}
+        profiles = [e for e in evidence.values() if e["evidence_id"].startswith("ev:rel19:profile-observed:")]
+        self.assertEqual(len(profiles), 15)
+        for row in profiles:
+            self.assertIsNone(row["source_date"])
+            self.assertEqual(row["observed_at"], "2026-09-30T00:00:00Z")
+        histories = [h for h in data["histories"]
+                     if h["history_revision"] == "rel19-since-fork-research-2026-09-30-v4"]
+        self.assertEqual(len(histories), 88)
+        self.assertEqual(sum(len(h["evidence_ids"]) == 2 for h in histories), 40)
+
+        def observation_day(row):
+            date = row.get("observation_month", "") + "-01" if row.get("observation_month") else (
+                row.get("observed_at") or row["source_date"])[:10]
+            return ach.parse_iso(date, field="observation_day")
+
+        for row in histories:
+            self.assertEqual(row["status"], "estimated")
+            self.assertFalse(row["end_ongoing"])
+            self.assertLessEqual(row["end_latest"], "2026-10-01T00:00:00Z")
+            endpoints = [evidence[key] for key in row["evidence_ids"]]
+            self.assertTrue(all(e["review_status"] != "rejected" for e in endpoints))
+            self.assertEqual({e["person_id"] for e in endpoints}, {row["person_id"]})
+            self.assertEqual({e["company_id"] for e in endpoints}, {row["company_id"]})
+            if len(endpoints) != 2:
+                continue
+            left, right = endpoints
+            self.assertIsNotNone(left["source_date"])
+            start, end = observation_day(left), observation_day(right)
+            self.assertGreater((end - start).days, 0)
+            self.assertLessEqual((end - start).days, 366)
+            for candidate in evidence.values():
+                if (candidate["person_id"] != row["person_id"] or not candidate.get("company_id")
+                        or candidate["review_status"] == "rejected"
+                        or not (candidate.get("source_date") or candidate.get("observed_at"))):
+                    continue
+                if start <= observation_day(candidate) <= end:
+                    self.assertEqual(candidate["company_id"], row["company_id"])
+
+    def test_rel19_research_does_not_guess_transition_dates_or_extend_old_evidence(self):
+        data = load_pilot()
+        cases = [
+            ("Richard Guo <guofenglinux@gmail.com>", "2026-09-15", None),
+            ("Richard Guo <guofenglinux@gmail.com>", "2026-09-30", "company:microsoft"),
+            ("Etsuro Fujita <etsuro.fujita@gmail.com>", "2026-09-15", None),
+            ("Etsuro Fujita <etsuro.fujita@gmail.com>", "2026-09-30", "company:amazon"),
+            ("Ayush Tiwari <ayushtiwari.slg01@gmail.com>", "2026-09-15", None),
+            ("Tom Lane <tgl@sss.pgh.pa.us>", "2026-09-15", "company:snowflake"),
+            ("Tom Lane <tgl@sss.pgh.pa.us>", "2026-10-01", None),
+        ]
+        commits = [{"branch": "REL_19_STABLE", "commit_id": str(i), "trailer_author": [credit],
+                    "commit_date": day + "T12:00:00Z"} for i, (credit, day, _) in enumerate(cases)]
+        report = ach.research_coverage(commits, data)
+        for row in report["commits"]:
+            expected = cases[int(row["commit_id"])][2]
+            self.assertEqual(row["company_ids"], [expected] if expected else [])
+
+    def test_branch_filter_and_missing_branch(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(ach.main(["research-coverage", "--data-dir", str(PILOT),
+                "--commits", str(SAMPLE_COMMITS), "--branch", "master", "--include-commits"]), 0)
+        report = json.loads(output.getvalue())
+        self.assertEqual(report["branch_filter"], "master")
+        self.assertTrue(all(row["branch"] == "master" for row in report["commits"]))
+        self.assertEqual(sum(report["coverage_funnel"].values()), report["total_commits"])
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(ach.main(["research-coverage", "--data-dir", str(PILOT),
+                "--commits", str(SAMPLE_COMMITS), "--branch", "missing"]), 2)
+
     def test_cli_report_is_read_only_and_identifies_input_revisions(self):
         before = {path.name: path.read_bytes() for path in PILOT.glob("*.json")}
         output = io.StringIO()
@@ -332,8 +471,9 @@ class ResearchCoverageTests(unittest.TestCase):
         self.assertEqual(report["commit_snapshot_sha256"], hashlib.sha256(SAMPLE_COMMITS.read_bytes()).hexdigest())
         self.assertEqual(report["research_provenance"]["input_sha256"]["histories.json"],
                          hashlib.sha256(before["histories.json"]).hexdigest())
-        self.assertEqual(report["attribution_source"], "trailer_author")
+        self.assertEqual(report["attribution_source"], "trailer_author_or_git_author")
         self.assertFalse(report["exhaustive_affiliation_research"])
+        self.assertNotIn("commits", report)
         self.assertEqual(before, {path.name: path.read_bytes() for path in PILOT.glob("*.json")})
 
     def test_inventory_is_trailer_only_and_does_not_merge_names(self):
@@ -352,6 +492,8 @@ class ResearchCoverageTests(unittest.TestCase):
         self.assertEqual(report["candidate_count"], 3)
         self.assertEqual(report["email_candidate_count"], 2)
         self.assertEqual(report["resolved_people"], 1)
+        self.assertEqual(report["coverage_funnel"], {"matched_company": 2,
+            "no_author_credit": 1, "unresolved_author_identity": 1, "no_usable_company_at_date": 0})
         self.assertFalse(report["exhaustive_affiliation_research"])
         resolved = next(row for row in report["candidates"] if row["person_id"])
         self.assertEqual(resolved["commit_count"], 2)
@@ -375,6 +517,39 @@ class ResearchCoverageTests(unittest.TestCase):
 
 
 class WebsiteSnapshotTests(unittest.TestCase):
+    def test_git_fallback_uses_exact_author_identity_and_existing_date_evidence(self):
+        data = load_pilot()
+        data["histories"] = [history(), history(person_id="person:tom-lane", company_id="company:snowflake", history_id="tom")]
+        base = {"branch": "master", "author_name": "Bruce Momjian", "author_email": "bruce@momjian.us",
+                "commit_date": "2025-02-18T20:51:31Z", "message": "Subject\n\nA correction.",
+                "committer_name": "Tom Lane", "committer_email": "tgl@sss.pgh.pa.us", "trailer_author": []}
+        commits = [
+            {**base, "commit_id": "no-tags"},
+            {**base, "commit_id": "coauthor-only", "message": "Subject\n\nCo-authored-by: Tom Lane <tgl@sss.pgh.pa.us>",
+             "co_authored_by": ["Tom Lane <tgl@sss.pgh.pa.us>"]},
+            {**base, "commit_id": "earlier-author", "message": "Subject\n\nAuthor: Someone\n\nBackpatch-through: 19"},
+            {**base, "commit_id": "malformed-block", "message": "Subject\n\nAuthor: Someone\nBackpatch through: 19"},
+            {**base, "commit_id": "unresolved-author", "trailer_author": ["Someone"]},
+            {**base, "commit_id": "unresolved-git", "author_email": "unreviewed@example.test"},
+            {**base, "commit_id": "name-only-git", "author_email": None},
+            {**base, "commit_id": "missing-git", "author_name": None, "author_email": None},
+            {**base, "commit_id": "undated", "commit_date": None},
+            {**base, "commit_id": "outside-horizon", "commit_date": "2026-10-01T00:00:00Z"},
+        ]
+        before = copy.deepcopy(commits)
+        credits = ach.extract_credits(commits)
+        self.assertFalse(any(c["role"] == "patch_author" for c in credits if c["commit_id"] in {"no-tags", "coauthor-only"}))
+        records, _ = ach.build_attributions(commits, credits, data, "committer")
+        snapshot = ach.website_snapshot(commits, records, data, {})
+        self.assertEqual(snapshot["matches"], [{"branch": "master", "commit_id": key,
+            "author_source": "git_author_fallback", "companies": [{"company_id": "company:enterprisedb", "status": "supported"}]}
+            for key in ["coauthor-only", "no-tags"]])
+        report = ach.research_coverage(commits, data)
+        self.assertEqual(report["matched_commits"], 2)
+        self.assertEqual({c["commit_id"] for c in report["commits"] if c["company_ids"]}, {"no-tags", "coauthor-only"})
+        self.assertNotIn("tgl@sss.pgh.pa.us", {c["email"] for c in report["candidates"]})
+        self.assertEqual(commits, before)
+
     def test_website_projection_never_promotes_candidates_and_deduplicates_roles(self):
         def row(status, company_status="supported", company_id="company:enterprisedb", branch="master",
                 roles=("patch_author",)):
@@ -388,7 +563,9 @@ class WebsiteSnapshotTests(unittest.TestCase):
                    row("supported", company_id="company:databricks", roles=("co_author",)),
                    row("supported", company_id="company:databricks", roles=()),
                    row("supported", branch="stable", roles=("git_author", "co_author"))]
-        snapshot = ach.website_snapshot([{}, {}], records, load_pilot(), {"timestamp_basis": "committer"})
+        commits = [{"branch": branch, "commit_id": "one", "trailer_author": ["Explicit Person"]}
+                   for branch in ("master", "stable")]
+        snapshot = ach.website_snapshot(commits, records, load_pilot(), {"timestamp_basis": "committer"})
         self.assertEqual(snapshot["coverage"]["matched_commits"], 2)
         self.assertEqual(len(snapshot["companies"]), 6)
         self.assertEqual(snapshot["matches"][0]["companies"], [{"company_id": "company:enterprisedb", "status": "supported"}])
@@ -418,7 +595,7 @@ class WebsiteSnapshotTests(unittest.TestCase):
             {"company_id": "company:snowflake", "status": "supported"},
         ])
 
-    def test_website_never_falls_back_for_missing_or_unresolved_trailer_authors(self):
+    def test_website_never_falls_back_without_message_or_for_unresolved_trailer_authors(self):
         data = load_pilot()
         data["histories"] = [history()]
         base = {"branch": "master", "author_name": "Bruce Momjian", "author_email": "bruce@momjian.us",
@@ -431,7 +608,7 @@ class WebsiteSnapshotTests(unittest.TestCase):
             "Bruce Momjian <bruce@momjian.us>", "Bruce Momjian <bruce@momjian.us>"]})
         records, _ = ach.build_attributions(commits, ach.extract_credits(commits), data, "committer")
         snapshot = ach.website_snapshot(commits, records, data, {})
-        self.assertEqual(snapshot["matches"], [{"branch": "master", "commit_id": "also-patch", "companies": [
+        self.assertEqual(snapshot["matches"], [{"branch": "master", "commit_id": "also-patch", "author_source": "trailer_author", "companies": [
             {"company_id": "company:enterprisedb", "status": "supported"}]}])
         self.assertEqual(snapshot["coverage"]["matched_commits"], 1)
 
@@ -445,8 +622,8 @@ class WebsiteSnapshotTests(unittest.TestCase):
             self.assertEqual(ach.main(args), 0)
             self.assertEqual(before, output.read_bytes())
             snapshot = json.loads(before)
-            self.assertEqual(snapshot["schema_version"], 2)
-            self.assertEqual(snapshot["attribution_source"], "trailer_author")
+            self.assertEqual(snapshot["schema_version"], 3)
+            self.assertEqual(snapshot["attribution_source"], "trailer_author_or_git_author")
             self.assertEqual(snapshot["provenance"]["timestamp_basis"], "committer")
             self.assertEqual(snapshot["provenance"]["input_sha256"]["commit_snapshot_sha256"], hashlib.sha256(SAMPLE_COMMITS.read_bytes()).hexdigest())
             self.assertEqual(snapshot["coverage"], {"total_commits": 7, "matched_commits": 5,

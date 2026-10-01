@@ -2,7 +2,7 @@
 
 This is an evidence-linked pilot for estimating which companies commit participants were associated with at a recorded commit timestamp. Offline research consumes the existing commits JSON format; the site build now publishes a compact filtering projection. The checked-in input lives in `data/author-affiliations/`; keep it out of `site/data/`, which `scripts/export-json.sh` clears before export.
 
-The 2026-09-30 expansion covers 58 people and 62 reviewed email identities across the six requested companies. The original evidence is preserved. `commits.json` retains the original seven branch-qualified commits; `company-coverage-commits.json` retains the separate six-company regression sample. Research is agent-inspected and provisional; `agent-reviewed` does not mean human-reviewed. It does not establish company sponsorship or support population-wide company totals.
+The REL19 research covers 64 people and 70 reviewed email identities across the six requested companies. The original evidence is preserved. `commits.json` retains the original seven branch-qualified commits; `company-coverage-commits.json` retains the separate six-company regression sample. Research is agent-inspected and provisional; `agent-reviewed` does not mean human-reviewed. It does not establish company sponsorship or support population-wide company totals.
 
 ## Run it
 
@@ -19,7 +19,7 @@ python3 scripts/author_company_history.py build \
   --commits data/author-affiliations/commits.json \
   --out-dir /tmp/author-affiliation-build
 
-# Read-only JSON inventory of every patch-author candidate in the full export.
+# Read-only JSON inventory of every primary-author candidate in the full export.
 python3 scripts/author_company_history.py research-coverage \
   --data-dir data/author-affiliations \
   --commits site/data/commits.json
@@ -30,7 +30,8 @@ The default timestamp basis is `committer`, which uses `commit_date` (the record
 The build writes deterministic `raw_credits.json`, `commit_author_companies.json`, `coverage.json`, and `manifest.json`. The output manifest contains SHA-256 hashes of every input JSON file and the commit snapshot, plus hashes of all generated data files. No build timestamp is injected, so identical inputs produce byte-identical outputs.
 
 `research-coverage` prints JSON to stdout without changing any files. It lists
-all `trailer_author` candidates, exact raw values, branch-qualified commit
+all primary-author candidates (`trailer_author` or the conditional Git-author
+fallback described below), exact raw values, branch-qualified commit
 counts, date bounds, reviewed identity status, companies with histories and
 actual matched-commit counts. Email keys are not unique people; opaque and
 name-only credits remain separate. The report includes input fingerprints and
@@ -95,7 +96,7 @@ Optional `relationship_group_id` and `relationship_group_mode` express multiple-
 `manifest.json`:
 
 ```json
-{"schema_version":"1","evidence_snapshot":"...","mapping_revision":"...","history_revision":"...","rule_revision":"author-company-attribution/1","retrieval_ledger_revision":"..."}
+{"schema_version":"1","evidence_snapshot":"...","mapping_revision":"...","history_revision":"...","rule_revision":"author-company-attribution/2","retrieval_ledger_revision":"..."}
 ```
 
 The checked-in manifest also records the full source-export SHA-256 and the exact branch-qualified selection. Updating any pilot JSON input requires updating the relevant revision and the manifest's evidence/source provenance.
@@ -158,11 +159,13 @@ python3 scripts/author_company_history.py build-site \
   --timestamp-basis committer
 ```
 
-The website JSON uses `schema_version: 2` and
-`attribution_source: "trailer_author"`. It contains company IDs/names/aliases,
+The website JSON uses `schema_version: 3` and
+`attribution_source: "trailer_author_or_git_author"`. Each match records
+`author_source: "trailer_author"` or `"git_author_fallback"`. It contains company IDs/names/aliases,
 sparse branch-qualified commit/company matches, supported/estimated labels, and
-coverage denominators. The client rejects version 1 all-participant exports and
-exports with a different attribution source, even when their commit hash matches.
+coverage denominators. The client rejects older policy versions, exports with a
+different attribution source, and per-commit sources inconsistent with the full
+message and credits, even when their commit hash matches.
 It retains input hashes and mapping/history/rule revisions. Its commit SHA-256
 is verified against the actual fetched commits before filtering. This check
 uses Web Crypto (HTTPS, or localhost when previewing). Invalid/stale/missing
@@ -175,11 +178,17 @@ suggestions, persistent removable chips, multiple checkbox selections, clear
 search/selection, and keyboard navigation. Its matching contract is:
 
 - Selected companies are ORed, then ANDed with branch, date and author filters.
-- A company can match only through a resolved `trailer_author` (`Author` trailer)
-  participant. A Git author, committer or `Co-authored-by` credit alone never
-  supplies a match. Missing, name-only or otherwise unresolved patch authors do
-  not fall back to another role. Someone with multiple roles qualifies only if
-  also resolved from `trailer_author`. The full offline audit retains all roles.
+- A company matches through resolved `trailer_author` (`Author` trailer)
+  participants first. If the full message contains no `Author:` line, use the
+  Git author (`author_name`/`author_email`), including messages containing only
+  `Co-authored-by:` credits. This is an explicit user-requested fallback, not
+  newly discovered patch authorship. A missing full message cannot establish
+  absence. A case-insensitive, optionally indented/spaced `Author:` line anywhere
+  in the message blocks fallback even if trailer extraction missed it; name-only,
+  malformed or unresolved extracted authors also block it. Co-authors remain
+  visible but never independently supply company matches. Never use the committer.
+  The raw trailer arrays and offline role records remain unchanged. Table rows
+  label the fallback; the author selector already includes Git authors.
   Author and company filters apply independently to the commit;
   they need not match the same person. This is not a person-at-company query.
 - No companies selected means unrestricted, including unknown affiliations.
@@ -206,7 +215,9 @@ search/selection, and keyboard navigation. Its matching contract is:
   sponsorship. Recent commits show a **Patch author companies** column with
   company names and status labels.
 
-The research now covers 58 people and all six requested companies:
+## Historical expansion before REL19 research and conditional fallback
+
+At this revision, the research covered 58 people and all six requested companies:
 Microsoft, Amazon Web Services (AWS), Databricks, Snowflake, EnterpriseDB and
 Percona. Amazon/AWS and EnterpriseDB/EDB aliases do not create duplicate totals;
 “Snowflakes” is accepted as a search spelling. The catalog does not imply that

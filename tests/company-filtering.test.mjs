@@ -15,16 +15,16 @@ const commits = [
 ];
 export function fixture(rows = commits) {
   return {
-    schema_version: 2, attribution_source: "trailer_author", provenance: { timestamp_basis: "committer" },
+    schema_version: 3, attribution_source: "trailer_author_or_git_author", provenance: { timestamp_basis: "committer" },
     coverage: { total_commits: rows.length, matched_commits: 3, researched_people: 3 },
     companies: [
       { company_id: "edb", name: "EnterpriseDB", aliases: ["EDB"] },
       { company_id: "other", name: "Another Company", aliases: ["Example"] },
     ],
     matches: [
-      { branch: "master", commit_id: "one", companies: [{ company_id: "edb", status: "estimated" }] },
-      { branch: "master", commit_id: "two", companies: [{ company_id: "other", status: "supported" }] },
-      { branch: "master", commit_id: "both", companies: [{ company_id: "edb", status: "supported" }, { company_id: "other", status: "estimated" }] },
+      { branch: "master", commit_id: "one", author_source: "trailer_author", companies: [{ company_id: "edb", status: "estimated" }] },
+      { branch: "master", commit_id: "two", author_source: "trailer_author", companies: [{ company_id: "other", status: "supported" }] },
+      { branch: "master", commit_id: "both", author_source: "trailer_author", companies: [{ company_id: "edb", status: "supported" }, { company_id: "other", status: "estimated" }] },
     ],
   };
 }
@@ -44,10 +44,13 @@ test("company OR deduplicates commits, keys include branch, unknowns only match 
 test("malformed, conflicting, duplicated and foreign-snapshot matches are rejected", () => {
   for (const mutate of [
     (s) => { s.schema_version = 1; },
-    (s) => { s.schema_version = 3; },
+    (s) => { s.schema_version = 2; },
     (s) => { delete s.attribution_source; },
     (s) => { s.attribution_source = "git_author"; },
     (s) => { s.attribution_source = "co_authored_by"; },
+    (s) => { s.attribution_source = "trailer_author"; },
+    (s) => { delete s.matches[0].author_source; },
+    (s) => { s.matches[0].author_source = "git_author_fallback"; },
     (s) => { s.coverage.total_commits++; },
     (s) => { s.provenance.timestamp_basis = "fallback"; },
     (s) => { s.matches[0].companies[0].status = "conflicting"; },
@@ -70,6 +73,30 @@ test("snapshot hash verification detects stale commit data", async () => {
   await assert.rejects(() => verifyCompanySnapshot(snapshot, `${text}\n`), /different commit snapshot/);
 });
 
+test("fallback company matches are accepted only for a truly absent Author tag", () => {
+  const rows = [{ ...base, commit_id: "fallback", message: "Subject\n\nCo-authored-by: Co Person",
+    co_authored_by: ["Co Person"] }];
+  const snapshot = fixture(rows);
+  snapshot.matches = [{ branch: "master", commit_id: "fallback", author_source: "git_author_fallback",
+    companies: [{ company_id: "edb", status: "estimated" }] }];
+  snapshot.coverage.matched_commits = 1;
+  const index = buildCompanyIndex(snapshot, rows);
+  assert.equal(matchesSelectedCompanies(rows[0], new Set(["edb"]), index), true);
+  assert.equal(matchesSelectedCompanies(rows[0], new Set(["edb"]), index, false), false);
+  for (const fields of [
+    { message: "Subject\n\nAuthor: Patch Person\n\nBackpatch-through: 19" },
+    { message: undefined }, { trailer_author: ["Unresolved Person"] },
+    { author_name: null, author_email: null },
+  ]) assert.throws(() => buildCompanyIndex(snapshot, [{ ...rows[0], ...fields }]));
+  const ui = dashboard(rows);
+  ui.state.companyIndex = index;
+  ui.state.filters.companies.add("edb");
+  ui.state.filters.authors.add(JSON.stringify(["email", "owner@example.test"]));
+  ui.renderDashboard();
+  assert.equal(ui.state.filteredCommits.length, 1);
+  assert.match(ui.render()[0], /commit-author fallback/);
+});
+
 function uiFixture() {
   const ui = dashboard(commits);
   ui.state.companyIndex = buildCompanyIndex(fixture(), commits);
@@ -85,8 +112,8 @@ test("dashboard combines company OR with author/branch/date AND and keeps Git me
   assert.deepEqual(Array.from(ui.state.filteredCommits, (c) => c.summary), ["First"]);
   assert.equal(ui.state.filteredAuthors[0].author_name, "Git Owner");
   assert.match(ui.render()[0], /EnterpriseDB \(estimated\)/);
-  assert.match(ui.element("#company-method").textContent, /only to patch authors in trailer_author/);
-  assert.match(ui.element("#company-coverage").textContent, /patch-author affiliations/);
+  assert.match(ui.element("#company-method").textContent, /Git author is the fallback/);
+  assert.match(ui.element("#company-coverage").textContent, /including commit-author fallback/);
   ui.state.filters.includeEstimated = false;
   assert.match(ui.render()[0], /No commits match/);
   ui.state.filters.authors.clear();
@@ -154,7 +181,7 @@ test("no research data disables only companies and safely renders text", () => {
 test("company filtering happens before recent-25 slicing", () => {
   const rows = Array.from({ length: 40 }, (_, i) => ({ ...base, commit_id: `c${i}`, summary: `c${i}`, trailer_author: ["Patch Person <patch@example.test>"], author_date: new Date(Date.UTC(2025, 0, i + 1)).toISOString() }));
   const data = fixture(rows);
-  data.matches = rows.slice(0, 30).map((row) => ({ branch: row.branch, commit_id: row.commit_id, companies: [{ company_id: "edb", status: "estimated" }] }));
+  data.matches = rows.slice(0, 30).map((row) => ({ branch: row.branch, commit_id: row.commit_id, author_source: "trailer_author", companies: [{ company_id: "edb", status: "estimated" }] }));
   data.coverage.matched_commits = data.matches.length;
   const ui = dashboard(rows);
   ui.state.companyIndex = buildCompanyIndex(data, rows);

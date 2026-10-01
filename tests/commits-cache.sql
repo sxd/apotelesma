@@ -72,6 +72,15 @@ INSERT INTO parser_cases VALUES
     ('empty values omitted', E'{field}:\n{field}:   \n{field}: Value', ARRAY['Value']),
     ('tabs retained', E'{field}: \tValue\t \n{field}: \t ', ARRAY[E'\tValue\t', E'\t']);
 
+-- Unknown labels are valid trailer syntax, but are not exported fields.
+INSERT INTO parser_cases
+SELECT 'unknown trailer ' || placement.name, placement.message, ARRAY['Value']
+FROM (VALUES
+    ('before', E'Subject\n\nSecurity: CVE-2026-6464\n{field}: Value'),
+    ('between', E'Subject\n\n{other}: Other\nDiscusssion: https://example.test/thread\n{field}: Value'),
+    ('after', E'Subject\n\n{field}: Value\nUnknown: Ignored')
+) AS placement(name, message);
+
 -- Invalid lines at any position invalidate the WHOLE terminal block, even
 -- when an earlier valid block or a recognized suffix could otherwise match.
 INSERT INTO parser_cases
@@ -79,7 +88,6 @@ SELECT 'invalid ' || bad.name || ' ' || placement.name,
        E'{field}: Earlier\n\n' || placement.message,
        ARRAY[]::text[]
 FROM (VALUES
-    ('unknown', 'Unknown: Bad'),
     ('space continuation', ' continued'),
     ('tab continuation', E'\tcontinued'),
     ('space indentation', ' {field}: Bad'),
@@ -148,6 +156,36 @@ END;
 $$;
 
 CREATE TEMP TABLE expected_trailers (field text, column_name text, values text[]);
+-- Exercise the actual SQL parser against EVERY commit in the frozen branch
+-- cohort, not just a Python model of the changed extraction rules.
+\if :{?rel19_fixture}
+CREATE TEMP TABLE rel19_cohort AS
+SELECT value AS commit FROM jsonb_array_elements(pg_read_file(:'rel19_fixture')::jsonb);
+DO $$
+DECLARE
+    row record;
+    expected text[];
+    recovered integer;
+BEGIN
+    IF (SELECT count(*) FROM rel19_cohort) <> 619 THEN
+        RAISE EXCEPTION 'unexpected REL_19_STABLE cohort size';
+    END IF;
+    FOR row IN SELECT commit FROM rel19_cohort LOOP
+        SELECT COALESCE(array_agg(value), ARRAY[]::text[]) INTO expected
+        FROM jsonb_array_elements_text(row.commit->'trailer_author');
+        IF extract_field(row.commit->>'message', 'Author') IS DISTINCT FROM expected THEN
+            RAISE EXCEPTION 'REL19 parser mismatch for %', row.commit->>'commit_id';
+        END IF;
+    END LOOP;
+    SELECT count(*) INTO recovered FROM rel19_cohort
+    WHERE commit->'trailer_author' <> commit->'exported_trailer_author';
+    IF recovered <> 30 THEN
+        RAISE EXCEPTION 'expected 30 recovered REL19 patch credits, got %', recovered;
+    END IF;
+END;
+$$;
+\endif
+
 INSERT INTO expected_trailers VALUES
     ('Reported-by', 'reported_by', ARRAY['Reporter']),
     ('Suggested-by', 'suggested_by', ARRAY['Suggester']),

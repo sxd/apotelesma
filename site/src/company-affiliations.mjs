@@ -1,11 +1,13 @@
-// Only accepted, dated trailer_author matches are exported. A missing row means no usable
+import { primaryAuthorSource } from "./patch-authors.mjs";
+
+// Only accepted, dated primary-author matches are exported. A missing row means no usable
 // affiliation evidence, never "unaffiliated" or "independent".
 export const companyCommitKey = (commit) => JSON.stringify([commit.branch, commit.commit_id]);
 
 export function buildCompanyIndex(snapshot, commits) {
   const invalid = () => { throw new Error("Invalid company affiliation snapshot"); };
-  // Reject older all-participant exports, even if their commit hash is current.
-  if (snapshot?.schema_version !== 2 || snapshot.attribution_source !== "trailer_author"
+  // Reject older policies, even if their commit hash is current.
+  if (snapshot?.schema_version !== 3 || snapshot.attribution_source !== "trailer_author_or_git_author"
       || !["committer", "author"].includes(snapshot.provenance?.timestamp_basis)
       || !Array.isArray(snapshot.companies) || !Array.isArray(snapshot.matches)
       || snapshot.coverage?.total_commits !== commits.length
@@ -18,11 +20,13 @@ export function buildCompanyIndex(snapshot, commits) {
         || companies.has(company.company_id)) invalid();
     companies.set(company.company_id, { ...company, searchText: [company.name, ...company.aliases].join("\n").toLowerCase() });
   }
-  const keys = new Set(commits.map(companyCommitKey));
+  const keys = new Map(commits.map((commit) => [companyCommitKey(commit), commit]));
   const matches = new Map();
   for (const row of snapshot.matches) {
     const key = companyCommitKey(row);
     if (!keys.has(key) || matches.has(key) || !Array.isArray(row.companies) || !row.companies.length) invalid();
+    if (!["trailer_author", "git_author_fallback"].includes(row.author_source)
+        || row.author_source !== primaryAuthorSource(keys.get(key))) invalid();
     const seen = new Set();
     for (const item of row.companies) {
       if (!companies.has(item.company_id) || !["supported", "estimated"].includes(item.status) || seen.has(item.company_id)) invalid();

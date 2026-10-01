@@ -22,7 +22,8 @@ from typing import Any, Iterable
 
 
 SCHEMA_VERSION = "1"
-RULE_VERSION = "author-company-attribution/1"
+RULE_VERSION = "author-company-attribution/2"
+ATTRIBUTION_SOURCE = "trailer_author_or_git_author"
 ROLES = ("git_author", "patch_author", "co_author")
 RELATIONSHIPS = {"employment", "consulting", "other", "unknown"}
 HISTORY_STATUSES = {"supported", "estimated", "unknown", "conflicting"}
@@ -669,18 +670,46 @@ def ensure_output_is_separate(out_dir: Path, data_dir: Path, commits_path: Path)
                     raise DataError(f"output {target} aliases input {source}")
 
 
+def primary_author_source(commit: dict[str, Any]) -> str:
+    """Choose primary authors without rewriting raw credits or guessing roles.
+
+    Absence in extracted fields is not absence in the message: an unextracted
+    Author line blocks fallback. A missing message cannot prove absence either.
+    Co-authored-by credits do not prevent the explicitly requested Git fallback.
+    """
+    values = commit.get("trailer_author")
+    if isinstance(values, list) and any(isinstance(value, str) and value.strip() for value in values):
+        return "trailer_author"
+    message = commit.get("message")
+    if not isinstance(message, str):
+        return "missing_message"
+    if re.search(r"^[ \t]*Author[ \t]*:", message, re.MULTILINE | re.IGNORECASE):
+        return "unextracted_author"
+    if any(isinstance(commit.get(field), str) and commit[field].strip()
+           for field in ("author_name", "author_email")):
+        return "git_author_fallback"
+    return "missing_git_author"
+
+
+def primary_author_role(commit: dict[str, Any]) -> str | None:
+    return {"trailer_author": "patch_author", "git_author_fallback": "git_author"}.get(primary_author_source(commit))
+
+
 def website_snapshot(commits: list[dict[str, Any]], records: list[dict[str, Any]],
                      data: dict[str, Any], provenance: dict[str, Any]) -> dict[str, Any]:
-    """Sparse trailer-author/company matches; candidates never become filters.
+    """Sparse primary-author/company matches; candidates never become filters.
 
-    Only participants credited in trailer_author qualify, even when a Git author
-    or co-author has usable evidence. A commit is counted once per company; a
-    supported patch author takes precedence over estimated patch authors for
+    Prefer trailer_author, otherwise use the Git author only when the full
+    message has no Author tag. Never substitute a co-author or committer. A
+    commit is counted once per company; a supported author takes precedence
+    over estimated authors for
     that company. Full participant/evidence detail remains in the audit build.
     """
     matches: dict[tuple[str, str], dict[str, str]] = defaultdict(dict)
+    commit_index = {(row["branch"], row["commit_id"]): row for row in commits}
     for row in records:
-        if "patch_author" not in row.get("roles", []):
+        commit = commit_index[(row["branch"], row["commit_id"])]
+        if primary_author_role(commit) not in row.get("roles", []):
             continue
         if row["attribution_status"] not in {"supported", "estimated"}:
             continue
@@ -693,8 +722,8 @@ def website_snapshot(commits: list[dict[str, Any]], records: list[dict[str, Any]
             if companies.get(company_id) != "supported":
                 companies[company_id] = status
     return {
-        "schema_version": 2,
-        "attribution_source": "trailer_author",
+        "schema_version": 3,
+        "attribution_source": ATTRIBUTION_SOURCE,
         "provenance": provenance,
         "coverage": {"total_commits": len(commits), "matched_commits": len(matches),
                      "researched_people": len(data["people"])},
@@ -702,6 +731,7 @@ def website_snapshot(commits: list[dict[str, Any]], records: list[dict[str, Any]
         # authors. A zero-count option is not evidence of an affiliation.
         "companies": sorted(data["companies"], key=lambda company: company["company_id"]),
         "matches": [{"branch": branch, "commit_id": commit_id,
+                     "author_source": primary_author_source(commit_index[(branch, commit_id)]),
                      "companies": [{"company_id": company_id, "status": status}
                                    for company_id, status in sorted(companies.items())]}
                     for (branch, commit_id), companies in sorted(matches.items())],
@@ -765,7 +795,7 @@ def extract_command(args: argparse.Namespace) -> int:
 
 
 def research_coverage(commits: list[dict[str, Any]], data: dict[str, Any]) -> dict[str, Any]:
-    """Inventory every trailer credit without guessing identities or employers.
+    """Inventory primary-author credits without guessing identities or employers.
 
     Email keys are candidate identities, not a count of unique people. Opaque
     and name-only credits remain separate research leads, never name matches.
@@ -775,7 +805,7 @@ def research_coverage(commits: list[dict[str, Any]], data: dict[str, Any]) -> di
     commit_index = {(row["branch"], row["commit_id"]): row for row in commits}
     candidates: dict[tuple[str, str], dict[str, Any]] = {}
     for credit in credits:
-        if credit["role"] != "patch_author":
+        if credit["role"] != primary_author_role(commit_index[(credit["branch"], credit["commit_id"])]):
             continue
         email = normalize_email(credit.get("email"))
         key = ("email", email) if email else ("raw", credit["raw_value"])
@@ -789,9 +819,37 @@ def research_coverage(commits: list[dict[str, Any]], data: dict[str, Any]) -> di
             row["dates"].add(date.isoformat())
     records, _ = build_attributions(commits, credits, data, "committer")
     matched_by_person: dict[str, set[tuple[str, str]]] = defaultdict(set)
+    primary_records: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for record in records:
-        if "patch_author" in record["roles"] and record["attribution_status"] in {"supported", "estimated"}:
-            matched_by_person[record["person_id"]].add((record["branch"], record["commit_id"]))
+        if primary_author_role(commit_index[(record["branch"], record["commit_id"])]) in record["roles"]:
+            primary_records[(record["branch"], record["commit_id"])].append(record)
+            if record["attribution_status"] in {"supported", "estimated"}:
+                matched_by_person[record["person_id"]].add((record["branch"], record["commit_id"]))
+    matched_keys = set().union(*matched_by_person.values()) if matched_by_person else set()
+    funnel: Counter[str] = Counter({reason: 0 for reason in (
+        "matched_company", "no_author_credit", "unresolved_author_identity", "no_usable_company_at_date")})
+    commit_audit = []
+    for key, commit in sorted(commit_index.items()):
+        participants = primary_records.get(key, [])
+        if key in matched_keys:
+            reason = "matched_company"
+        elif not participants:
+            reason = "no_author_credit"
+        elif not any(row["person_id"] for row in participants):
+            reason = "unresolved_author_identity"
+        else:
+            reason = "no_usable_company_at_date"
+        funnel[reason] += 1
+        commit_audit.append({"branch": key[0], "commit_id": key[1],
+                             "commit_date": commit.get("commit_date"), "coverage_status": reason,
+                             "patch_authors": commit.get("trailer_author") or [],
+                             "author_source": primary_author_source(commit),
+                             "attribution_authors": sorted({credit["raw_value"] for row in participants
+                                 for credit in row["raw_credits"] if credit["role"] == primary_author_role(commit)}),
+                             "participant_reasons": sorted({row["reason"] for row in participants}),
+                             "company_ids": sorted({aff["company_id"] for row in participants
+                                 if row["attribution_status"] in {"supported", "estimated"}
+                                 for aff in row["affiliations"] if aff["status"] in {"supported", "estimated"}})})
     output = []
     for key, row in sorted(candidates.items()):
         person_id = mappings.get(row["email"])
@@ -806,7 +864,7 @@ def research_coverage(commits: list[dict[str, Any]], data: dict[str, Any]) -> di
                        "matched_commit_count": len(row["commits"] & matched_by_person.get(person_id, set())),
                        "first_commit_date": dates[0] if dates else None,
                        "last_commit_date": dates[-1] if dates else None})
-    return {"schema_version": 1, "attribution_source": "trailer_author",
+    return {"schema_version": 2, "attribution_source": ATTRIBUTION_SOURCE,
             "exhaustive_affiliation_research": False,
             "coverage_note": "Complete credit inventory for this snapshot, not a complete employment directory. Name-only credits and unknown affiliations remain unresolved.",
             "total_commits": len(commits), "candidate_count": len(output),
@@ -814,8 +872,9 @@ def research_coverage(commits: list[dict[str, Any]], data: dict[str, Any]) -> di
             "resolved_email_candidates": sum(row["person_id"] is not None for row in output),
             "resolved_people": len({row["person_id"] for row in output if row["person_id"]}),
             "people_with_matched_commits": len(matched_by_person),
-            "matched_commits": len(set().union(*matched_by_person.values())) if matched_by_person else 0,
-            "candidates": output}
+            "matched_commits": len(matched_keys), "coverage_funnel": dict(funnel),
+            "author_sources": dict(sorted(Counter(primary_author_source(c) for c in commits).items())),
+            "commits": commit_audit, "candidates": output}
 
 
 def research_coverage_command(args: argparse.Namespace) -> int:
@@ -824,7 +883,14 @@ def research_coverage_command(args: argparse.Namespace) -> int:
     errors = validate_dataset(data) + validate_commit_snapshot(commits)
     if errors:
         raise DataError("\n".join(errors))
+    if args.branch:
+        commits = [row for row in commits if row["branch"] == args.branch]
+        if not commits:
+            raise DataError(f"branch {args.branch!r} has no commits in this snapshot")
     report = research_coverage(commits, data)
+    report["branch_filter"] = args.branch
+    if not args.include_commits:
+        report.pop("commits")
     report["commit_snapshot_sha256"] = sha256_bytes(commits_path.read_bytes())
     report["research_provenance"] = {
         "manifest": data["manifest"],
@@ -847,9 +913,11 @@ def make_parser() -> argparse.ArgumentParser:
     extract.add_argument("--commits", required=True)
     extract.add_argument("--out", required=True)
     extract.set_defaults(func=extract_command)
-    research = subparsers.add_parser("research-coverage", help="report every trailer-author research candidate as JSON")
+    research = subparsers.add_parser("research-coverage", help="report every primary-author research candidate as JSON")
     research.add_argument("--data-dir", required=True)
     research.add_argument("--commits", required=True)
+    research.add_argument("--branch", help="inventory one exact exported branch (no inherited master history)")
+    research.add_argument("--include-commits", action="store_true", help="include a coverage reason for every commit")
     research.set_defaults(func=research_coverage_command)
     build = subparsers.add_parser("build", help="build a deterministic attribution snapshot")
     build.add_argument("--data-dir", required=True)

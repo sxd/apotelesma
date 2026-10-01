@@ -1,6 +1,173 @@
 # Author/company research
 
-## Expanded coverage (2026-09-30)
+## Conditional commit-author fallback (2026-10-01, rule revision 2)
+
+At the user's request, primary-author attribution now prefers `trailer_author`
+but uses the Git commit author (`author_name` and `author_email`) when the full
+message contains no `Author:` tag. This includes messages with only
+`Co-authored-by:` tags. Co-author credits remain intact and visible; they are
+not independently used for company matching. The Git committer is never a
+fallback. Missing full messages and explicit but unresolved/unextracted Author
+credits do not qualify. Raw trailer fields and offline participant roles are
+not rewritten to pretend that fallback identities were explicitly credited.
+
+Of the previously unmatched 212 author-credit cases, 198 have neither author
+tag and six have only co-author tags. All **204** now use the commit author.
+Eight still have explicit `Author:` lines that extraction missed: five in an
+earlier paragraph and three in a malformed terminal paragraph. These remain
+unextracted; this policy change does not silently replace their stated authors.
+
+The same frozen 619-commit cohort now contains its exact Git author headers
+copied from the previously hashed public export. Its new SHA-256 is
+`f405e42f41b6c81f14da76a99c5feee49d5616f8b2e6a009b44b26f8d457ace2`.
+The previous projection hash is retained in the manifest. No commit messages,
+timestamps or original trailer arrays were changed for this policy update.
+
+There are **178/619 matched commits (28.8%)**: the previous 143 explicit
+patch-author matches plus **35 commit-author fallback matches**. The remainder
+is eight unextracted authors, 357 unresolved primary-author identities and 76
+resolved identities without usable company evidence at the commit date.
+The 204 fallbacks comprise 35 matches, 157 unresolved identities and 12 missing
+date/company cases. Selecting a fallback author does not invent an employer
+or extend an evidence interval. The company counts are AWS 47, Microsoft 52,
+Snowflake 40, EDB 21, Percona 17 and Databricks 2; one commit overlaps, and all
+matches remain estimates.
+
+The current primary-author inventory has 144 candidate keys (141 emails).
+The earlier 125-email mail sweep covers explicit patch-author emails only;
+no searches or identity mappings for new Git aliases are claimed by this
+policy change. Exact-email identity review and dated affiliation evidence
+remain required. Raw name equality alone does not merge identities.
+
+`rel19-coverage.json` has been regenerated with per-commit `author_source`,
+`attribution_authors`, preserved `patch_authors`, source counts and input hashes.
+Use the reproduction command below. The site snapshot is now schema version
+3 with `attribution_source: "trailer_author_or_git_author"`; older policy
+snapshots are rejected. The table labels commit-author fallback explicitly.
+Regenerate the website company data when publishing; none of this updates a
+live deployment automatically.
+
+## REL_19_STABLE since its fork (2026-09-30, historical revision v4)
+
+This pass inventories **all 619 REL_19_STABLE commits in the published snapshot**,
+not inherited master history. The upstream merge-base is
+`9cfd19bc10ac07139ca6c6d051d4492764441edb`, dated **2026-06-29 19:33:52 UTC**.
+The frozen cohort spans June 29 through September 30, 2026. This is complete
+commit/credit accounting for that snapshot, **not complete company attribution**.
+The catalog remains Microsoft, Amazon/AWS, Databricks, Snowflake, EDB and Percona.
+Other companies and unknown employers are not silently classified into them.
+
+The source was the public site's 75,104-row `data/commits.json`, SHA-256
+`d1729d059ca120132ad498c7680c69c051ee7c4bbd0e235143ae5ad085415493`.
+The branch-qualified projection is `rel19-since-fork-commits.json`, SHA-256
+`8c7c381c18ba769ea0ec0d9d0e53902b94487bd04c33d0c6e592bbb3324f2bdd`.
+It preserves raw messages and the originally exported credits separately as
+`exported_trailer_author`. Its `trailer_author` arrays use the corrected SQL
+parser. Git identity headers are intentionally omitted: they cannot substitute
+for missing patch authors. The original pilot and six-company fixtures remain
+unchanged.
+
+### Extraction and identity research
+
+The extractor previously discarded a whole terminal trailer paragraph when
+it contained an unrecognized label, including `Security:`. It now ignores
+syntactically valid unknown labels while retaining recognized fields. This
+recovers patch-author credits on **30 commits**; the real SQL parser is tested
+against all 619 frozen messages. Body prose, indented lines, malformed labels
+and earlier paragraphs still cannot become trailers. Raw malformed addresses
+are preserved, not guessed or repaired.
+
+The corrected cohort contains 128 candidate keys: **125 exact parsed emails**
+and three name-only/opaque keys. A captured Amauta `pgsql-hackers` sweep queried
+every one of those emails, requesting two results per sender. The ledger
+records all 125 requests, including 48 empty results; 77 requests returned
+150 distinct messages, which were fetched for inspection. This is a complete
+sender-query inventory, not an exhaustive mailbox sweep. Search semantics
+remain unverified and empty results are not negative employment evidence.
+Earlier exploratory/retried requests are not claimed in those counts.
+
+Additional direct message reads, including Discussion links on Bharath's
+commits, and primary public sources support reviewed observations. Only the
+sender's own company signature or an explicit affiliation statement was
+accepted, not quoted signatures, email domains or product discussions. Eight
+exact identity mappings and six people were added. The cumulative dataset
+now has **64 people, 70 mappings, 390 evidence records, 648 history hypotheses
+and 335 captured search requests**. This revision adds 53 evidence records
+and 88 estimated histories, including 40 bounded continuity intervals.
+
+### Dates, provisional endpoints and transitions
+
+The existing `bounded-observation-gap/1` policy remains: at most 366 days
+between consecutive same-company observations, no intervening different
+company and no extrapolation. All new histories are **estimated**, not proof
+of employment or patch sponsorship. The builder only consumes reviewed,
+explicit histories; it never invents periods automatically.
+
+The [January committer roster](https://speakerdeck.com/clairegiordano/behind-the-postgres-18-major-release-an-analysis-of-contributions-claire-giordano-fosdem-pgday-2026)
+on slide 79 has an explicit January 2026 reference month and February 3
+publication date. Its hypotheses retain month-level uncertainty. Event-specific
+speaker affiliations use their scheduled session dates as approximate
+observations, not as hire dates. Exact citations accompany each evidence row.
+
+[Contributor-maintained profiles](https://www.postgresql.org/community/contributors/)
+are provisional observations on September 30, not dated announcements. Their
+`source_date` is null and `observed_at` records the retrieval day; publication
+and employment-change dates remain unknown. Profiles may be stale. Where an
+independent dated observation agrees, a bounded continuity estimate can end
+at that provisional observation; an undated profile cannot establish an
+earlier historical starting point. These new histories do not extend beyond
+the exclusive October 1 boundary.
+
+Conflicting or changing affiliations remain explicit research warnings:
+Richard Guo's EDB/Microsoft transition and Etsuro Fujita's NTT/AWS transition
+are undated; their current profiles do not backfill this branch. Amit Kapila's
+current Apple entry does not justify carrying older EDB observations forward.
+Robert Haas's stale EDB profile is rejected as a continuity endpoint; his
+accepted August 31 EDB and September 29 Databricks signatures leave the
+intervening gap unknown. Ayush Tiwari's Microsoft evidence from May 2025 is
+not extrapolated over his 2026 commits. Warnings add no attribution histories.
+
+### Result and reproducible remaining-work queue
+
+Matching commits increased from **33/619 (5.3%) to 143/619 (23.1%)**. A match
+means at least one credited patch author has a usable company estimate on the
+commit timestamp; it does not mean every author on that commit is resolved.
+The mutually exclusive audit categories are:
+
+| Result | Commits |
+| --- | ---: |
+| At least one matched patch-author company | 143 |
+| No extracted `Author:` credit | 212 |
+| Patch credits present, but no reviewed identity match | 200 |
+| At least one resolved identity, but no usable company at that date | 64 |
+| Total | 619 |
+
+Company counts are Amazon/AWS 41, Microsoft 34, Snowflake 35, EDB 15, Percona
+17 and Databricks 2. Counts overlap (one commit matches two companies), are
+all estimates, and must not be added as distinct commits or treated as a
+ranking of company contributions.
+
+`rel19-coverage.json` records a reason for every commit, every candidate's
+exact raw credits and date range, and input hashes. Reproduce it from the
+repository root with:
+
+```sh
+python3 scripts/author_company_history.py research-coverage \
+  --data-dir data/author-affiliations \
+  --commits data/author-affiliations/rel19-since-fork-commits.json \
+  --branch REL_19_STABLE --include-commits
+```
+
+The command is read-only and fails for an absent branch instead of falling
+back to master. Omit `--include-commits` for just the aggregate/candidate report.
+The remaining queue prioritizes unresolved credits and missing date intervals;
+missing trailers require primary patch-thread research, not a Git-author
+fallback. The frozen fixture is an audit/regression input, not a replacement
+for the full published export. Publishing these changes requires regenerating
+the commit cache/export with the updated SQL and rebuilding the company
+snapshot; refreshing only the HTML or reusing the old JSON is insufficient.
+
+## Expanded coverage (2026-09-30, historical revision v3)
 
 This revision expands the seven-person sample to **58 people**, **62 exact email
 mappings**, **337 evidence records** and **560 reviewed history hypotheses**.

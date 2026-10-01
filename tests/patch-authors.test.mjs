@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { patchAuthors, renderPatchAuthors } from "../site/src/patch-authors.mjs";
+import { patchAuthors, renderPatchAuthors, primaryAuthorSource } from "../site/src/patch-authors.mjs";
 import { dashboard } from "./helpers/dashboard.mjs";
 
 test("Author then Co-authored-by, stable exact deduplication, full names preserved", () => {
@@ -12,6 +12,26 @@ test("Author then Co-authored-by, stable exact deduplication, full names preserv
   assert.deepEqual(patchAuthors(commit), ["Second <second@example.test>", "First", "Co One", "first"]);
   assert.equal(renderPatchAuthors({ trailer_author: ["Name <email>"] }),
     '<ul class="patch-authors"><li>Name &lt;email&gt;</li></ul>');
+});
+
+test("primary author fallback follows the shared Python/JavaScript policy", () => {
+  const cases = JSON.parse(readFileSync(new URL("./fixtures/author-fallback.json", import.meta.url), "utf8"));
+  for (const row of cases) assert.equal(primaryAuthorSource(row.commit), row.source, row.name);
+});
+
+test("fallback is visible, preserves coauthors and escapes Git metadata", () => {
+  const commit = { message: "Subject\n\nCo-authored-by: Co Person", author_name: "Git <script>",
+    author_email: "git@example.test", co_authored_by: ["Co Person"] };
+  const original = structuredClone(commit);
+  assert.deepEqual(patchAuthors(commit), ["Git <script> <git@example.test>", "Co Person"]);
+  assert.match(renderPatchAuthors(commit), /Git &lt;script&gt; &lt;git@example.test&gt; <small>\(commit-author fallback\)<\/small>/);
+  assert.ok(!renderPatchAuthors(commit).includes("<script>"));
+  assert.deepEqual(commit, original);
+  const ui = dashboard([{ ...commit, branch: "master", commit_id: "fallback", author_date: "2026-01-01" }]);
+  assert.match(ui.render()[0], /commit-author fallback/);
+  ui.state.filters.authors.add(JSON.stringify(["email", "git@example.test"]));
+  ui.updateDerivedState();
+  assert.equal(ui.state.filteredCommits.length, 1);
 });
 
 test("missing, null, malformed and blank values show an explicit empty marker without Git fallback", () => {

@@ -25,7 +25,9 @@ trap cleanup EXIT
 
 "$ROOT_DIR/scripts/temp-postgres.sh" init
 "$ROOT_DIR/scripts/temp-postgres.sh" start
-"$ROOT_DIR/scripts/temp-postgres.sh" psql -f "$ROOT_DIR/tests/commits-cache.sql"
+"$ROOT_DIR/scripts/temp-postgres.sh" psql \
+	-v rel19_fixture="$ROOT_DIR/data/author-affiliations/rel19-since-fork-commits.json" \
+	-f "$ROOT_DIR/tests/commits-cache.sql"
 
 DATA_DIR="$RUN_DIR/export" ROOT_BRANCH=master bash "$ROOT_DIR/scripts/export-json.sh"
 jq -e -n \

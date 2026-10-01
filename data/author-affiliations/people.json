@@ -56,5 +56,29 @@
   {"person_id":"person:richard-guo","display_name":"Richard Guo"},
   {"person_id":"person:david-christensen","display_name":"David Christensen"},
   {"person_id":"person:greg-sabino-mullane","display_name":"Greg Sabino Mullane"},
-  {"person_id":"person:peter-geoghegan","display_name":"Peter Geoghegan"}
+  {"person_id":"person:peter-geoghegan","display_name":"Peter Geoghegan"},
+  {
+    "person_id": "person:michael-paquier",
+    "display_name": "Michael Paquier"
+  },
+  {
+    "person_id": "person:noah-misch",
+    "display_name": "Noah Misch"
+  },
+  {
+    "person_id": "person:bertrand-drouvot",
+    "display_name": "Bertrand Drouvot"
+  },
+  {
+    "person_id": "person:etsuro-fujita",
+    "display_name": "Etsuro Fujita"
+  },
+  {
+    "person_id": "person:marco-nenciarini",
+    "display_name": "Marco Nenciarini"
+  },
+  {
+    "person_id": "person:ayush-tiwari",
+    "display_name": "Ayush Tiwari"
+  }
 ]

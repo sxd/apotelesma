@@ -85,6 +85,10 @@ contains:
 
 Commit-level records expose one array per allowed trailer field, plus
 `mentioned_people` and `mentioned_urls` for downstream consumers.
+Unknown, syntactically valid trailer labels (such as `Security:`) are ignored
+without discarding adjacent supported fields. Extraction still requires a
+terminal trailer paragraph: body prose, quoted/indented lines and malformed
+labels are not accepted, and raw trailer arrays are never filled from Git metadata.
 
 The Grafana-oriented datasets use explicit `time` and `time_unix_ms` fields for
 time-series friendly queries.
@@ -102,13 +106,16 @@ Infinity-based dashboard.
 The [affiliation-history pilot](./docs/author-company-affiliations.md)
 keeps dated evidence and reviewed identity mappings in durable, versioned files,
 then attributes commit participants using either recorded Git timestamp. It
-includes 58 researched people, explicit uncertainty, reproducible
+includes 64 researched people, explicit uncertainty, reproducible
 exports, and an independent PostgreSQL schema. The site build derives a compact
 `company_affiliations.json` from the exact published commits and exposes a
 searchable **Patch author companies** multiselect beside the author/date controls. Select any
 number of companies; estimates are included by default and can be excluded.
-Company matching uses **only `trailer_author`**, never Git authors or
-`co_authored_by` as a fallback. Company and author selections are independent
+Company matching uses **`trailer_author` first**. If the full message contains
+no `Author:` tag, it uses the Git author (`author_name`/`author_email`), including
+co-author-only messages. Missing messages and unresolved or unextracted explicit
+authors never trigger fallback. Co-authors remain visible but do not independently
+supply company matches; the committer is never substituted. Company and author selections are independent
 commit-level filters. The UI
 shows coverage and uncertainty, not company sponsorship or population-wide
 company totals. Microsoft, Amazon/AWS, Databricks, Snowflake, EDB and Percona
@@ -116,9 +123,14 @@ remain searchable; companies without usable patch-author evidence show zero
 matches. Aliases share one company identity.
 The expanded snapshot combines dated mailing-list evidence with primary company
 announcements. It is not an exhaustive employment directory. A read-only
-`research-coverage` command inventories every patch-author identity in an export,
+`research-coverage` command inventories every primary-author identity in an export,
 including unresolved credits, so coverage gaps remain visible. Automatic mail
 collection and exhaustive historical coverage remain future work.
+The [REL_19_STABLE audit](./data/author-affiliations/RESEARCH.md)
+accounts for all 619 published commits since the June 29, 2026 fork, with
+company estimates for 178 (143 explicit patch-author matches and 35 Git-author
+fallback matches) and explicit reasons for the remaining gaps.
+Its frozen messages also exercise the SQL trailer parser in regression tests.
 
 ## Branch Model
 

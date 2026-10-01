@@ -1,24 +1,24 @@
 {
   "schema_version": "1",
-  "evidence_snapshot": "RESEARCH.md sha256:725283d8479a9c5f21f49f0a8da515ed585b7c1971755ef6f87bfedb9e6531ef",
-  "previous_evidence_snapshot": "RESEARCH.md sha256:360dd0c1cd118b96efdb0f3c771aa939d776dc2115d21eb3b038b42f7c5dc6f9",
-  "mapping_revision": "expanded-company-research-2026-09-30-v3",
-  "history_revision": "expanded-company-research-2026-09-30-v3",
-  "rule_revision": "author-company-attribution/1",
-  "retrieval_ledger_revision": "expanded-company-mail-sample-2026-09-30-v3",
+  "evidence_snapshot": "RESEARCH.md sha256:a65c50291bf06dc69980404f7ec3a497ef3e90dece040a0f971a4195b83fa558",
+  "previous_evidence_snapshot": "RESEARCH.md sha256:4f1d4bc16f7308bf405efccc036eea10247d6cfd6ce41a5748d99af4df518500",
+  "mapping_revision": "rel19-since-fork-research-2026-09-30-v4",
+  "history_revision": "rel19-since-fork-research-2026-09-30-v4",
+  "rule_revision": "author-company-attribution/2",
+  "retrieval_ledger_revision": "rel19-since-fork-research-2026-09-30-v4",
   "history_estimation_policy": {
     "revision": "bounded-observation-gap/1",
     "max_gap_days": 366,
     "automatic_at_build": false,
-    "note": "Curated, estimated continuity between consecutive reviewed same-company observations; no intervening observed company or extrapolation. Other explicitly sourced retrospective histories retain their own methods."
+    "note": "Curated, estimated continuity between consecutive reviewed same-company observations; no intervening observed company or extrapolation. A current-profile endpoint is provisional and may be stale; its observation day is distinct from an unknown publication date. Other explicitly sourced retrospective histories retain their own methods."
   },
   "research_scope": {
-    "attribution_source": "trailer_author",
-    "people": 58,
-    "exact_email_mappings": 62,
+    "attribution_source": "trailer_author_or_git_author",
+    "people": 64,
+    "exact_email_mappings": 70,
     "exhaustive_affiliation_research": false,
     "candidate_inventory_command": "research-coverage",
-    "note": "Complete inventory of export credits, sampled affiliation evidence. Unknown identities, gaps and transitions remain unresolved."
+    "note": "Complete inventory of export credits, sampled affiliation evidence. All 125 parsed REL19 patch-author emails queried; this is not exhaustive mailbox or employer research. Unknown identities, gaps and transitions remain unresolved."
   },
   "commit_source": {
     "path": "site/dist/data/commits.json",
@@ -30,6 +30,26 @@
     "sha256": "e5b0f5f0283b518f200f4a7342f8d551fe8448ba8f2a9e2124f27d8fd9b4aa71",
     "source_export_sha256": "09108f7ab144fbe75277921b01abd915a8240eb945b7d880b29462c449279114",
     "selection": "Six exact branch-qualified projections, one matched commit per requested company. The original seven-commit pilot is unchanged."
+  },
+  "rel19_coverage_sample": {
+    "path": "rel19-since-fork-commits.json",
+    "sha256": "f405e42f41b6c81f14da76a99c5feee49d5616f8b2e6a009b44b26f8d457ace2",
+    "previous_projection_sha256": "8c7c381c18ba769ea0ec0d9d0e53902b94487bd04c33d0c6e592bbb3324f2bdd",
+    "source_export_url": "https://sxd.github.io/apotelesma/data/commits.json",
+    "source_export_sha256": "d1729d059ca120132ad498c7680c69c051ee7c4bbd0e235143ae5ad085415493",
+    "observed_on": "2026-09-30",
+    "branch": "REL_19_STABLE",
+    "fork_commit": "9cfd19bc10ac07139ca6c6d051d4492764441edb",
+    "fork_commit_date": "2026-06-29T19:33:52Z",
+    "commit_count": 619,
+    "original_matched_commits": 33,
+    "matched_commits": 178,
+    "trailer_only_matched_commits": 143,
+    "fallback_author_commits": 204,
+    "fallback_matched_commits": 35,
+    "recovered_author_credit_commits": 30,
+    "audit_path": "rel19-coverage.json",
+    "selection": "All branch-qualified REL_19_STABLE rows in the published snapshot, excluding inherited master history. Raw messages, Git author headers and exported_trailer_author preserve original data; trailer_author is re-extracted with the corrected terminal-paragraph parser. Conditional Git-author fallback affects attribution, never raw trailer fields."
   },
   "review_status": "agent-reviewed; no human review implied"
 }

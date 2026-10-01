@@ -237,9 +237,6 @@ DECLARE
     field_name text;
     value text;
     values_found text[] := ARRAY[]::text[];
-    accepted_fields text[] := ARRAY(
-        SELECT lower(label::text) FROM unnest(enum_range(field)) AS label
-    );
 BEGIN
     -- Ignore trailing blank lines, then inspect the entire final paragraph.
     -- Never recover a recognized suffix from an invalid paragraph or fall
@@ -258,8 +255,10 @@ BEGIN
 
     FOR line_number IN first_line..last_line LOOP
         field_name := lower(split_part(lines[line_number], ':', 1));
-        IF lines[line_number] !~ '^[A-Za-z0-9-]+:'
-           OR NOT (field_name = ANY(accepted_fields)) THEN
+        -- Unknown but syntactically valid trailers (e.g. Security or a
+        -- misspelled Discussion) must not erase adjacent Author credits.
+        -- They are ignored, not promoted into our supported field catalog.
+        IF lines[line_number] !~ '^[A-Za-z0-9-]+:' THEN
             RETURN ARRAY[]::text[];
         END IF;
         -- Keep the existing btrim contract: spaces are trimmed, tabs are not.

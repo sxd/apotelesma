@@ -36,7 +36,7 @@ try {
   ];
   const commitText = JSON.stringify(commits);
   const snapshot = {
-    schema_version: 2, attribution_source: "trailer_author",
+    schema_version: 3, attribution_source: "trailer_author_or_git_author",
     provenance: { timestamp_basis: "committer", input_sha256: { commit_snapshot_sha256: createHash("sha256").update(commitText).digest("hex") } },
     coverage: { total_commits: 5, matched_commits: 3, researched_people: 3 },
     companies: [
@@ -46,9 +46,9 @@ try {
       { company_id: "hostile", name: '<img src=x onerror="alert(1)">', aliases: ["hostile"] },
     ],
     matches: [
-      { branch: "master", commit_id: "one", companies: [{ company_id: "edb", status: "estimated" }] },
-      { branch: "master", commit_id: "two", companies: [{ company_id: "other", status: "supported" }] },
-      { branch: "master", commit_id: "both", companies: [{ company_id: "edb", status: "supported" }, { company_id: "other", status: "estimated" }] },
+      { branch: "master", commit_id: "one", author_source: "trailer_author", companies: [{ company_id: "edb", status: "estimated" }] },
+      { branch: "master", commit_id: "two", author_source: "trailer_author", companies: [{ company_id: "other", status: "supported" }] },
+      { branch: "master", commit_id: "both", author_source: "trailer_author", companies: [{ company_id: "edb", status: "supported" }, { company_id: "other", status: "estimated" }] },
     ],
   };
   let mode = "valid";
@@ -73,8 +73,8 @@ try {
   const ready = async () => { await page.waitForFunction(() => document.querySelector("#selection-summary")?.textContent.includes("commits")); };
   await page.goto(url); await ready();
   assert.equal(await search.isEnabled(), true);
-  assert.match(await page.locator("#company-help").textContent(), /trailer_author.*only/);
-  assert.match(await page.locator("#company-method").textContent(), /only to patch authors in trailer_author/);
+  assert.match(await page.locator("#company-help").textContent(), /Git author when that tag is absent/);
+  assert.match(await page.locator("#company-method").textContent(), /Git author is the fallback/);
   assert.equal(await page.getByRole("columnheader", { name: "Patch author companies", exact: true }).count(), 1);
   await search.click();
   assert.equal(await page.locator("#company-filter input").count(), 8);
@@ -155,8 +155,8 @@ try {
   await page.goto(url); await ready();
   assert.equal(await search.isEnabled(), true);
   const real = JSON.parse(await readFile(resolve(root, "data/company_affiliations.json"), "utf8"));
-  assert.equal(real.schema_version, 2);
-  assert.equal(real.attribution_source, "trailer_author");
+  assert.equal(real.schema_version, 3);
+  assert.equal(real.attribution_source, "trailer_author_or_git_author");
   await expectCount(real.coverage.total_commits.toLocaleString("en-US"));
   await search.fill("edb");
   const edb = page.getByRole("checkbox", { name: "EnterpriseDB", exact: true });

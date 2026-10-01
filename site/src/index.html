@@ -187,7 +187,7 @@
               </div>
             </div>
             <label class="company-estimates"><input id="company-estimates" type="checkbox" checked disabled> Include estimated affiliations</label>
-            <p class="selection-summary" id="company-help">Matches any selected company through patch authors in <code>trailer_author</code> only. No selection includes commits without company evidence. A zero count means no usable patch-author evidence in this scope.</p>
+            <p class="selection-summary" id="company-help">Matches any selected company through <code>Author:</code> credits, or the Git author when that tag is absent. Co-author-only messages also use the Git author. No selection includes commits without company evidence.</p>
             <p class="selection-summary" id="company-coverage"></p>
             <details class="selection-summary"><summary>How company matching works</summary><p id="company-method"></p><p>Company and author filters apply independently to each commit, not necessarily the same person. Affiliation is not proof of company sponsorship. Unknown or conflicting evidence does not match a company.</p></details>
             <p class="selection-summary" id="company-status" role="status" aria-live="polite" aria-atomic="true"></p>
